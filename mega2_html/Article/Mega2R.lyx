@@ -3699,6 +3699,424 @@ print(as.numeric(raw.allele.representation))
 
 \end_layout
 
+\begin_layout Subsubsection
+A more realistic 
+\begin_inset Quotes eld
+\end_inset
+
+show
+\begin_inset Quotes erd
+\end_inset
+
+ function
+\end_layout
+
+\begin_layout Standard
+The example 
+\begin_inset Quotes eld
+\end_inset
+
+show
+\begin_inset Quotes erd
+\end_inset
+
+ function that we were using does not compute any statistics; it just shows
+ the data that are available to analyze.
+ The two functions below, 
+\begin_inset Quotes eld
+\end_inset
+
+show2
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+show3
+\begin_inset Quotes erd
+\end_inset
+
+, compute the fisher exact test for the trait vs marker and a chisq test
+ of the same data and show the p-value.
+ Hopefully, the code with comments is easy to understand.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<show2,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+show2 = function(m, r, e) {
+\end_layout
+
+\begin_layout Plain Layout
+
+      print(r)
+\end_layout
+
+\begin_layout Plain Layout
+
+#     print(m)
+\end_layout
+
+\begin_layout Plain Layout
+
+# collect genotypes for the set of markers "m"      
+\end_layout
+
+\begin_layout Plain Layout
+
+      mm = getgenotypes(m, envir=e) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#     colnames(mm) = m$MarkerName 
+\end_layout
+
+\begin_layout Plain Layout
+
+#     print(head(mm)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+# apply fisher.test of trait vs marker (accumulating samples)       
+\end_layout
+
+\begin_layout Plain Layout
+
+      pv = apply(mm, 2,
+\end_layout
+
+\begin_layout Plain Layout
+
+                     function(x) {tryCatch(fisher.test(table(e$fam$trait,
+ x)),
+\end_layout
+
+\begin_layout Plain Layout
+
+                                  error = function(e) {list(p.value = 0)}
+ ) $p.value } )
+\end_layout
+
+\begin_layout Plain Layout
+
+      names(pv) = m$MarkerName
+\end_layout
+
+\begin_layout Plain Layout
+
+      print(pv)
+\end_layout
+
+\begin_layout Plain Layout
+
+ } 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<show3,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+show3 = function(m, r, e) {
+\end_layout
+
+\begin_layout Plain Layout
+
+      print(r) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#     print(m) 
+\end_layout
+
+\begin_layout Plain Layout
+
+# collect genotypes for the set of markers "m"
+\end_layout
+
+\begin_layout Plain Layout
+
+      mm = getgenotypes(m, envir=e) 
+\end_layout
+
+\begin_layout Plain Layout
+
+#     colnames(mm) = m$MarkerName 
+\end_layout
+
+\begin_layout Plain Layout
+
+#     print(head(mm)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+# apply chisq.test of trait vs marker (accumulating samples)
+\end_layout
+
+\begin_layout Plain Layout
+
+      pv = apply(mm, 2,
+\end_layout
+
+\begin_layout Plain Layout
+
+                     function(x) {tryCatch(chisq.test(table(e$fam$trait,
+ x)),
+\end_layout
+
+\begin_layout Plain Layout
+
+                                  error = function(e) {list(p.value = 0)}
+ ) $p.value } )
+\end_layout
+
+\begin_layout Plain Layout
+
+      names(pv) = m$MarkerName
+\end_layout
+
+\begin_layout Plain Layout
+
+      print(pv)
+\end_layout
+
+\begin_layout Plain Layout
+
+ } 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+or
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<showstat,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+show.stat = function(m, r, e, fn) {
+\end_layout
+
+\begin_layout Plain Layout
+
+      print(r) 
+\end_layout
+
+\begin_layout Plain Layout
+
+# collect genotypes for the set of markers "m"
+\end_layout
+
+\begin_layout Plain Layout
+
+      mm = getgenotypes(m, envir=e) 
+\end_layout
+
+\begin_layout Plain Layout
+
+# apply chisq.test of trait vs marker (accumulating samples)
+\end_layout
+
+\begin_layout Plain Layout
+
+      pv = apply(mm, 2, fn)
+\end_layout
+
+\begin_layout Plain Layout
+
+      names(pv) = m$MarkerName
+\end_layout
+
+\begin_layout Plain Layout
+
+      print(pv)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+show2 = function(m, r, e) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    f = function(x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+          tryCatch(fisher.test(table(e$fam$trait, x)),
+\end_layout
+
+\begin_layout Plain Layout
+
+                   error = function(e) {list(p.value = 0)}) $p.value }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    show.stat(m, r, e, f)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+show3 = function(m, r, e) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    f = function(x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+          tryCatch(chisq.test(table(e$fam$trait, x)),
+\end_layout
+
+\begin_layout Plain Layout
+
+                   error = function(e) {list(p.value = 0)}) $p.value }
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    show.stat(m, r, e, f)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now try using these functions:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<xshow2,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+applyFnToGenes(show2, genes_arg = c("CEP104"))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Chunk
+status open
+
+\begin_layout Plain Layout
+
+<<xshow3,eval=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+applyFnToGenes(show3, genes_arg = c("CEP104"))
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note: Since both test functions just count unique categorical values, the
+ 
+\emph on
+getgenotypes
+\emph default
+ function in 
+\begin_inset Quotes eld
+\end_inset
+
+show.stat
+\begin_inset Quotes erd
+\end_inset
+
+ could be replaced by 
+\emph on
+getgenotypesraw
+\emph default
+ without changing the calculated p-values.
+\end_layout
+
 \begin_layout Subsection
 Using Mega2R to carry out automated gene-based association tests using 'pedgene'
  
