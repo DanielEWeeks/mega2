@@ -1198,7 +1198,7 @@ SHAPEIT/Minimac3 format
 \end_layout
 
 \begin_layout Enumerate
-VCF format
+BCF/VCF format
 \end_layout
 
 \begin_layout Enumerate
@@ -1233,7 +1233,18 @@ name "subsec:Output-formats-1"
 \end_layout
 
 \begin_layout Standard
-The Mega2R R package supports the following:
+The Mega2R R package (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://cran.r-project.org/package=Mega2R
+\end_layout
+
+\end_inset
+
+) supports the following:
 \end_layout
 
 \begin_layout Enumerate
@@ -1295,52 +1306,63 @@ Enhancements in Mega2 version 5.0.1
 \end_layout
 
 \begin_layout Itemize
-DBoff option to skip database generation has been deleted.
- Mega2 always must generate/use a database.
+The Mega2 'No database' legacy mode (also known as the DBoff option) is
+ no longer supported.
+ Now Mega2 always must generate/use a database.
 \end_layout
 
 \begin_layout Itemize
-Add MQLS-XM/KinInbcoef analysis.
+We have added a new output format: MQLS-XM/KinInbcoef (See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Conver-to-MQLS-XM/KinInbcoef"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Itemize
-For DUMP operation, ask all questions that need answers, before any input
- data are processed.
- Thus, processing is not interrupted with questions.
+In the 'Mega2 database create mode', we now ask all questions that need
+ answers upfront, before any input data are processed.
+ Thus, processing, which may be time-consuming, is not interrupted with
+ questions.
 \end_layout
 
 \begin_layout Itemize
-Add input menu item line to control whether to calculate and print statistics
- on markers typed per individual.
+We have added an input menu item line to control whether to calculate and
+ print statistics about markers typed per individual.
+ Choosing to not print these statistics results in faster run times.
 \end_layout
 
 \begin_layout Itemize
-Performance: Write bcf and bcf.gz files using bcftools directly rather than
- first generate a vcf file.
+Performance: Mega2 now writes BCF and VCF.gz files using bcftools directly
+ rather than first generating an intermediate VCF file.
 \end_layout
 
 \begin_layout Itemize
-Performance: Fix memory leak in write_vcf and use faster technique to build
- vcf text lines.
+Performance: Fixed a memory leak in write_vcf and use faster technique to
+ build VCF text lines.
 \end_layout
 
 \begin_layout Itemize
-Performance: Fix allele frequency counting when there are a large number
+Performance: Fixed allele frequency counting when there are a large number
  of indels (which appear as alleles).
 \end_layout
 
 \begin_layout Itemize
-Bug: Make pangaea routines store the file name stem in the batch file.
+Bug: The pangaea routines now store the file name stem in the batch file,
+ permitting more flexible creation of shell scripts.
 \end_layout
 
 \begin_layout Itemize
-Bug: dbCompress was not set correctly during an interactive vs batch run.
+Bug: The dbCompress flag was not set correctly during an interactive vs
+ batch run, causing data not to be compressed when Mega2 was used interactively.
 \end_layout
 
 \begin_layout Itemize
-Bug: There is no Mega2 program compiled using the native Microsoft compiler.
- This should be available in a later release.
- For the present, you should use Msys2 Mega2 or Cygwin Mega2 instead.
+There is no Mega2 program compiled using the native Microsoft compiler.
+ You should use Msys2 Mega2 or Cygwin Mega2 instead.
 \end_layout
 
 \begin_layout Subsection
@@ -1470,315 +1492,6 @@ Bug: Fix SQL index statements.
 Bug: Allow disconnected individuals and fix warning print out.
 \end_layout
 
-\begin_layout Subsection
-Enhancements in Mega2 version 4.9.1
-\end_layout
-
-\begin_layout Itemize
-For any particular set of input data, Mega2 now stores those data in a database.
- Subsequent runs of Mega2 are then much faster as the data is quickly loaded
- from the database.
- There are two different file selection (aka input) menus: one to create
- the database and the other to select the database and the analysis.
- These choices are selected via the new 
-\begin_inset Quotes eld
-\end_inset
-
-database mode
-\begin_inset Quotes erd
-\end_inset
-
- menu (see Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:The-database-mode"
-
-\end_inset
-
-) or via the command line switches: 
-\series bold
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--
-\series default
-\emph default
-DBdump and 
-\series bold
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--
-\series default
-\emph default
-DBread.
-\end_layout
-
-\begin_layout Itemize
-Mega2 now supports Mach/SHAPEIT/Minimac3 analysis.
- See Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "ext:minimac-shapeit"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Mega2 now supports VCF output.
- See Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Detailed-info-convert-vcf"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Mega2 now allows a database to be created without any genetic map information.
- This is not useful for most Mega2 analysis options, but can be useful when
- the output is PLINK, VCF, SHAPEIT, etc and genetic map information is not
- needed.
-\end_layout
-
-\begin_layout Itemize
-Bug: Require only empty file names (
-\begin_inset Quotes eld
-\end_inset
-
-
-\begin_inset Quotes erd
-\end_inset
-
-) on Windows for open() argument and not a NULL pointer.
-\end_layout
-
-\begin_layout Itemize
-Bug: Fix argument generation for internal exec of Mega2 when requested.
- Have Windows use spawn vs exec.
-\end_layout
-
-\begin_layout Itemize
-Bug: Remove lambda expressions from code since not all versions of all compilers
- will accept them.
-\end_layout
-
-\begin_layout Itemize
-Bug: PLINK –map3 parameter was not handled correctly.
-\end_layout
-
-\begin_layout Itemize
-Bug: Marker typing summary table needs longer fields and genotype calculation
- function(s) must use size_t internally.
-\end_layout
-
-\begin_layout Itemize
-Bug: Roadtrips buffer overrun (allocate 3 chars vs 2).
-\end_layout
-
-\begin_layout Itemize
-Internals: Reset random seed only for debugging compilation of Mega2.
-\end_layout
-
-\begin_layout Itemize
-Internals: Data cleaning and other checks are applied to all markers in
- the database, not just the chosen subset of markers.
- 
-\end_layout
-
-\begin_layout Subsection
-Enhancements in Mega2 version 4.9.0
-\end_layout
-
-\begin_layout Itemize
-Mega2 now supports preparing input for MaCH/Minimac3 analysis.
- See Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "ext:minimac"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Mega2 now supports preparing input for ROADTRIPS analysis.
- See Section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "ext:roadtrips"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Mega2 now stores its input in an SQLite3 database and fetches data for processin
-g from the SQLite3 database.
- (This is explained further in section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:SQLite3"
-
-\end_inset
-
-.) When reading from a SQLite3 database, Mega2 uses the Database input menu
- see 
-\begin_inset Quotes eld
-\end_inset
-
-the Database input menu
-\begin_inset Quotes erd
-\end_inset
-
- (section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:The-alternate-input-menu"
-
-\end_inset
-
-).
- When running multiple different Mega2 analyses on the same set of input
- data, it will be substantially faster to read in the pre-processed data
- from the SQLite3 database.
-\end_layout
-
-\begin_layout Itemize
-\align left
-Bug: IMPUTE2 GEN input now checks for well formed probability 3-tuples and
- verifies there are the correct number of them in each line of the input
- file.
- Also, a 
-\begin_inset Quotes eld
-\end_inset
-
-rsid
-\begin_inset Quotes erd
-\end_inset
-
- of 
-\begin_inset Quotes eld
-\end_inset
-
-—
-\begin_inset Quotes erd
-\end_inset
-
- is treated as 
-\begin_inset Quotes eld
-\end_inset
-
-NA
-\begin_inset Quotes erd
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Itemize
-Bug: Fix name for Aux file reported in the logs based on input type.
-\end_layout
-
-\begin_layout Itemize
-Feature: The Analysis name used in a batch file can either be the 
-\begin_inset Quotes eld
-\end_inset
-
-_name
-\begin_inset Quotes erd
-\end_inset
-
- attribute of the class or the analysis menu selection name (section 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:The-analysis-menu"
-
-\end_inset
-
-).
-\end_layout
-
-\begin_layout Itemize
-Feature: Renamed top level shell, that runs all the analysis shells, to
- <name>.top.sh versus <name>.all.sh; the latter could cause conflicts in certain
- cases.
-\end_layout
-
-\begin_layout Itemize
-Internals: Lots of NEW code to dump and restore arrays of data into the
- SQLite3 database.
-\end_layout
-
-\begin_layout Subsection
-Enhancements in Mega2 version 4.8.2
-\end_layout
-
-\begin_layout Itemize
-Mega2 now supports preparing input for SHAPEIT analysis (in phased and checked
- modes).
-\end_layout
-
-\begin_layout Itemize
-Mega2 was upgraded to support the latest IMPUTE2 BGEN format (version v1.2).
-\end_layout
-
-\begin_layout Itemize
-Detailed information about the analysis options has been consolidated into
- Chapter 25 of the Mega2 documentation; previously it was scattered between
- Chapter 25 and the section about the Analysis Menu.
-\end_layout
-
-\begin_layout Itemize
-The Analysis menu now can be sorted if desired.
-\end_layout
-
-\begin_layout Itemize
-Bug: Missing_Value defaults were incorrectly set for Beagle, Simwalk and
- Summary analysis.
-\end_layout
-
-\begin_layout Itemize
-Bug: Msys2 has been enhanced to allow compilation under the 
-\series bold
-mingw64_shell.bat
-\series default
- environment.
-\end_layout
-
-\begin_layout Itemize
-Bug: When using native Microsoft binaries, the documentation now suggests
- downloading the appropriate Microsoft Visual C++ Redistributable.
-\end_layout
-
 \begin_layout Standard
 \noindent
 \begin_inset CommandInset line
@@ -1892,7 +1605,28 @@ pre-makeped
 \shape default
  pedigree file format is a relatively simple format with the first 5 columns
  containing pedigree information followed by genotypes and phenotypes.
- The first 5 columns are: 
+ Note that 
+\series bold
+Mega2 is designed so that the pedigree file either needs both Father and
+ Mother to be defined or for both to be undefined
+\series default
+, you cannot have one defined and the other set to unknown.
+ As the SimWalk2 documentation explains: “To reconstruct the relationships
+ between individuals properly, often people must be included who are dead
+ or otherwise unavailable for study.
+ One rule is important to keep in mind.
+ Either both parents or neither parent of a person must be listed in the
+ pedigree.
+ Those people without parents in the pedigree can be thought of as founders
+ of the pedigree.” 
+\begin_inset Newline newline
+\end_inset
+
+The first 5 columns of the 
+\shape italic
+pre-makeped
+\shape default
+ pedigree file are: 
 \begin_inset Newline newline
 \end_inset
 
@@ -2824,7 +2558,7 @@ University of Pittsburgh
 \end_layout
 
 \begin_layout LyX-Code
-Crabtree Hall, Room A303     
+Public Health 3119    
 \end_layout
 
 \begin_layout LyX-Code
@@ -5514,6 +5248,11 @@ name "subsec:Native-Windows-installation"
 
 \end_layout
 
+\begin_layout Standard
+NOTE: As of version 5.0.1, the Native Windows version is not supported as
+ the BCFtools library does not compile in this environment.
+\end_layout
+
 \begin_layout Subsubsection
 Native Windows environment
 \end_layout
@@ -5799,11 +5538,14 @@ binary IMPUTE2 BGEN format
 
 \end_deeper
 \begin_layout Enumerate
-Mega2 database Input
-\end_layout
+BCF/VCF Variant Format (using BCFtools) (See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:VCF-file-formats"
 
-\begin_layout Enumerate
-Variant Format (using BCFtools)
+\end_inset
+
+)
 \end_layout
 
 \begin_deeper
@@ -5820,6 +5562,10 @@ VCF format
 \end_layout
 
 \end_deeper
+\begin_layout Enumerate
+Mega2 database format
+\end_layout
+
 \begin_layout Standard
 In the past, Mega2 read in its data in an existing supported data format
  as described in the next sections, did its validation and then proceeded
@@ -6282,7 +6028,14 @@ There are 5 required columns and 9 optional columns with fixed column names,
  Mega2 is designed so that it either needs both Father and Mother to be
  defined or for both to be undefined, you cannot have one defined and the
  other set to unknown.
- 
+ As the SimWalk2 documentation explains: “To reconstruct the relationships
+ between individuals properly, often people must be included who are dead
+ or otherwise unavailable for study.
+ One rule is important to keep in mind.
+ Either both parents or neither parent of a person must be listed in the
+ pedigree.
+ Those people without parents in the pedigree can be thought of as founders
+ of the pedigree.”
 \end_layout
 
 \begin_layout Standard
@@ -8233,7 +7986,18 @@ pre-makeped
  and sex.
  This is followed by a single trait and then the markers, coded as pairs
  of alleles.
- There is no header for this file, so it includes no information regarding
+ Note that Mega2 follows these rules, as described in the SimWalk2 documentation
+: “To reconstruct the relationships between individuals properly, often
+ people must be included who are dead or otherwise unavailable for study.
+ One rule is important to keep in mind.
+ Either both parents or neither parent of a person must be listed in the
+ pedigree.
+ Those people without parents in the pedigree can be thought of as founders
+ of the pedigree.”
+\end_layout
+
+\begin_layout Standard
+There is no header for the PED file, so it includes no information regarding
  the type of trait in the trait column; this information is supplied via
  the use of the Mega2-PLINK parameter -
 \begin_inset ERT
@@ -10156,6 +9920,15 @@ where missing parents are entered as 0 (zero), and, for the gender column,
  to enter by hand) and breaks loops, which is required by the LINKAGE programs.Th
 e columns should be separated by spaces or tabs (any number of these is
  allowed).
+ Note that if one parent is missing, the other must be also missing.
+ As the SimWalk2 documentation explains: “To reconstruct the relationships
+ between individuals properly, often people must be included who are dead
+ or otherwise unavailable for study.
+ One rule is important to keep in mind.
+ Either both parents or neither parent of a person must be listed in the
+ pedigree.
+ Those people without parents in the pedigree can be thought of as founders
+ of the pedigree.”
 \end_layout
 
 \begin_layout Standard
@@ -11801,7 +11574,7 @@ name "subsec:VCF-file-formats"
 \end_layout
 
 \begin_layout Standard
-Variant Call Format (VCF) was designed to store information about genetic
+The Variant Call Format (VCF) was designed to store information about genetic
  variants (See: 
 \begin_inset CommandInset href
 LatexCommand href
@@ -11824,7 +11597,19 @@ Mega2 currently uses two applications for parsing VCF and BCF files, these
 \end_layout
 
 \begin_layout Standard
-Mega2 uses from the popular VCFtools program (See: 
+In the input file type menu, these two options
+\end_layout
+
+\begin_layout LyX-Code
+* Legacy Implementation VCF compressed format (vcf.gz)
+\end_layout
+
+\begin_layout LyX-Code
+* Legacy Implementation VCF format (vcf)
+\end_layout
+
+\begin_layout Standard
+use functions from the VCFtools program (See: 
 \begin_inset CommandInset href
 LatexCommand href
 name "VCFtools"
@@ -11832,7 +11617,7 @@ target "http://vcftools.sourceforge.net"
 
 \end_inset
 
-) as its underlying engine for parsing VCF files in 'legacy' mode.
+) as its underlying engine for parsing VCF files.
  VCFtools (and so Mega2) currently supports VCF format v4.0 and VCF format
  v4.1 (See: 
 \begin_inset CommandInset href
@@ -11884,7 +11669,23 @@ reference "par:VCF_Args"
 \end_layout
 
 \begin_layout Standard
-Mega2 now also uses the source code of the BCFtools program (See: 
+For these three input options
+\end_layout
+
+\begin_layout LyX-Code
+* BCF v2.2 or higher (bcf)
+\end_layout
+
+\begin_layout LyX-Code
+* VCF compressed format (vcf.gz)
+\end_layout
+
+\begin_layout LyX-Code
+* VCF format (vcf)
+\end_layout
+
+\begin_layout Standard
+Mega2 uses functions from the BCFtools program (See: 
 \begin_inset CommandInset href
 LatexCommand href
 name "BCFtools"
@@ -11892,7 +11693,7 @@ target "https://samtools.github.io/bcftools/bcftools.html"
 
 \end_inset
 
-) in new input modes for VCF and BCF format files.
+).
  BCFtools supports VCF Format v4.0 and higher as well as BCF format v2.2 and
  higher.
  Mega2 supports a subset of the 
@@ -11915,7 +11716,7 @@ reference "subsec:Input-Format:-BCFTools"
 \end_layout
 
 \begin_layout Standard
-VCF input format uses a subset of the PLINK parameters (See 
+These input format options use a subset of the PLINK parameters (See 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "par:VCF-Menu-item-PLINK-parameters"
@@ -11938,8 +11739,8 @@ reference "subsec:VCF-Pedigree-File"
 
 \begin_layout Standard
 Mega2 and the 'vcftools' program will accept variant call input files in
- one of three formats: text only, gzipped compressed text only, or binary
- file.
+ one of three formats: text only (VCF), gzipped compressed text only (VCF.gz),
+ or binary (BCF).
  The variant call file format is specified using the appropriate menu in
  Mega2 (See 
 \begin_inset CommandInset ref
@@ -13213,8 +13014,15 @@ Mother
 \end_inset
 
  must both be specified, one cannot be 0 while the other is defined.
- The second line of the header is extended for each column, and contains
- codes indicating the type of variable stored in each column.
+ As the SimWalk2 documentation explains: “To reconstruct the relationships
+ between individuals properly, often people must be included who are dead
+ or otherwise unavailable for study.
+ One rule is important to keep in mind.
+ Either both parents or neither parent of a person must be listed in the
+ pedigree.
+ Those people without parents in the pedigree can be thought of as founders
+ of the pedigree.” The second line of the header is extended for each column,
+ and contains codes indicating the type of variable stored in each column.
  Mega2 maps codes 
 \begin_inset Quotes eld
 \end_inset
@@ -14643,15 +14451,15 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
- 6) BCF format (bcf)
+ 6) BCF format up to v2.1 (bcf)
 \end_layout
 
 \begin_layout LyX-Code
- 7) VCF compressed format (vcf.gz)
+ 7) Legacy Implementation VCF compressed format (vcf.gz)
 \end_layout
 
 \begin_layout LyX-Code
- 8) VCF format (vcf) 
+ 8) Legacy Implementation VCF format (vcf)
 \end_layout
 
 \begin_layout LyX-Code
@@ -14687,11 +14495,11 @@ For example, selecting
 \begin_inset Quotes eld
 \end_inset
 
-Line 6
+6
 \begin_inset Quotes erd
 \end_inset
 
- (BCF format (bcf)) replaces the old input menu with a new menu:
+ (BCF format up to v2.1 (bcf)) replaces the old input menu with a new menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -17951,7 +17759,7 @@ Menu item: Pedigree File
 \end_layout
 
 \begin_layout Standard
-This format and the other new VCF formats are unique in that a pedigree
+This format and the other BCF/VCF formats are unique in that a pedigree
  file is not required.
  If one is not provided Mega2 will construct a simulated pedigree with entirely
  unrelated data using the sample id's within the BCF file.
@@ -18098,7 +17906,7 @@ This specifies the name of the file that is to contain the sSQLite3 database
 \end_layout
 
 \begin_layout Subsection
-External Reference Allele Panel in the Database 
+External Reference Allele Panel 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Using-an-external-reference"
@@ -18183,7 +17991,7 @@ ALT
 \end_layout
 
 \begin_layout Standard
-this file must be 
+This file must be 
 \series bold
 tab delimited
 \series default
@@ -18878,6 +18686,14 @@ One or both parents are missing
 Most pedigree analysis programs require that individual records for both
  parents are included within the pedigree data, therefore, so does Mega2.
  Missing parental records are fatal errors.
+ As the SimWalk2 documentation explains: “To reconstruct the relationships
+ between individuals properly, often people must be included who are dead
+ or otherwise unavailable for study.
+ One rule is important to keep in mind.
+ Either both parents or neither parent of a person must be listed in the
+ pedigree.
+ Those people without parents in the pedigree can be thought of as founders
+ of the pedigree.”
 \end_layout
 
 \end_deeper
@@ -19504,7 +19320,8 @@ After all the input files and the chromosome number have been specified,
 \end_layout
 
 \begin_layout LyX-Code
-22 SAGE format                     45 VCF format                     
+22 SAGE format                     45 BCF/VCF format                   
+  
 \end_layout
 
 \begin_layout LyX-Code
@@ -20056,7 +19873,7 @@ reference "ext:minimac-shapeit"
 \end_layout
 
 \begin_layout Enumerate
-Convert to VCF format (Section 
+Convert to BCF/VCF format (Section 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "ext:vcf"
@@ -34686,7 +34503,7 @@ name "subsec:Analysis-PLINK-option"
 \begin_layout Standard
 
 \series bold
-This Analysis Menu options
+This Analysis Menu option
 \series default
  sets up pedigree, genotype, phenotype and map files in PLINK format.
  
@@ -39127,7 +38944,7 @@ name "ext:vcf"
 
 \end_inset
 
-Convert to VCF (Variant Call Format) 
+Convert to BCF/VCF format 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Detailed-info-convert-vcf"
@@ -39140,19 +38957,19 @@ name "subsec:Detailed-info-convert-vcf"
 \begin_layout Standard
 
 \series bold
-This analysis menu option
+This Analysis Menu option
 \series default
- allows the creation of Variant Call format (VCF) from genetic data read
- in by Mega2.
+ allows the creation of Variant Call format (VCF) and its compressed binary
+ counterpart (BCF) from genetic data read in by Mega2.
  Variant Call Format (VCF) was designed to store information about genetic
  variants.
- Information on the VCF format standard can be found at 
+ Information about the VCF and BCF format standards can be found at 
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
-https://samtools.github.io/hts-specs/VCFv4.2.pdf
+https://github.com/samtools/hts-specs
 \end_layout
 
 \end_inset
@@ -39168,7 +38985,7 @@ https://samtools.github.io/hts-specs/VCFv4.2.pdf
 \end_layout
 
 \begin_layout Standard
-VCF, BCF (the new default) and VCF gzipped formats are now all output via
+BCF (the new default), VCF gzipped, and VCF formats are now all output via
  an internal implementation of BCFtools (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -39176,24 +38993,10 @@ reference "subsec:Input-Format:-BCFTools"
 
 \end_inset
 
-) This means that BCF is the new default as internally it is what BCFTools
+) This means that BCF is the new default as internally this is how BCFTools
  represents data as and is therefore the fastest.
  For large datasets we recommend not outputting VCF as the file size will
  scale accordingly and write time will increase.
-\end_layout
-
-\begin_layout Standard
-In addition to creating the standard VCF output file, Mega2 also will create
- a .fam file similar to a PLINK .fam file for storing pedigree information
- (this is not standard for VCF data ).
- Also Mega2 will create a .phe file for storing additional phenotype information
- as well as a mapping between sample ID and the pedigree.
- Mega2 will also output any map information it has into a .map file.
- Similarly a .freq file containing allele frequency information, whether
- calculated by Mega2 or provided on input, will be output.
- Finally penetrance of affection status traits will be output into a .pen
- file.
- Below are these files are explained in more detail.
 \end_layout
 
 \begin_layout Standard
@@ -39246,28 +39049,38 @@ This menu has six prompts: First is the output format as either a BCV, VCF,
  build version is listed in the contig portion of the VCF header.
  The reference allele decision, which allows you to use Mega2's computed
  frequencies to use the major or minor allele as your reference, or an external
- reference allele panel .
- If using an external reference panel and one has not been created already
- Mega2 will prompt you to create one, you can do that by following the instructi
-ons here 
+ reference allele panel (if one was specified during the creation of the
+ input Mega2 database; for more information see the instructions here 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:Using-an-external-reference"
 
 \end_inset
 
-.
- If the reference allele table already exists it will continue with that
- data.
+).
  The last two fields determine how Mega2 represents your family and person
  ID data, the default is to use the values put in by the input data but
- this can be changed to values such as monotonically increasing numbers
+ this can be changed to values such as monotonically increasing numbers,
  etc.
 \end_layout
 
 \begin_layout Standard
 If more than one chromosome is selected, there will be an additional option
  to either combine or split chromosomes.
+\end_layout
+
+\begin_layout Standard
+In addition to creating the standard BCF or VCF output file, Mega2 also
+ will create several matched files: it will a .fam file similar to a PLINK
+ .fam file for storing pedigree information.
+ Also Mega2 will create a .phe file for storing additional phenotype information
+ as well as a mapping between sample ID and the pedigree.
+ Mega2 will also output any map information it has into a .map file.
+ Similarly a .freq file containing allele frequency information, whether
+ calculated by Mega2 or provided on input, will be output.
+ Finally penetrance of affection status traits will be output into a .pen
+ file.
+ Now these files are explained in more detail:
 \end_layout
 
 \begin_layout LyX-Code
@@ -39454,13 +39267,12 @@ name "subsec:Conver-to-MQLS-XM/KinInbcoef"
 \begin_layout Standard
 
 \series bold
-This analysis menu option
+This Analysis Menu option
 \series default
  allows for the creation of data to be used with the MQLS-XM application.
- MQLS.
  MQLS-XM is a C program that performs single-SNP, case-control association
  testing for the autosomal chromosomes and the X-chromosome in samples with
- known relatedness.(
+ known relatedness (
 \begin_inset CommandInset href
 LatexCommand href
 name "MQLS-XM Webpage"
@@ -39469,10 +39281,10 @@ target "https://www.stat.uchicago.edu/~mcpeek/software/MQLS_XM/index.html"
 \end_inset
 
 ).
- To set up the kinship and inbreeding data that MQLS-XM utilizes there are
- two other pieces of software used, the first is KinInbcoef which is a C++
- program that computes inbreeding and kinship coefficients for general pedigrees
- using the algorithm ( 
+ To set up the kinship matrix that MQLS-XM utilizes there are two other
+ pieces of software used, the first is KinInbcoef which is a C++ program
+ that computes inbreeding and kinship coefficients for general pedigrees
+ (
 \begin_inset CommandInset href
 LatexCommand href
 name "KinInbcoef Webpage"
@@ -39480,11 +39292,11 @@ target "https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoef/index.html"
 
 \end_inset
 
- ).
+).
  The other is KinInbcoefX which is a C++ program that calculates X-chromosome
  kinship coefficients for pairs of individuals (and X-chromosome inbreeding
  coefficients for each individual), based on pedigree and sex information
- ( 
+ (
 \begin_inset CommandInset href
 LatexCommand href
 name "KinInbcoefX Webpage"
@@ -39492,29 +39304,9 @@ target "https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoefX/index.htm"
 
 \end_inset
 
- ).
+).
  For the autosomes KinInbcoef is used, whereas on the X chromosome KinInbcoefX
  is used.
-\end_layout
-
-\begin_layout Standard
-This mode creates several files to be used with KinInbcoef, KinInbcoefX
- and MQLS-XM.
- The first is the .gen file, which is the genotype file (tped format) that
- stores the genetic data that MQLS-XM uses for analysis.
- Next is the MQLS-XM phenotype information file which is labeled .fam, this
- is used by MQLS-XM to organize family structure and phenotype information
- for analysis.
- Next are the .kininbcoef and the .kininbcoefx files, these are used by their
- respective applications and will only be created if the appropriate chromosome
- (autosome or X) is selected.
- these files are modified fam files with less columns used by the KinInbcoef
- and KinInbcoefX applications.
- Next is the Kininbcoef list file (.txt file), this file is used by both
- the KinInbcoef and KinInbcoefX file and is a two column list of all related
- pairs within families.
- Finally there are shell files per chromosome and a top shell file that
- run all subsequent shell files.
 \end_layout
 
 \begin_layout Standard
@@ -39558,11 +39350,12 @@ Enter options 0-3 >
 \end_layout
 
 \begin_layout Standard
-The first menu prompt is the stem which all the files created will have.
- The second is a prevalence file name used by MQLS-XM, it is a two value
- file that contains decimal prevalence values, see their documentation for
- more on that file.
- The last are additional arguments for MQLS-XM, those arguments are as follows:
+The first menu prompt defines the filename stem which all the files created
+ will have.
+ The second specifies the name of the required prevalence file used by MQLS-XM,
+ it is a two value file that contains decimal male and female prevalence
+ values from an appropriate reference population.
+ The last are additional optional arguments for MQLS-XM, which are as follows:
 \end_layout
 
 \begin_layout Itemize
@@ -39574,9 +39367,9 @@ The first menu prompt is the stem which all the files created will have.
 
 \begin_layout Itemize
 -m Allows the user to specify that only individuals who have non-missing
- genotypes at a marker will be included in calculating the MQLS and XM statistic
-s at that SNP, i.e., phenotype information for individuals with missing genotype
- data at a SNP will not be used.
+ genotypes at a marker will be included when calculating the MQLS and XM
+ statistics at that SNP, i.e., phenotype information for individuals with
+ missing genotype data at a SNP will not be used.
  If this option is not used, the MQLS and XM statistics will incorporate
  phenotype information for individuals with missing genotype data at a SNP
  being tested, provided that those individuals have a sampled relative who
@@ -39592,14 +39385,31 @@ s at that SNP, i.e., phenotype information for individuals with missing genotype
 \end_layout
 
 \begin_layout Standard
-A caution about maps for the Genetic Map Selection Menu.
+When using the MQLS-XM option, you should be careful about the choices made
+ in the Genetic Map Selection Menu.
  Mega2 is designed to filter data based on the map data.
- However when running analysis on the X chromosome if there are no map values
+ However when running analysis on the X chromosome if you selected an autosomal
+ genetic map that has no known map positions for markers on the X chromosome,
  then it will filter out the data.
  This can lead to empty files being output by Mega2.
- The menu's have been redesigned so that the Genetic Map Selection Menu
- will come up on database read, allowing selection of the appropriate genetic
- map for each run so as to not filter out valid data.
+ 
+\end_layout
+
+\begin_layout Standard
+This mode creates several files to be used with KinInbcoef, KinInbcoefX,
+ and MQLS-XM.
+ The first is the .gen file, which is the genotype file (in 'tped' format)
+ that stores the genetic marker data.
+ Next is the MQLS-XM phenotype information .fam file which is used by MQLS-XM
+ to organize family structure and phenotype information for analysis.
+ Next are the .kininbcoef and .kininbcoefx kinship coefficient files which
+ are used by their respective applications and will only be created if the
+ appropriate chromosome type (autosome or X) is selected.
+ Next is the Kininbcoef list file (.txt file) which is used by both the KinInbcoe
+f and KinInbcoefX programs and is a two column list of all related pairs
+ within families.
+ Finally there are shell files per chromosome and a top shell file that
+ run all subsequent shell files.
 \end_layout
 
 \begin_layout Standard
@@ -40927,7 +40737,7 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-November 12, 2018
+December 13, 2018
 \end_layout
 
 \end_inset
@@ -41976,50 +41786,60 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 5.0.0 to Version 5.0.1 (Released November 12, 2018)
+Changes from Version 5.0.0 to Version 5.0.1 (Released December 13, 2018)
 \end_layout
 
 \begin_layout Itemize
-DBoff option to skip database generation has been deleted.
- Mega2 always must generate/use a database.
+The Mega2 'No database' legacy mode (also known as the DBoff option) is
+ no longer supported.
+ Now Mega2 always must generate/use a database.
 \end_layout
 
 \begin_layout Itemize
-Add MQLS-XM/KinInbcoef analysis.
+We have added a new output format: MQLS-XM/KinInbcoef.
 \end_layout
 
 \begin_layout Itemize
-For DUMP operation, ask all questions that need answers, before any input
- data are processed.
- Thus, processing is not interrupted with questions.
+In the 'Mega2 database create mode', we now ask all questions that need
+ answers upfront, before any input data are processed.
+ Thus, processing, which may be time-consuming, is not interrupted with
+ questions.
 \end_layout
 
 \begin_layout Itemize
-Add input menu item line to control whether to calculate and print statistics
- on markers typed per individual.
+We have added an input menu item line to control whether to calculate and
+ print statistics about markers typed per individual.
+ Choosing to not print these statistics results in faster run times.
 \end_layout
 
 \begin_layout Itemize
-Performance: Write bcf and bcf.gz files using bcftools directly rather than
- first generate a vcf file.
+Performance: Mega2 now writes BCF and VCF.gz files using bcftools directly
+ rather than first generating an intermediate VCF file.
 \end_layout
 
 \begin_layout Itemize
-Performance: Fix memory leak in write_vcf and use faster technique to build
- vcf text lines.
+Performance: Fixed a memory leak in write_vcf and use faster technique to
+ build VCF text lines.
 \end_layout
 
 \begin_layout Itemize
-Performance: Fix allele frequency counting when there are a large number
+Performance: Fixed allele frequency counting when there are a large number
  of indels (which appear as alleles).
 \end_layout
 
 \begin_layout Itemize
-Bug: Make pangaea routines store the file name stem in the batch file.
+Bug: The pangaea routines now store the file name stem in the batch file,
+ permitting more flexible creation of shell scripts.
 \end_layout
 
 \begin_layout Itemize
-Bug: dbCompress was not set correctly during an interactive vs batch run.
+Bug: The dbCompress flag was not set correctly during an interactive vs
+ batch run, causing data not to be compressed when Mega2 was used interactively.
+\end_layout
+
+\begin_layout Itemize
+There is no Mega2 program compiled using the native Microsoft compiler.
+ You should use Msys2 Mega2 or Cygwin Mega2 instead.
 \end_layout
 
 \begin_layout Subsection
