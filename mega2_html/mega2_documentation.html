@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="generator" content="http://www.nongnu.org/elyxer/"/>
-<meta name="create-date" content="2018-06-14"/>
+<meta name="create-date" content="2018-12-13"/>
 <link rel="stylesheet" href="Mega2_Documentation.css" type="text/css" media="all"/>
 <title>Mega2Manipulation Environment for Genetic AnalysesA data-handling program for facilitatinggenetic linkage and association analyses</title>
 </head>
@@ -17,7 +17,7 @@ A data-handling program for facilitating<br/>
 genetic linkage and association analyses
 </h1>
 <h2 class="Date">
-Jun 14, 2018
+Dec 13, 2018
 </h2>
 <div class="Standard">
 <div class="center">
@@ -132,19 +132,13 @@ Table of Contents
 </div>
 <div class="tocindent">
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.1">Subsection 3.1: Enhancements in Mega2 version 5.0.0</a>
+<a class="Link" href="#toc-Subsection-3.1">Subsection 3.1: Enhancements in Mega2 version 5.0.1</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.2">Subsection 3.2: Enhancements in Mega2 version 4.9.2</a>
+<a class="Link" href="#toc-Subsection-3.2">Subsection 3.2: Enhancements in Mega2 version 5.0.0</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-3.3">Subsection 3.3: Enhancements in Mega2 version 4.9.1</a>
-</div>
-<div class="toc">
-<a class="Link" href="#toc-Subsection-3.4">Subsection 3.4: Enhancements in Mega2 version 4.9.0</a>
-</div>
-<div class="toc">
-<a class="Link" href="#toc-Subsection-3.5">Subsection 3.5: Enhancements in Mega2 version 4.8.2</a>
+<a class="Link" href="#toc-Subsection-3.3">Subsection 3.3: Enhancements in Mega2 version 4.9.2</a>
 </div>
 </div>
 <div class="toc">
@@ -496,7 +490,7 @@ Table of Contents
 <a class="Link" href="#toc-Subsection-14.14">Subsection 14.14: File input menu item: SQLite3 Database file: </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-14.15">Subsection 14.15: External Reference Allele Panel in the Database </a>
+<a class="Link" href="#toc-Subsection-14.15">Subsection 14.15: External Reference Allele Panel </a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection-14.16">Subsection 14.16: File input menu item: Simulating genotyping errors: </a>
@@ -517,23 +511,26 @@ Table of Contents
 <a class="Link" href="#toc-Subsection-14.18">Subsection 14.18: File input menu item: Upper limit for squared deviation between input and observed allele frequencies </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-14.19">Subsection 14.19: File input menu item: Unknown allele and affection definition </a>
+<a class="Link" href="#toc-Subsection-14.19">Subsection 14.19: File input menu item: Show pedigree typing statistics </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-14.20">Subsection 14.20: File input menu item: Maximum number of alleles per marker </a>
+<a class="Link" href="#toc-Subsection-14.20">Subsection 14.20: File input menu item: Unknown allele and affection definition </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-14.21">Subsection 14.21: Errors in input data </a>
+<a class="Link" href="#toc-Subsection-14.21">Subsection 14.21: File input menu item: Maximum number of alleles per marker </a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-14.22">Subsection 14.22: Errors in input data </a>
 </div>
 <div class="tocindent">
 <div class="toc">
-<a class="Link" href="#toc-Subsubsection-14.21.1">Subsubsection 14.21.1: Problems with locus data </a>
+<a class="Link" href="#toc-Subsubsection-14.22.1">Subsubsection 14.22.1: Problems with locus data </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsubsection-14.21.2">Subsubsection 14.21.2: Problems with pedigree data.</a>
+<a class="Link" href="#toc-Subsubsection-14.22.2">Subsubsection 14.22.2: Problems with pedigree data.</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsubsection-14.21.3">Subsubsection 14.21.3: Genotype reset menu </a>
+<a class="Link" href="#toc-Subsubsection-14.22.3">Subsubsection 14.22.3: Genotype reset menu </a>
 </div>
 </div>
 </div>
@@ -865,7 +862,10 @@ Table of Contents
 <a class="Link" href="#toc-Subsection-28.44">Subsection 28.44: Convert to SHAPEIT/Minimac3 format </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-28.45">Subsection 28.45: Convert to VCF (Variant Call Format) </a>
+<a class="Link" href="#toc-Subsection-28.45">Subsection 28.45: Convert to BCF/VCF format </a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-28.46">Subsection 28.46: Convert to MQLS-XM/KinInbcoef format </a>
 </div>
 </div>
 <div class="toc">
@@ -936,61 +936,64 @@ Table of Contents
 <a class="Link" href="#toc-Subsection-31.2">Subsection 31.2: Recent releases</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.3">Subsection 31.3: Changes from Version 4.9.2 to Version 5.0.0 (Released June 14, 2018)</a>
+<a class="Link" href="#toc-Subsection-31.3">Subsection 31.3: Changes from Version 5.0.0 to Version 5.0.1 (Released December 13, 2018)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.4">Subsection 31.4: Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)</a>
+<a class="Link" href="#toc-Subsection-31.4">Subsection 31.4: Changes from Version 4.9.2 to Version 5.0.0 (Released June 14, 2018)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.5">Subsection 31.5: Changes from Version 4.9.0 to Version 4.9.1 (Released November 1, 2016)</a>
+<a class="Link" href="#toc-Subsection-31.5">Subsection 31.5: Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.6">Subsection 31.6: Changes from Version 4.8.2 to Version 4.9.0 (Released June 14, 2016)</a>
+<a class="Link" href="#toc-Subsection-31.6">Subsection 31.6: Changes from Version 4.9.0 to Version 4.9.1 (Released November 1, 2016)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.7">Subsection 31.7: Changes from Version 4.8.1 to Version 4.8.2 (Released January 15, 2016)</a>
+<a class="Link" href="#toc-Subsection-31.7">Subsection 31.7: Changes from Version 4.8.2 to Version 4.9.0 (Released June 14, 2016)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.8">Subsection 31.8: Changes from Version 4.8.0 to Version 4.8.1 (Released October 22, 2015)</a>
+<a class="Link" href="#toc-Subsection-31.8">Subsection 31.8: Changes from Version 4.8.1 to Version 4.8.2 (Released January 15, 2016)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.9">Subsection 31.9: Changes from Version 4.7.1 to Version 4.8.0 (Released June 13, 2015)</a>
+<a class="Link" href="#toc-Subsection-31.9">Subsection 31.9: Changes from Version 4.8.0 to Version 4.8.1 (Released October 22, 2015)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.10">Subsection 31.10: Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)</a>
+<a class="Link" href="#toc-Subsection-31.10">Subsection 31.10: Changes from Version 4.7.1 to Version 4.8.0 (Released June 13, 2015)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.11">Subsection 31.11: Changes from Version 4.6.2 to Version 4.7.0 (Released May 15, 2014)</a>
+<a class="Link" href="#toc-Subsection-31.11">Subsection 31.11: Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.12">Subsection 31.12: Changes from Version 4.6.1 to Version 4.6.2 (Released Feb 28, 2014)</a>
+<a class="Link" href="#toc-Subsection-31.12">Subsection 31.12: Changes from Version 4.6.2 to Version 4.7.0 (Released May 15, 2014)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.13">Subsection 31.13: Changes from Version 4.6.0 to Version 4.6.1 (Released Oct 21st, 2013)</a>
+<a class="Link" href="#toc-Subsection-31.13">Subsection 31.13: Changes from Version 4.6.1 to Version 4.6.2 (Released Feb 28, 2014)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.14">Subsection 31.14: Changes from Version 4.5.9 to Version 4.6.0 (Released Sept 6th, 2013)</a>
+<a class="Link" href="#toc-Subsection-31.14">Subsection 31.14: Changes from Version 4.6.0 to Version 4.6.1 (Released Oct 21st, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.15">Subsection 31.15: Changes from Version 4.5.8 to Version 4.5.9 (Released July 5th, 2013)</a>
+<a class="Link" href="#toc-Subsection-31.15">Subsection 31.15: Changes from Version 4.5.9 to Version 4.6.0 (Released Sept 6th, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.16">Subsection 31.16: Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)</a>
+<a class="Link" href="#toc-Subsection-31.16">Subsection 31.16: Changes from Version 4.5.8 to Version 4.5.9 (Released July 5th, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.17">Subsection 31.17: Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) </a>
+<a class="Link" href="#toc-Subsection-31.17">Subsection 31.17: Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)</a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.18">Subsection 31.18: Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) </a>
+<a class="Link" href="#toc-Subsection-31.18">Subsection 31.18: Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.19">Subsection 31.19: Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) </a>
+<a class="Link" href="#toc-Subsection-31.19">Subsection 31.19: Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.20">Subsection 31.20: Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) </a>
+<a class="Link" href="#toc-Subsection-31.20">Subsection 31.20: Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) </a>
 </div>
 <div class="toc">
-<a class="Link" href="#toc-Subsection-31.21">Subsection 31.21: Changes from Version 4.0 R5.2 Beta -<span class="formula"></span> Version 4.5.3 (Released June 15th, 2011) </a>
+<a class="Link" href="#toc-Subsection-31.21">Subsection 31.21: Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) </a>
+</div>
+<div class="toc">
+<a class="Link" href="#toc-Subsection-31.22">Subsection 31.22: Changes from Version 4.0 R5.2 Beta -<span class="formula"></span> Version 4.5.3 (Released June 15th, 2011) </a>
 </div>
 <div class="toc">
 <a class="Link" href="#toc-Subsection--4">Subsection: Changes from Ver 4.0 R5.1 -<span class="formula"></span> Ver 4.0 R5.2 Beta </a>
@@ -1267,7 +1270,7 @@ During an association or linkage analysis project, one may need to analyze the d
 The Quick Start Mega2 tutorial in <a class="Reference" href="#sec:Quickstart---get">Section 4↓</a> will help you get started using Mega2.
 </div>
 <div class="Standard">
-Mega2 can read input data in several formats: LINKAGE format, PLINK format, IMPUTE format and VCF format (as listed here: <a class="Reference" href="#subsec:Input-formats">1.5.1↓</a>). Mega2 allows one to augment these input formats with additional information, if desired. For example, trait locus pentrance information can be specified. The input data are read and validated once, then stored in a SQLite3 database file.
+Mega2 can read input data in several formats: LINKAGE format, PLINK format, IMPUTE format and VCF format (as listed here: <a class="Reference" href="#subsec:Input-formats">1.5.1↓</a>). Mega2 allows one to augment these input formats with additional information, if desired. For example, trait locus penetrance information can be specified. The input data are read and validated once, then stored in a SQLite3 database file.
 </div>
 <div class="Standard">
 Mega2 then takes the database file and, via a menu-driven interface, transforms it into various other file formats (listed in Section <a class="Reference" href="#subsec:Output-formats">1.5.2↓</a>), thus greatly facilitating a variety of different analyses. In addition, for many of these options, it also sets up a shell script that then can automatically run these analyses (if you are using Mega2 in a Unix or Macintosh environment). 
@@ -1332,7 +1335,6 @@ Creation of extensive data analysis logs, both during database creation: (files 
 <div class="Standard">
 <span class="environment"><span class="arrayrow">
 <span class="arraycell align-l">
- − 1.5cm − 1.5cm
 </span>
 
 </span>
@@ -1343,7 +1345,7 @@ Creation of extensive data analysis logs, both during database creation: (files 
 
 </div>
 <div class="Standard">
-<span class="unknown">\end</span>adjustwidth*
+<span class="unknown">\end</span>
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-1.3">1.3</a> Overview of Mega2R
@@ -1399,7 +1401,6 @@ Mega2R contains the Mega2gdsfmt function for outputting data from a Mega2 databa
 <div class="Standard">
 <span class="environment"><span class="arrayrow">
 <span class="arraycell align-l">
- − 1.5cm − 1.5cm
 </span>
 
 </span>
@@ -1410,7 +1411,7 @@ Mega2R contains the Mega2gdsfmt function for outputting data from a Mega2 databa
 
 </div>
 <div class="Standard">
-<span class="unknown">\end</span>adjustwidth*
+<span class="unknown">\end</span>
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-1.5">1.5</a> Supported formats
@@ -1454,7 +1455,6 @@ Mega2 supports the following output file formats (For more detail, see Sections 
 <div class="Standard">
 <span class="environment"><span class="arrayrow">
 <span class="arraycell align-l">
-2
 </span>
 
 </span>
@@ -1585,18 +1585,21 @@ MaCH/Minimac3 format
 SHAPEIT/Minimac3 format
 </li>
 <li>
-VCF format
+BCF/VCF format
+</li>
+<li>
+MQLS-XM/KinInbcoef
 </li>
 
 </ol>
 <div class="Standard">
-<span class="unknown">\end</span>multicols
+<span class="unknown">\end</span>
 </div>
 <h3 class="Subsubsection">
 <a class="toc" name="toc-Subsubsection-1.5.3">1.5.3</a> Mega2R output formats <a class="Label" name="subsec:Output-formats-1"> </a>
 </h3>
 <div class="Standard">
-The Mega2R R package supports the following:
+The Mega2R R package (<a class="FlexURL" href="https://cran.r-project.org/package=Mega2R">https://cran.r-project.org/package=Mega2R</a>) supports the following:
 </div>
 <ol>
 <li>
@@ -1629,7 +1632,43 @@ Detailed installation instructions can be found in Section <a class="Reference" 
 <a class="toc" name="toc-Section-3">3</a> Recent improvements and changes
 </h1>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.1">3.1</a> Enhancements in Mega2 version 5.0.0
+<a class="toc" name="toc-Subsection-3.1">3.1</a> Enhancements in Mega2 version 5.0.1
+</h2>
+<ul>
+<li>
+The Mega2 ’No database’ legacy mode (also known as the DBoff option) is no longer supported. Now Mega2 always must generate/use a database.
+</li>
+<li>
+We have added a new output format: MQLS-XM/KinInbcoef (See Section <a class="Reference" href="#subsec:Conver-to-MQLS-XM/KinInbcoef">28.46↓</a>).
+</li>
+<li>
+In the ’Mega2 database create mode’, we now ask all questions that need answers upfront, before any input data are processed. Thus, processing, which may be time-consuming, is not interrupted with questions.
+</li>
+<li>
+We have added an input menu item line to control whether to calculate and print statistics about markers typed per individual. Choosing to not print these statistics results in faster run times.
+</li>
+<li>
+Performance: Mega2 now writes BCF and VCF.gz files using bcftools directly rather than first generating an intermediate VCF file.
+</li>
+<li>
+Performance: Fixed a memory leak in write_vcf and use faster technique to build VCF text lines.
+</li>
+<li>
+Performance: Fixed allele frequency counting when there are a large number of indels (which appear as alleles).
+</li>
+<li>
+Bug: The pangaea routines now store the file name stem in the batch file, permitting more flexible creation of shell scripts.
+</li>
+<li>
+Bug: The dbCompress flag was not set correctly during an interactive vs batch run, causing data not to be compressed when Mega2 was used interactively.
+</li>
+<li>
+There is no Mega2 program compiled using the native Microsoft compiler. You should use Msys2 Mega2 or Cygwin Mega2 instead.
+</li>
+
+</ul>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-3.2">3.2</a> Enhancements in Mega2 version 5.0.0
 </h2>
 <ul>
 <li>
@@ -1654,7 +1693,7 @@ Improved Mega2R vignette and documentation and make Mega2R pass CRAN acceptance 
 Mega2R now can generate CRAN SeqArray/SnpArray format objects.
 </li>
 <li>
-Mega2R now ’enhanves’ GenABEL instead of requires GenABEL because the GenABEL R package has been archived.
+Mega2R now ’enhances’ GenABEL instead of requires GenABEL because the GenABEL R package has been archived.
 </li>
 <li>
 There is no Mega2 program compiled using the native Microsoft compilers. This should be available in release 5.0.1. For the present, you should use Msys2 Mega2 instead.
@@ -1662,7 +1701,7 @@ There is no Mega2 program compiled using the native Microsoft compilers. This sh
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.2">3.2</a> Enhancements in Mega2 version 4.9.2
+<a class="toc" name="toc-Subsection-3.3">3.3</a> Enhancements in Mega2 version 4.9.2
 </h2>
 <ul>
 <li>
@@ -1691,108 +1730,6 @@ Bug: Fix SQL index statements.
 </li>
 <li>
 Bug: Allow disconnected individuals and fix warning print out.
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.3">3.3</a> Enhancements in Mega2 version 4.9.1
-</h2>
-<ul>
-<li>
-For any particular set of input data, Mega2 now stores those data in a database. Subsequent runs of Mega2 are then much faster as the data is quickly loaded from the database. There are two different file selection (aka input) menus: one to create the database and the other to select the database and the analysis. These choices are selected via the new &ldquo;database mode&rdquo; menu (see Section <a class="Reference" href="#sec:The-database-mode">13↓</a>) or via the command line switches: <b><i>-<span class="unknown">\/</span>-</i></b>DBdump and <b><i>-<span class="unknown">\/</span>-</i></b>DBread.
-</li>
-<li>
-Mega2 now supports Mach/SHAPEIT/Minimac3 analysis. See Section <a class="Reference" href="#ext:minimac-shapeit">28.44↓</a>.
-</li>
-<li>
-Mega2 now supports VCF output. See Section <a class="Reference" href="#subsec:Detailed-info-convert-vcf">28.45↓</a>.
-</li>
-<li>
-Mega2 now allows a database to be created without any genetic map information. This is not useful for most Mega2 analysis options, but can be useful when the output is PLINK, VCF, SHAPEIT, etc and genetic map information is not needed.
-</li>
-<li>
-Bug: Require only empty file names (&ldquo;&rdquo;) on Windows for open() argument and not a NULL pointer.
-</li>
-<li>
-Bug: Fix argument generation for internal exec of Mega2 when requested. Have Windows use spawn vs exec.
-</li>
-<li>
-Bug: Remove lambda expressions from code since not all versions of all compilers will accept them.
-</li>
-<li>
-Bug: PLINK –map3 parameter was not handled correctly.
-</li>
-<li>
-Bug: Marker typing summary table needs longer fields and genotype calculation function(s) must use size_t internally.
-</li>
-<li>
-Bug: Roadtrips buffer overrun (allocate 3 chars vs 2).
-</li>
-<li>
-Internals: Reset random seed only for debugging compilation of Mega2.
-</li>
-<li>
-Internals: Data cleaning and other checks are applied to all markers in the database, not just the chosen subset of markers. 
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.4">3.4</a> Enhancements in Mega2 version 4.9.0
-</h2>
-<ul>
-<li>
-Mega2 now supports preparing input for MaCH/Minimac3 analysis. See Section <a class="Reference" href="#ext:minimac">28.43↓</a>.
-</li>
-<li>
-Mega2 now supports preparing input for ROADTRIPS analysis. See Section <a class="Reference" href="#ext:roadtrips">28.42↓</a>.
-</li>
-<li>
-Mega2 now stores its input in an SQLite3 database and fetches data for processing from the SQLite3 database. (This is explained further in section <a class="Reference" href="#subsec:SQLite3">31.1↓</a>.) When reading from a SQLite3 database, Mega2 uses the Database input menu see &ldquo;the Database input menu&rdquo; (section <a class="Reference" href="#sec:The-alternate-input-menu">15↓</a>). When running multiple different Mega2 analyses on the same set of input data, it will be substantially faster to read in the pre-processed data from the SQLite3 database.
-</li>
-<li>
-<div class="left">
-Bug: IMPUTE2 GEN input now checks for well formed probability 3-tuples and verifies there are the correct number of them in each line of the input file. Also, a &ldquo;rsid&rdquo; of &ldquo;—&rdquo; is treated as &ldquo;NA&rdquo;.
-</div>
-
-</li>
-<li>
-Bug: Fix name for Aux file reported in the logs based on input type.
-</li>
-<li>
-Feature: The Analysis name used in a batch file can either be the &ldquo;_name&rdquo; attribute of the class or the analysis menu selection name (section <a class="Reference" href="#sec:The-analysis-menu">16↓</a>).
-</li>
-<li>
-Feature: Renamed top level shell, that runs all the analysis shells, to &lt;name&gt;.top.sh versus &lt;name&gt;.all.sh; the latter could cause conflicts in certain cases.
-</li>
-<li>
-Internals: Lots of NEW code to dump and restore arrays of data into the SQLite3 database.
-</li>
-
-</ul>
-<h2 class="Subsection">
-<a class="toc" name="toc-Subsection-3.5">3.5</a> Enhancements in Mega2 version 4.8.2
-</h2>
-<ul>
-<li>
-Mega2 now supports preparing input for SHAPEIT analysis (in phased and checked modes).
-</li>
-<li>
-Mega2 was upgraded to support the latest IMPUTE2 BGEN format (version v1.2).
-</li>
-<li>
-Detailed information about the analysis options has been consolidated into Chapter 25 of the Mega2 documentation; previously it was scattered between Chapter 25 and the section about the Analysis Menu.
-</li>
-<li>
-The Analysis menu now can be sorted if desired.
-</li>
-<li>
-Bug: Missing_Value defaults were incorrectly set for Beagle, Simwalk and Summary analysis.
-</li>
-<li>
-Bug: Msys2 has been enhanced to allow compilation under the <b>mingw64_shell.bat</b> environment.
-</li>
-<li>
-Bug: When using native Microsoft binaries, the documentation now suggests downloading the appropriate Microsoft Visual C++ Redistributable.
 </li>
 
 </ul>
@@ -1837,7 +1774,8 @@ M   Marker1
 </li>
 <li>
 Pedigree file: <br/>
- The <i>pre-makeped</i> pedigree file format is a relatively simple format with the first 5 columns containing pedigree information followed by genotypes and phenotypes. The first 5 columns are: <br/>
+ The <i>pre-makeped</i> pedigree file format is a relatively simple format with the first 5 columns containing pedigree information followed by genotypes and phenotypes. Note that <b>Mega2 is designed so that the pedigree file either needs both Father and Mother to be defined or for both to be undefined</b>, you cannot have one defined and the other set to unknown. As the SimWalk2 documentation explains: “To reconstruct the relationships between individuals properly, often people must be included who are dead or otherwise unavailable for study. One rule is important to keep in mind. Either both parents or neither parent of a person must be listed in the pedigree. Those people without parents in the pedigree can be thought of as founders of the pedigree.” <br/>
+The first 5 columns of the <i>pre-makeped</i> pedigree file are: <br/>
  pedigree-id, individual-id, father, mother, gender. \begin_inset Separator latexpar\end_inset<div class="Standard">
 Genotypes and phenotypes have to match the order of the loci in the names file. Here, gender is coded as ’1’ = male, and ’2’ = female; the ’Trait’ phenotypes are coded as ’2’ = affected, and ’1’ = unaffected. <br/>
  Call this file pedin.txt . Here is how it looks for our example data: 
@@ -1895,21 +1833,20 @@ mega2
 Without any supplied arguments, Mega2 will present the &ldquo;database mode&rdquo; menu:
 </div>
 <pre class="LyX-Code">
-Mega2 5.0.0 database mode menu: 
+Mega2 5.0.1 database mode menu: 
 ==========================================================
 0) Done with this menu - please proceed
  1) Select Mega2 database create mode
 *2) Select Mega2 database read mode
  3) Select Mega2 database create "then use" mode 
- 4) Select Mega2 "NO database" legacy mode
-Select from options 0-4&gt; 
+Select from options 0-3&gt; 
 </pre>
 <div class="Standard">
 Since there is no existing database, select &ldquo;1&rdquo; to create a database and then type &ldquo;0&rdquo; to leave this menu and enter the &ldquo;file input&rdquo; menu shown below (<a class="Reference" href="#sec:The-input-menu">14↓</a>),:
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 5.0.0 file input menu:
+              Mega2 5.0.1 file input menu:
 ==========================================================
 0) Done with this menu - please proceed
  1) Select input file format:                  Mega2 format with header
@@ -1922,10 +1859,12 @@ Since there is no existing database, select &ldquo;1&rdquo; to create a database
  8) Penetrance file:  (Mega2 pen.)  [optional] _
  9) Output Directory:                          [ Current directory ]
 10) SQLite3 Database file:                     dbmega2.db
-11) Simulate genotyping errors:                [ no ]
-12) Include all pedigrees whether typed or not 
-13) Maximum number of alleles per marker:      2 alleles
-Select from options 0-13 &gt; 
+11) Reference Allele File:          [optional] 
+12) Simulate genotyping errors:                [ no ]
+13) Include all pedigrees whether typed or not 
+14) Show pedigree typing statistics:           [ no ]
+15) Maximum number of alleles per marker:      2 alleles
+Select from options 0-15 &gt; 
 </pre>
 <div class="Standard">
 This input menu displays the names of these three input files in the appropriate items (e.g., items 3, 4, and 5). When you are done making all your choices within this menu, to proceed to the next menu, choose item 0 &ldquo;Done with this menu - please proceed&rdquo;. Simply follow the instructions provided by this and subsequent menus to continue with the Mega2 database creation process. When processing is completed, an SQLite3 database will be written to the file indicated in menu item 10 and Mega2 will exit. Mega2 will also create several files starting with the prefix &ldquo;MEGA2&rdquo; in this directory to log progress and report errors, viz. MEGA2.DB.ERR, MEGA2.DB.LOG, MEGA2.KEY, MEGA2.RECODE, etc. (See section <a class="Reference" href="#sec:Additional-Mega2-Output">24↓</a> for more details.)
@@ -1943,29 +1882,28 @@ mega2
 without any supplied arguments to get the &ldquo;database menu&rdquo; again:
 </div>
 <pre class="LyX-Code">
-Mega2 5.0.0 database mode menu: 
+Mega2 5.0.1 database mode menu: 
 ==========================================================
 0) Done with this menu - please proceed
  1) Select Mega2 database create mode
 *2) Select Mega2 database read mode
  3) Select Mega2 database create "then use" mode 
- 4) Select Mega2 "NO database" legacy mode
-Select from options 0-4&gt; 
+Select from options 0-3&gt; 
 </pre>
 <div class="Standard">
 Note that the option selected by default is option 2, the database read mode. Since you intend to use the existing database, type &ldquo;0&rdquo; to leave this menu and enter the &ldquo;database input&rdquo; menu (see <a class="Reference" href="#sec:The-alternate-input-menu">15↓</a>) below:
 </div>
 <pre class="LyX-Code">
-Mega2 5.0.0 database input menu: 
+Mega2 5.0.1 database input menu: 
 ==========================================================
 0) Done with this menu - please proceed
  1) Output Directory: [ Current directory ]
  2) Database filename: dbmega2.db [exists]
- 3) Align strands with reference: [ no ]
- 4) Simulate genotyping errors: [ no ]
- 5) Include all pedigrees whether typed or not
+ 3) Simulate genotyping errors: [ no ]
+ 4) Include all pedigrees whether typed or not
+ 5) Show pedigree typing statistics:             [ no ]
  6) Allele frequency error measure threshold: No limit
- q) Exit Mega2. 
+ q) Exit Mega2.
 Select from options 0-6 or q&gt; 
 </pre>
 <div class="Standard">
@@ -2015,10 +1953,10 @@ If you use Mega2 as part of a published work, please remember to reference Mega2
 Baron RV, Kollar C, Mukhopadhyay N, Weeks DE (2014) Mega2: validated data-reformatting for linkage and association analyses. Source Code for Biology and Medicine 9:26. PubMed PMID: 25687422; PubMed Central PMCID: <a class="URL" href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4269913/?report=reader">PMC4269913</a> DOI: <a class="URL" href="http://doi.org/10.1186/s13029-014-0026-y">10.1186/s13029-014-0026-y</a> 
 </blockquote>
 <div class="Standard">
-as well as citing the web site and the version that you used. For example, the web site citation for version 5.0.0 should be: 
+as well as citing the web site and the version that you used. For example, the web site citation for version 5.0.1 should be: 
 </div>
 <blockquote class="Quote">
-Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2018) Mega2 (Version 5.0.0). <a class="FlexURL" href="https://watson.hgen.pitt.edu/mega2.html">https://watson.hgen.pitt.edu/mega2.html</a> 
+Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP, Weeks DE (2018) Mega2 (Version 5.0.1). <a class="FlexURL" href="https://watson.hgen.pitt.edu/mega2.html">https://watson.hgen.pitt.edu/mega2.html</a> 
 </blockquote>
 <div class="Standard">
 Use of Mega2 to convert Legacy VCF or BCF input files makes use of a built-in copy of VCFtools; you should cite the following paper:
@@ -2095,7 +2033,7 @@ Professor of Human Genetics and Biostatistics
 Department of Human Genetics
 Graduate School of Public Health   
 University of Pittsburgh        
-Crabtree Hall, Room A303     
+Public Health 3119    
 130 DeSoto Street             
 Pittsburgh, PA 15261          
 USA                         
@@ -2124,30 +2062,30 @@ Mega2 can be downloaded from:
 <a class="FlexURL" href="https://watson.hgen.pitt.edu/register">https://watson.hgen.pitt.edu/register</a> 
 </pre>
 <div class="Standard">
-The latest version is 5.0.0 
+The latest version is 5.0.1 
 </div>
 <ol>
 <li>
 Download the Mega2 distribution package: \begin_inset Separator latexpar\end_inset<pre class="LyX-Code">
-mega2_v5.0.0_src.tar.gz
+mega2_v5.0.1_src.tar.gz
 </pre>
 
 </li>
 <li>
 Uncompress the package using the "gunzip" Unix command. For example: \begin_inset Separator latexpar\end_inset<pre class="LyX-Code">
-gunzip mega2_v5.0.0_src.tar.gz 
+gunzip mega2_v5.0.1_src.tar.gz 
 </pre>
 
 </li>
 <li>
 Untar the result using the "tar" Unix command: \begin_inset Separator latexpar\end_inset<pre class="LyX-Code">
-tar xvf mega2_v5.0.0_src.tar 
+tar xvf mega2_v5.0.1_src.tar 
 </pre>
 <div class="Standard">
 NOTE: You may combine the above two steps via a single command: 
 </div>
 <div class="Standard">
-tar xzvf mega2_v5.0.0_src.tar.gz 
+tar xzvf mega2_v5.0.1_src.tar.gz 
 </div>
 <div class="Standard">
 The "z" instructs tar that it is a compressed archive. This is works for GNU-tar. 
@@ -2155,7 +2093,7 @@ The "z" instructs tar that it is a compressed archive. This is works for GNU-tar
 
 </li>
 <li>
-At this point, you should see a new folder named <b>mega2_v5.0.0_src</b>. This is the "distribution folder" which contains all the necessary components of Mega2.
+At this point, you should see a new folder named <b>mega2_v5.0.1_src</b>. This is the "distribution folder" which contains all the necessary components of Mega2.
 </li>
 
 </ol>
@@ -2235,7 +2173,7 @@ You should be able to see the above libraries in the list of installed libraries
 <a class="toc" name="toc-Subsubsection-8.3.1">8.3.1</a> Contents of a binary package
 </h3>
 <div class="Standard">
-If you downloaded and unpacked the mega2_v5.0.0_src.tar.gz bundle following the download section (<a class="Reference" href="#subsec:Download-Instructions">8.1↑</a>), you should see a directory named mega2_v5.0.0_src containing the following directories (in bold) or files listed in alphabetical order:
+If you downloaded and unpacked the mega2_v5.0.1_src.tar.gz bundle following the download section (<a class="Reference" href="#subsec:Download-Instructions">8.1↑</a>), you should see a directory named mega2_v5.0.1_src containing the following directories (in bold) or files listed in alphabetical order:
 </div>
 <blockquote class="Quotation">
 <table>
@@ -2493,7 +2431,7 @@ The <b>install.sh</b> program (below) determines whether any compiled binaries w
 <a class="toc" name="toc-Subsubsection-8.3.3">8.3.3</a> Installing Mega2
 </h3>
 <div class="Standard">
-To install the mega2 executable, Perl scripts and nplplot, from within the Mega2 package folder (i.e. mega2_v5.0.0_src in above step), type the command:
+To install the mega2 executable, Perl scripts and nplplot, from within the Mega2 package folder (i.e. mega2_v5.0.1_src in above step), type the command:
 </div>
 <pre class="LyX-Code">
 ./install.sh 
@@ -2520,7 +2458,7 @@ Mega2 can now be run on a set of data by simply typing the command "mega2". It s
 <a class="toc" name="toc-Subsection-8.4">8.4</a> Compiling and Installing Mega2 from Source <a class="Label" name="subsec:Compiling-and-Installing"> </a>
 </h2>
 <div class="Standard">
-The mega2_v5.0.0_src.tar.gz package also includes a source code folder "srcdir" containing C source files, a Makefile, and several OS-specific Makedefs files that define compilation flags that govern locations of standard C libraries, and other OS-specific behavior.
+The mega2_v5.0.1_src.tar.gz package also includes a source code folder "srcdir" containing C source files, a Makefile, and several OS-specific Makedefs files that define compilation flags that govern locations of standard C libraries, and other OS-specific behavior.
 </div>
 <div class="Standard">
 Please note that GNU-make is required to compile Mega2.
@@ -2530,7 +2468,7 @@ To compile Mega2 follow these steps:
 </div>
 <ol>
 <li>
-From within the mega2_v5.0.0_src folder, type \begin_inset Separator latexpar\end_inset<pre class="LyX-Code">
+From within the mega2_v5.0.1_src folder, type \begin_inset Separator latexpar\end_inset<pre class="LyX-Code">
 ./install.sh
 </pre>
 <div class="Standard">
@@ -2689,7 +2627,6 @@ mega2 <i>-<span class="unknown">\/</span>-DB</i>read MEGA.BATCH.pre
 </pre>
 <div class="Standard">
 Your own data can be run exactly as above<span class="FootOuter"><span class="SupFootMarker"> [A] </span><span class="HoverFoot"><span class="SupFootMarker"> [A] </span>Alternatively, you may enter <pre class="LyX-Code">
-mega2 <i>-<span class="unknown">\/</span>-DBoff</i> MEGA.BATCH.pre                 or
 mega2 <i>-<span class="unknown">\/</span>-DBdump</i> <i>-<span class="unknown">\/</span>-DB</i>read MEGA.BATCH.pre
 </pre>
 all these flags are explained later.</span></span>; simply change into your data folder, and run Mega2. 
@@ -2711,7 +2648,7 @@ The example_output_pre, example_output_post, example_output_annotated, example_o
 <a class="toc" name="toc-Subsection-8.6">8.6</a> Mega2 Documentation
 </h2>
 <div class="Standard">
-The sub-folder called mega2_html/ within the mega2_v5.0.0_src folder contains documentation for mega2. The Mega2 documentation is also available on-line at 
+The sub-folder called mega2_html/ within the mega2_v5.0.1_src folder contains documentation for mega2. The Mega2 documentation is also available on-line at 
 </div>
 <pre class="LyX-Code">
 <a class="FlexURL" href="https://watson.hgen.pitt.edu/docs/mega2_html/">https://watson.hgen.pitt.edu/docs/mega2_html/</a> 
@@ -2964,11 +2901,11 @@ You need to have registered your e-mail before you can download software at this
 </div>
 <ol>
 <li>
-The Mega2 distribution package is named mega2_v5.0.0_src.tar.gz. Download this package into your Downloads folder.
+The Mega2 distribution package is named mega2_v5.0.1_src.tar.gz. Download this package into your Downloads folder.
 </li>
 <li>
 Depending on your browser settings, Windows may automatically untar the file, in which case you will see this folder on your desktop instead: \begin_inset Separator latexpar\end_inset<pre class="LyX-Code">
-mega2_v5.0.0_src.tar
+mega2_v5.0.1_src.tar
 </pre>
 
 </li>
@@ -2977,19 +2914,19 @@ Now please follow the common installation instructions in section <a class="Refe
 </li>
 <li>
 Note: In some cases, your file may be downloaded as: \begin_inset Separator latexpar\end_inset<pre class="LyX-Code">
-mega2_v5.0.0_src.tar.tar
+mega2_v5.0.1_src.tar.tar
 </pre>
 <div class="Standard">
 instead of as:
 </div>
 <pre class="LyX-Code">
-mega2_v5.0.0_src.tar.gz
+mega2_v5.0.1_src.tar.gz
 </pre>
 <div class="Standard">
 If that happens, then rename the “tar.tar” file as follows:
 </div>
 <pre class="LyX-Code">
-mv mega2_v5.0.0_src.tar.tar mega2_v5.0.0_src.tar.gz
+mv mega2_v5.0.1_src.tar.tar mega2_v5.0.1_src.tar.gz
 </pre>
 <div class="Standard">
 and then follow the common installation instructions in section <a class="Reference" href="#subsec:Download-Instructions">8.1↑</a>. 
@@ -3138,6 +3075,9 @@ Following the previous recipe, you will have a Mega2 binary program. But as disc
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-8.14">8.14</a> Native Windows installation<a class="Label" name="subsec:Native-Windows-installation"> </a>
 </h2>
+<div class="Standard">
+NOTE: As of version 5.0.1, the Native Windows version is not supported as the BCFtools library does not compile in this environment.
+</div>
 <h3 class="Subsubsection">
 <a class="toc" name="toc-Subsubsection-8.14.1">8.14.1</a> Native Windows environment
 </h3>
@@ -3245,10 +3185,7 @@ binary IMPUTE2 BGEN format
 
 </li>
 <li>
-Mega2 database Input
-</li>
-<li>
-Varuant Format (using BCFtools)<ol>
+BCF/VCF Variant Format (using BCFtools) (See <a class="Reference" href="#subsec:VCF-file-formats">9.4↓</a>)<ol>
 <li>
 BCF format (BCF format v2.2 and higher.)
 </li>
@@ -3262,13 +3199,13 @@ VCF format
 </ol>
 
 </li>
+<li>
+Mega2 database format
+</li>
 
 </ol>
 <div class="Standard">
-In the past, Mega2 read in its data in an existing supported data format as described in the next sections, did its validation and then proceeded to the analysis. If you specify the <b>-<span class="unknown">\/</span>-DBoff</b> command line flag, this is exactly what Mega2 will still do. 
-</div>
-<div class="Standard">
-Mega2 has been redesigned so that the pedigree, phenotypes, and genotypes for a given experiment need only to be thoroughly processed once and then stored in a database. Mega2 uses the SQLite3 database <a class="Reference" href="#subsec:SQLite3">31.1↓</a>. Mega2 determines allele values, computes allele frequencies, checks allele consistency, cleans alleles, and recodes letter alleles to numeric alleles. Mega2 also compresses the genotype information as much as possible for use by the analysis programs. Then it generates an SQLite3 database that stores this information. Once the database is created, all the analysis programs of Mega2 can be run using this database, thus eliminating the time-consuming read-in and validation phase. Furthermore in the future, filtering on markers, chromosomes and individuals will be supported as the database is read. 
+In the past, Mega2 read in its data in an existing supported data format as described in the next sections, did its validation and then proceeded to the analysis. Mega2 has been redesigned so that the pedigree, phenotypes, and genotypes for a given experiment need only to be thoroughly processed once and then stored in a database. Mega2 uses the SQLite3 database <a class="Reference" href="#subsec:SQLite3">31.1↓</a>. Mega2 determines allele values, computes allele frequencies, checks allele consistency, cleans alleles, and recodes letter alleles to numeric alleles. Mega2 also compresses the genotype information as much as possible for use by the analysis programs. Then it generates an SQLite3 database that stores this information. Once the database is created, all the analysis programs of Mega2 can be run using this database, thus eliminating the time-consuming read-in and validation phase. Furthermore in the future, filtering on markers, chromosomes and individuals will be supported as the database is read. 
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-9.1">9.1</a> <a class="Label" name="inp:mega2"> </a>Mega2 input file formats<a class="Label" name="subsec:Annotated-file-formats"> </a>
@@ -3412,7 +3349,10 @@ M M3
 <a class="toc" name="toc-Subsubsection-9.1.2">9.1.2</a> Mega2 Pedigree file<a class="Label" name="subsec:Annotated-pedigree-file"> </a>
 </h3>
 <div class="Standard">
-There are 5 required columns and 9 optional columns with fixed column names, which primarily refer to the pedigree information. The required columns are ID, Pedigree, Father, Mother, and Sex. The optional columns allowed in the pedigree file are: PerID, PedID, MZTwin, DZTwin, Proband, Group, FirstOff, NextMatSib, NextPatSib . 
+There are 5 required columns and 9 optional columns with fixed column names, which primarily refer to the pedigree information. The required columns are ID, Pedigree, Father, Mother, and Sex. Mega2 is designed so that it either needs both Father and Mother to be defined or for both to be undefined, you cannot have one defined and the other set to unknown. As the SimWalk2 documentation explains: “To reconstruct the relationships between individuals properly, often people must be included who are dead or otherwise unavailable for study. One rule is important to keep in mind. Either both parents or neither parent of a person must be listed in the pedigree. Those people without parents in the pedigree can be thought of as founders of the pedigree.”
+</div>
+<div class="Standard">
+The optional columns allowed in the pedigree file are: PerID, PedID, MZTwin, DZTwin, Proband, Group, FirstOff, NextMatSib, NextPatSib . 
 </div>
 <div class="Standard">
 Phenotype and genotype column headers are defined by the user using the following convention: numbered autosomal and x-linked loci genotype column names are named as
@@ -4005,7 +3945,10 @@ To read the example PED file correctly while naming the quantitative trait &ldqu
 by setting them in Option 2 &ldquo;Enter PLINK parameters&rdquo; of the Mega2 file input menu.
 </div>
 <div class="Standard">
-This file is very similar to a <i>pre-makeped</i> style Mega2 pedigree file. It has the standard five initial columns: pedigree, person, father, mother and sex. This is followed by a single trait and then the markers, coded as pairs of alleles. There is no header for this file, so it includes no information regarding the type of trait in the trait column; this information is supplied via the use of the Mega2-PLINK parameter -<span class="unknown">\/</span>-affectionstatus or -<span class="unknown">\/</span>-quantitative. In Mega2, it is sometimes necessary to have a name for the trait. This name is supplied as part of the Mega2 file selection menu, using the -<span class="unknown">\/</span>-trait Mega2 PLINK parameter. (The name is necessary to correlate this trait with the information in the Mega2 penetrance and frequency files.) The Mega2 PLINK parameters are:
+This file is very similar to a <i>pre-makeped</i> style Mega2 pedigree file. It has the standard five initial columns: pedigree, person, father, mother and sex. This is followed by a single trait and then the markers, coded as pairs of alleles. Note that Mega2 follows these rules, as described in the SimWalk2 documentation: “To reconstruct the relationships between individuals properly, often people must be included who are dead or otherwise unavailable for study. One rule is important to keep in mind. Either both parents or neither parent of a person must be listed in the pedigree. Those people without parents in the pedigree can be thought of as founders of the pedigree.”
+</div>
+<div class="Standard">
+There is no header for the PED file, so it includes no information regarding the type of trait in the trait column; this information is supplied via the use of the Mega2-PLINK parameter -<span class="unknown">\/</span>-affectionstatus or -<span class="unknown">\/</span>-quantitative. In Mega2, it is sometimes necessary to have a name for the trait. This name is supplied as part of the Mega2 file selection menu, using the -<span class="unknown">\/</span>-trait Mega2 PLINK parameter. (The name is necessary to correlate this trait with the information in the Mega2 penetrance and frequency files.) The Mega2 PLINK parameters are:
 </div>
 <blockquote class="Quotation">
 <table>
@@ -4534,7 +4477,7 @@ A pre-Makeped LINKAGE pedigree file consist of columns of integer data. The pre-
 Pedigree Person Father Mother Gender Phenotype1 Phenotype2 Phenotype3 ... 
 </pre>
 <div class="Standard">
-where missing parents are entered as 0 (zero), and, for the gender column, a 1 = Male and a 2 = Female (This is easy to remember if you think of the number of X chromosomes). Makeped inserts some additional columns of pointers (which would be difficult to enter by hand) and breaks loops, which is required by the LINKAGE programs.The columns should be separated by spaces or tabs (any number of these is allowed).
+where missing parents are entered as 0 (zero), and, for the gender column, a 1 = Male and a 2 = Female (This is easy to remember if you think of the number of X chromosomes). Makeped inserts some additional columns of pointers (which would be difficult to enter by hand) and breaks loops, which is required by the LINKAGE programs.The columns should be separated by spaces or tabs (any number of these is allowed). Note that if one parent is missing, the other must be also missing. As the SimWalk2 documentation explains: “To reconstruct the relationships between individuals properly, often people must be included who are dead or otherwise unavailable for study. One rule is important to keep in mind. Either both parents or neither parent of a person must be listed in the pedigree. Those people without parents in the pedigree can be thought of as founders of the pedigree.”
 </div>
 <div class="Standard">
 While the order of the phenotypes is arbitrary, it is common to put the affection status phenotype first, followed by the marker phenotypes (which, for co-dominant markers, are the same as the genotypes). 
@@ -5009,22 +4952,37 @@ In the Mega2 file format, providing a frequency file will cause the allele-frequ
 <a class="toc" name="toc-Subsection-9.4">9.4</a> <a class="Label" name="inp:vcf_or_bcf"> </a>Variant Call Format (VCF, BCF, compressed VCF) input file formats<a class="Label" name="subsec:VCF-file-formats"> </a>
 </h2>
 <div class="Standard">
-Variant Call Format (VCF) was designed to store information about genetic variants (See: <a class="URL" href="http://en.wikipedia.org/wiki/Variant_Call_Format">Wikipedia</a>). 
+The Variant Call Format (VCF) was designed to store information about genetic variants (See: <a class="URL" href="http://en.wikipedia.org/wiki/Variant_Call_Format">Wikipedia</a>). 
 </div>
 <div class="Standard">
 Mega2 currently uses two applications for parsing VCF and BCF files, these are VCFtools and BCFtools. The former is called the ’legacy’ mode because it reads the earlier BCF format 2.1 bcf files, while the later reads the current BCF format files (v2.2 and higher). 
 </div>
 <div class="Standard">
-Mega2 uses from the popular VCFtools program (See: <a class="URL" href="http://vcftools.sourceforge.net">VCFtools</a>) as its underlying engine for parsing VCF files in ’legacy’ mode. VCFtools (and so Mega2) currently supports VCF format v4.0 and VCF format v4.1 (See: <a class="URL" href="http://vcftools.sourceforge.net/specs.html">VCF Specification</a>), and BCF format v2.1 (See: <a class="URL" href="http://www.1000genomes.org/wiki/analysis/variant-call-format/bcf-binary-vcf-version-2">BCF (Binary VCF) version 2</a>). Mega2 supports only the ’filtering’ options associated with the binary executable ’vcftools’ file (See: <a class="URL" href="http://vcftools.sourceforge.net/options.html">VCFtools Options</a>). In particular, the options supported are: the Site Filtering Options, the Individual Filters, and the Genotype Filters. These options are specified to Mega2 as they would be to the ’vcftools’ program in the form of a command line option string. In Mega2 interactive mode (See <a class="Reference" href="#subsec:Common-Variant-Call-Format-menu-items">14.6↓</a>) Mega2 allows the user to specify the filtering options via the input menu, and in batch file mode the VCF_Args batch file item is used (See: <a class="Reference" href="#par:VCF_Args">95↓</a>).
+In the input file type menu, these two options
+</div>
+<pre class="LyX-Code">
+* Legacy Implementation VCF compressed format (vcf.gz)
+* Legacy Implementation VCF format (vcf)
+</pre>
+<div class="Standard">
+use functions from the VCFtools program (See: <a class="URL" href="http://vcftools.sourceforge.net">VCFtools</a>) as its underlying engine for parsing VCF files. VCFtools (and so Mega2) currently supports VCF format v4.0 and VCF format v4.1 (See: <a class="URL" href="http://vcftools.sourceforge.net/specs.html">VCF Specification</a>), and BCF format v2.1 (See: <a class="URL" href="http://www.1000genomes.org/wiki/analysis/variant-call-format/bcf-binary-vcf-version-2">BCF (Binary VCF) version 2</a>). Mega2 supports only the ’filtering’ options associated with the binary executable ’vcftools’ file (See: <a class="URL" href="http://vcftools.sourceforge.net/options.html">VCFtools Options</a>). In particular, the options supported are: the Site Filtering Options, the Individual Filters, and the Genotype Filters. These options are specified to Mega2 as they would be to the ’vcftools’ program in the form of a command line option string. In Mega2 interactive mode (See <a class="Reference" href="#subsec:Common-Variant-Call-Format-menu-items">14.6↓</a>) Mega2 allows the user to specify the filtering options via the input menu, and in batch file mode the VCF_Args batch file item is used (See: <a class="Reference" href="#par:VCF_Args">95↓</a>).
 </div>
 <div class="Standard">
-Mega2 now also uses the source code of the BCFtools program (See: <a class="URL" href="https://samtools.github.io/bcftools/bcftools.html">BCFtools</a>) in new input modes for VCF and BCF format files. BCFtools supports VCF Format v4.0 and higher as well as BCF format v2.2 and higher. Mega2 supports a subset of the &ldquo;view&rdquo; options that are included in the documentation of the new input methods. <a class="Reference" href="#subsec:Input-Format:-BCFTools">14.9↓</a>
+For these three input options
+</div>
+<pre class="LyX-Code">
+* BCF v2.2 or higher (bcf)
+* VCF compressed format (vcf.gz)
+* VCF format (vcf)
+</pre>
+<div class="Standard">
+Mega2 uses functions from the BCFtools program (See: <a class="URL" href="https://samtools.github.io/bcftools/bcftools.html">BCFtools</a>). BCFtools supports VCF Format v4.0 and higher as well as BCF format v2.2 and higher. Mega2 supports a subset of the &ldquo;view&rdquo; options that are included in the documentation of the new input methods. <a class="Reference" href="#subsec:Input-Format:-BCFTools">14.9↓</a>
 </div>
 <div class="Standard">
-VCF input format uses a subset of the PLINK parameters (See <a class="Reference" href="#par:VCF-Menu-item-PLINK-parameters">51↓</a>) to allow the user to specify phenotype information. With these the user can: specify a name for the pedigree file trait column (See <a class="Reference" href="#subsec:VCF-Pedigree-File">9.4.2↓</a>), indicate the trait to be affection status or quantitative, specify the missing value for quantitative traits, and specify how the affection status is coded.
+These input format options use a subset of the PLINK parameters (See <a class="Reference" href="#par:VCF-Menu-item-PLINK-parameters">51↓</a>) to allow the user to specify phenotype information. With these the user can: specify a name for the pedigree file trait column (See <a class="Reference" href="#subsec:VCF-Pedigree-File">9.4.2↓</a>), indicate the trait to be affection status or quantitative, specify the missing value for quantitative traits, and specify how the affection status is coded.
 </div>
 <div class="Standard">
-Mega2 and the ’vcftools’ program will accept variant call input files in one of three formats: text only, gzipped compressed text only, or binary file. The variant call file format is specified using the appropriate menu in Mega2 (See <a class="Reference" href="#subsec:Common-Variant-Call-Format-menu-items">14.6↓</a>) or using the batch file item Input_Format_Type (See: <a class="Reference" href="#par:Input_Format_Type">84↓</a>) set to the values of: 5 for a .bcf (binary) file, 6 for a .vcf.gz (compressed text) file, and 7 for a .vcf (text) file.
+Mega2 and the ’vcftools’ program will accept variant call input files in one of three formats: text only (VCF), gzipped compressed text only (VCF.gz), or binary (BCF). The variant call file format is specified using the appropriate menu in Mega2 (See <a class="Reference" href="#subsec:Common-Variant-Call-Format-menu-items">14.6↓</a>) or using the batch file item Input_Format_Type (See: <a class="Reference" href="#par:Input_Format_Type">84↓</a>) set to the values of: 5 for a .bcf (binary) file, 6 for a .vcf.gz (compressed text) file, and 7 for a .vcf (text) file.
 </div>
 <div class="Standard">
 In addition to variant information, Mega2 needs additional information (i.e., about family structure, genetic map positions, etc.) depending on the output analysis chosen (See <a class="Reference" href="#sec:The-analysis-menu">16↓</a>). The VCF file format allows for the possibility of user-defined fields, which could in theory specify this additional information within the VCF file. However, in many instances there is no consistent method for representing this information, and so Mega2 instead takes the approach of specifying additional information in separate files, which is consistent with other input file formats. As the VCF file standard evolves, we will revisit this decision. For example, the map position information in the variant file does not include genetic position information. Genetic position information can be easily input by providing a Mega2-format map file.
@@ -5283,7 +5241,7 @@ This file format can be used instead of the IMPUTE2 GEN genotype file illustrate
 <a class="toc" name="toc-Subsubsection-9.5.3">9.5.3</a> IMPUTE2 Sample File<a class="Label" name="subsec:Impute-Sample-File"> </a>
 </h3>
 <div class="Standard">
-The IMPUTE2 Sample file is used to list the sample names. In the header line, the first three columns MUST have the values: &ldquo;<b>ID_1</b>&rdquo;, &ldquo;<b>ID_2</b>&rdquo;, and &ldquo;<b>missing</b>&rdquo;. There is a second header line where the values for each of these three columns is 0. For the subsequent lines, the column data reports two components of the sample name and the missing data proportion, respectively. Although &ldquo;<b>ID_1</b>&rdquo;, &ldquo;<b>ID_2</b>&rdquo;, and &ldquo;<b>missing</b>&rdquo; are the only required fields, additional columns can be added. In particular, it makes sense to add the pedigree structure and phenotypes to this file. Our convention is to use the columns &ldquo;<b>father</b>&rdquo;, &ldquo;<b>mother</b>&rdquo;, and &ldquo;<b>sex</b>&rdquo; to label the pedigree data and any other columns are interpreted as phenotype information. There is no order prescribed for these extra columns. If any of the the &ldquo;<b>father</b>&rdquo;, &ldquo;<b>mother’</b>, or &ldquo;<b>sex</b>&rdquo; columns are omitted, Mega2 will internally generate these fields with a value of <b>0</b>. The second line of the header is extended for each column, and contains codes indicating the type of variable stored in each column. Mega2 maps codes &ldquo;B&rdquo; or &ldquo;D&rdquo; to an Affection status phenotype, while &ldquo;C&rdquo; and &ldquo;P&rdquo; are mapped to Quantitative phenotypes. (Officially, &ldquo;D&rdquo; indicates discrete covariate, &ldquo;C&rdquo; continuous covariate, &ldquo;P&rdquo; continuous phenotype and &ldquo;B&rdquo; binary phenotype.)
+The IMPUTE2 Sample file is used to list the sample names. In the header line, the first three columns MUST have the values: &ldquo;<b>ID_1</b>&rdquo;, &ldquo;<b>ID_2</b>&rdquo;, and &ldquo;<b>missing</b>&rdquo;. There is a second header line where the values for each of these three columns is 0. For the subsequent lines, the column data reports two components of the sample name and the missing data proportion, respectively. Although &ldquo;<b>ID_1</b>&rdquo;, &ldquo;<b>ID_2</b>&rdquo;, and &ldquo;<b>missing</b>&rdquo; are the only required fields, additional columns can be added. In particular, it makes sense to add the pedigree structure and phenotypes to this file. Our convention is to use the columns &ldquo;<b>father</b>&rdquo;, &ldquo;<b>mother</b>&rdquo;, and &ldquo;<b>sex</b>&rdquo; to label the pedigree data and any other columns are interpreted as phenotype information. There is no order prescribed for these extra columns. If any of the the &ldquo;<b>father</b>&rdquo;, &ldquo;<b>mother’</b>, or &ldquo;<b>sex</b>&rdquo; columns are omitted, Mega2 will internally generate these fields with a value of <b>0</b>. &ldquo;Father&rdquo; and &ldquo;Mother&rdquo; must both be specified, one cannot be 0 while the other is defined. As the SimWalk2 documentation explains: “To reconstruct the relationships between individuals properly, often people must be included who are dead or otherwise unavailable for study. One rule is important to keep in mind. Either both parents or neither parent of a person must be listed in the pedigree. Those people without parents in the pedigree can be thought of as founders of the pedigree.” The second line of the header is extended for each column, and contains codes indicating the type of variable stored in each column. Mega2 maps codes &ldquo;B&rdquo; or &ldquo;D&rdquo; to an Affection status phenotype, while &ldquo;C&rdquo; and &ldquo;P&rdquo; are mapped to Quantitative phenotypes. (Officially, &ldquo;D&rdquo; indicates discrete covariate, &ldquo;C&rdquo; continuous covariate, &ldquo;P&rdquo; continuous phenotype and &ldquo;B&rdquo; binary phenotype.)
 </div>
 <h3 class="Subsubsection">
 <a class="toc" name="toc-Subsubsection-9.5.4">9.5.4</a> IMPUTE2 Info File<a class="Label" name="subsec:Impute-Info-File"> </a> (Optional)
@@ -5504,17 +5462,16 @@ The converter checks the map function type and male or female-specific maps from
 <a class="toc" name="toc-Section-13">13</a> The database mode menu <a class="Label" name="sec:The-database-mode"> </a>
 </h1>
 <div class="Standard">
-If you invoke Mega2 with a command line that contains, <b>-<span class="unknown">\/</span>-DBdump, -<span class="unknown">\/</span>-DBread, -<span class="unknown">\/</span>-DBdump</b> and <b>-<span class="unknown">\/</span>-DBread</b> or <b>-<span class="unknown">\/</span>-DBoff</b>, you short circuit the &ldquo;database mode&rdquo; menu presentation and immediately select the first, second, third or fourth item of that menu and start with the next appropriate menu. With these flags missing, the default &ldquo;database mode&rdquo; menu (below) is presented, with Option 2 ’database read mode’ pre-selected.
+If you invoke Mega2 with a command line that contains, <b>-<span class="unknown">\/</span>-DBdump, -<span class="unknown">\/</span>-DBread, </b>or<b> -<span class="unknown">\/</span>-DBdump</b> and <b>-<span class="unknown">\/</span>-DBread</b>, you short circuit the &ldquo;database mode&rdquo; menu presentation and immediately select the first, second, third or fourth item of that menu and start with the next appropriate menu. With these flags missing, the default &ldquo;database mode&rdquo; menu (below) is presented, with Option 2 ’database read mode’ pre-selected.
 </div>
 <pre class="LyX-Code">
-Mega2 5.0.0 database mode menu: 
+Mega2 5.0.1 database mode menu: 
 ==========================================================
 0) Done with this menu - please proceed
  1) Select Mega2 database create mode
 *2) Select Mega2 database read mode
  3) Select Mega2 database create "then use" mode 
- 4) Select Mega2 "NO database" legacy mode
-Select from options 0-4&gt; 
+Select from options 0-3&gt; 
 </pre>
 <div class="Standard">
 Option 1 (or the flag <b>-<span class="unknown">\/</span>-DBdump</b>) indicates that a SQL database should be created. The &ldquo;file input&rdquo; menu (below) (see <a class="Reference" href="#sec:The-input-menu">14↓</a>) will be presented next. When the database is eventually written, Mega2 will exit. This choice will either generate a new or replacement database (and will save the old database, if any).
@@ -5524,9 +5481,6 @@ Option 2 (or the flag <b>-<span class="unknown">\/</span>-DBread</b>) indicates 
 </div>
 <div class="Standard">
 Option 3 (or both flags <b>-<span class="unknown">\/</span>-DBdump</b> and <b>-<span class="unknown">\/</span>-DBread</b>) indicate that a &ldquo;file input&rdquo; menu should be processed to create a database and then Mega2 should &ldquo;exec&rdquo; (rerun) using that newly created database to perform an analysis. 
-</div>
-<div class="Standard">
-Option 4 (or the flag <b>-<span class="unknown">\/</span>-DBoff</b>) indicates that a database should not be created and Mega2 should operate like the earlier v4.8.x versions of Mega2 without a database. (This option is deprecated and is left in for regression testing; it will soon be removed).
 </div>
 <div class="Standard">
 There is one final database related command line argument, <b>-<span class="unknown">\/</span>-DBfile &lt;filename&gt;</b>, that can be used to change the default database name used in the both the &ldquo;file input&rdquo; and the &ldquo;database input&rdquo; menus. By default, the database filename is <b>dbmega2.db</b>.
@@ -5551,7 +5505,7 @@ When entering the file input menu, Mega2 initially expects to read input files i
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 5.0.0 file input menu:
+              Mega2 5.0.1 file input menu:
 ==========================================================
 0) Done with this menu - please proceed
  1) Select input file format:                   Mega2 format with header
@@ -5564,10 +5518,12 @@ When entering the file input menu, Mega2 initially expects to read input files i
  8) Penetrance file:  (Mega2 pen.)   [optional] _
  9) Output Directory:                           [ Current directory ]
 10) SQLite3 Database file:                      dbmega2.db
-11) Simulate genotyping errors:                 [ no ]
-12) Include all pedigrees whether typed or not 
-13) Maximum number of alleles per marker:       2 alleles
-Select from options 0-13 &gt;
+11) Reference Allele File:           [optional] 
+12) Simulate genotyping errors:                 [ no ]
+13) Include all pedigrees whether typed or not 1
+14) Show pedigree typing statistics:            [ no ]
+15) Maximum number of alleles per marker:       2 alleles
+Select from options 0-15 &gt;
 </pre>
 <div class="Standard">
 Each line that selects an input file indicates the type of file, the format of the file (here Mega2), the prefix (when prepended to the suffix) [ or the suffix (when appended to a stem)] and whether the file is required or optional. Whether the file type is embedded in the suffix or prefix depends on the convention used for the particular input class. Additional menu lines are used to set operational parameters.
@@ -5577,7 +5533,7 @@ Each line that selects an input file indicates the type of file, the format of t
 </div>
 <pre class="LyX-Code">
 ==========================================================
-Mega2 5.0.0 input file type menu:
+             Mega2 5.0.1 input file type menu:
 ==========================================================
 0) Done with this menu - please proceed
 *1) Mega2 format with header
@@ -5585,37 +5541,45 @@ Mega2 5.0.0 input file type menu:
  3) Linkage with Mega2 names file
  4) PLINK binary PED format (bed)
  5) PLINK PED format (ped)
- 6) BCF format (bcf)
- 7) VCF compressed format (vcf.gz)
- 8) VCF format (vcf) 
+ 6) BCF format up to v2.1 (bcf)
+ 7) Legacy Implementation VCF compressed format (vcf.gz)
+ 8) Legacy Implementation VCF format (vcf)
  9) IMPUTE2 GEN format (gen/impute2)
- 10) IMPUTE2 BGEN format (bgen)
-Select from options 0-9 &gt;
+10) IMPUTE2 BGEN 1.3 format (bgen) 
+11) IMPUTE2 BGEN format (bgen) 
+12) BCF v2.2 or higher (bcf) 
+13) VCF compressed format (vcf.gz) 
+14) VCF format (vcf)
+Select from options 1-14 &gt;
 </pre>
 <div class="Standard">
-For example, selecting &ldquo;Line 6&rdquo; (BCF format (bcf)) replaces the old input menu with a new menu:
+For example, selecting &ldquo;6&rdquo; (BCF format up to v2.1 (bcf)) replaces the old input menu with a new menu:
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 5.0.0 file input menu:
+              Mega2 5.0.1 file input menu:
 ==========================================================
 0) Done with this menu - please proceed
- 1) Select input file format:                 BCF format (bcf)
+ 1) Select input file format:                 BCF format up to v2.1 (bcf)
  2) Enter VCF parameters:                     --remove-indels
- 3) Enter PLINK parameters:                    --missing-phenotype -9 --trait default
- 4) Input file stem:                          study
- 5) Variant file:     (binary .bcf)[required] _
- 6) Pedigree file:    (PLINK .fam) [required] _
- 7) Phenotype file:   (PLINK .phe) [optional] _
- 8) Map file:         (Mega2 .map) [optional] _
- 9) Omit file:        (Mega2 .omit)[optional] _
-10) Frequency file:   (Mega2 .freq)[optional] _
-11) Penetrance file:  (Mega2 .pen) [optional] _
-12) Output Directory:                         [ Current directory ]
-13) SQLite3 Database file:                    dbmega2.db
-14) Simulate genotyping errors:               [ no ]
-15) Include all pedigrees whether typed or not
-16) Maximum number of alleles per marker:     2 alleles
+ 3) Read marker names from the:               ID field
+ 4) Enter PLINK parameters:                    --missing-phenotype -9 --trait default
+ 5) Input file stem:                          study
+ 6) Variant file:     (binary .bcf)[required] _
+ 7) Pedigree file:    (PLINK .fam) [required] _
+ 8) Phenotype file:   (PLINK .phe) [optional] _
+ 9) Map file:         (Mega2 .map) [optional] _
+10) Omit file:        (Mega2 .omit)[optional] _
+11) Frequency file:   (Mega2 .freq)[optional] _
+12) Penetrance file:  (Mega2 .pen) [optional] _
+13) Output Directory:                         [ Current directory ]
+14) SQLite3 Database file:                    dbmega2.db
+15) Reference Allele File:         [optional] 
+16) Simulate genotyping errors:               [ no ]
+17) Include all pedigrees whether typed or not
+18) Show pedigree typing statistics:          [ no ]
+19) Allele frequency error measure threshold: No limit
+20) Maximum number of alleles per marker:     2 alleles
 Select from options 0-16 &gt;
 </pre>
 <div class="Standard">
@@ -6686,7 +6650,7 @@ The text file is split by lines and can use ’#’ as an escape character if yo
 <a class="toc" name="toc-Subsubsection--5"></a>Menu item: Pedigree File
 </h3>
 <div class="Standard">
-This format and the other new VCF formats are unique in that a pedigree file is not required. If one is not provided Mega2 will construct a simulated pedigree with entirely unrelated data using the sample id’s within the BCF file. <i>It will also set all of the samples to a male sex by default.</i> Each member in this pedigree will be in a family identified by their sample ID and will have their sample ID as their person ID. No relatedness will be determined. This is purely a feature for convenience for unrelated data where there is no utility to constructing a pedigree outside of Mega2.
+This format and the other BCF/VCF formats are unique in that a pedigree file is not required. If one is not provided Mega2 will construct a simulated pedigree with entirely unrelated data using the sample id’s within the BCF file. <i>It will also set all of the samples to a male sex by default.</i> Each member in this pedigree will be in a family identified by their sample ID and will have their sample ID as their person ID. No relatedness will be determined. This is purely a feature for convenience for unrelated data where there is no utility to constructing a pedigree outside of Mega2.
 </div>
 <div class="Standard">
 Additionally when using this feature, the file name for the pedigree file is used as &ldquo;-.fam&rdquo; and you will see that in your batch output. To use this feature in batch mode simply use &ldquo;Input_Pedigree_File-.fam&rdquo; as the line in the batch file.
@@ -6731,7 +6695,7 @@ This specifies the name of the directory where Mega2 creates the output files. B
 This specifies the name of the file that is to contain the sSQLite3 database derived from all the input data indicated in the rest of the input menu. This name may also be specified as the value of the command line<b> -\/-DBfile</b> flag.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-14.15">14.15</a> External Reference Allele Panel in the Database <a class="Label" name="subsec:Using-an-external-reference"> </a>
+<a class="toc" name="toc-Subsection-14.15">14.15</a> External Reference Allele Panel <a class="Label" name="subsec:Using-an-external-reference"> </a>
 </h2>
 <div class="Standard">
 Mega2 supports the use of an external reference panel, to facilitate alignment of your data to the reference, resolving strand issues where possible. If there are data that are usable as a reference dataset, i.e. 1000 genomes, the functionality now exists to upload that data into Mega2 in order to compare your data against that reference. This feature requires the database to be turned on as it uses the database to join values and store the reference alleles.
@@ -6740,19 +6704,19 @@ Mega2 supports the use of an external reference panel, to facilitate alignment o
 To use this mode, there are two steps. First, when in Mega2 database create mode, you need to specify the name of the Reference Allele File. We provide several reference panels at <a class="URL" href="https://watson.hgen.pitt.edu/mega2/refs/">https://watson.hgen.pitt.edu/mega2/refs/</a>. As the database is created, the information from the Reference Allele File is recorded into the database.
 </div>
 <div class="Standard">
-Second, after you have created a Mega2 database while having specified a Reference Allele file, then alignment to the chosen reference file can be used by toggling option 3 &ldquo;Align strands with reference&rdquo; in the database input menu (when in ’Mega2 database read mode’) to ’yes’. This strand alignment option does two things: for cases where the reference value’s reference allele is different from the input data, it sets the data to be harmonized with the reference (e.g. if your data has A/C as the reference and alternate allele for a marker but the reference panel has C/A, it will switch it). Second it resolves T/G &lt;-&gt; A/C strand alignments where possible.
+Second, after you have created a Mega2 database while having specified a Reference Allele file, then alignment to the chosen reference file can be used by toggling option 3 &ldquo;Align strands with reference&rdquo; in the database input menu (when in ’Mega2 database read mode’) to ’yes’. This strand alignment option does two things: for cases where the reference value’s reference allele is different from the input data, it sets the data to be harmonized with the reference (e.g. if your data has A/C as the reference and alternate allele for a marker but the reference panel has C/A, it will switch it). Second it resolves T/G &lt;-&gt; A/C strand alignments where possible. Note that strand alignment can only be done on data that is in A, C, G, T form. Harmonizing to the reference value is possible as long as the reference value matches the inputted data, this can include indels or numeric valued alleles.
 </div>
 <div class="Standard">
-If the provided reference panels are not sufficient, your own reference panel can be created in a couple of ways; in general it is a file of the form:
+If the provided Mega2 reference panels are not sufficient, your own reference panel can be created in a couple of ways; in general it is a 4 column file, without a header, of the form:
 </div>
 <div class="Standard">
-CHR POS REF
+CHR POS REF ALT
 </div>
 <div class="Standard">
-which can then gzipped for compression. 
+This file must be <b>tab delimited</b>, space delimters will seem to be read but will not be parsed correctly. This file can then gzipped to save hard disk space and still be parsed by Mega2.
 </div>
 <div class="Standard">
-This file can be created by hand or by any script that outputs this format. Or the reference file can be created utilizing a script provided with Mega2. The script’s name is GetRefAlleles.sh. It uses bcftools so for it to be used bcftools must be installed. It can be run on panels of vcf.gz files with chromosome specific files. For example, Minimac3 has datasets as references for imputation. First, get the reference vcfs from their website. Next, unpack the references until there’s a directory of gzipped vcf files, one for each chromosome. Inspect them to make sure the files are the same name template, for instance &ldquo;ALL.chr1.phased.vcf.gz&rdquo; and &ldquo;ALL.chr2.phased.vcf.gz&rdquo; etc. Then the GetRefAlleles script can be used to parse all chromosomes 1-22 and create a single smaller reference allele file consisting of the chromosome position and reference. Please note though, GetRefAlleles requires bcftools to be installed and in your path. Finally, to run this in our simplified case, we can use the command &ldquo;GetRefAlleles.sh All.chr .phased.vcf.gz&rdquo; where there are two arguments for GetRefAlleles.sh which are: (1) the character string for the filename up to the number of the chromosome, and (2) everything after the chromosome. It should create a file called ref_alleles.txt (which can be gzipped). 
+This file can be created by hand or by any script that outputs this specified format. Or the reference file can be created utilizing a script provided with Mega2. The script’s name is GetRefAlleles.sh. It uses bcftools so for it to be used bcftools must be installed. It can be run on panels of vcf.gz files with chromosome specific files. For example, Minimac3 has datasets as references for imputation. First, get the reference vcfs from their website. Next, unpack the references until there’s a directory of gzipped vcf files, one for each chromosome. Inspect them to make sure the files are the same name template, for instance &ldquo;ALL.chr1.phased.vcf.gz&rdquo; and &ldquo;ALL.chr2.phased.vcf.gz&rdquo; etc. Then the GetRefAlleles script can be used to parse all chromosomes 1-22 and create a single smaller reference allele file consisting of the chromosome position and reference. Please note though, GetRefAlleles requires bcftools to be installed and in your path. Finally, to run this in our simplified case, we can use the command &ldquo;GetRefAlleles.sh All.chr .phased.vcf.gz&rdquo; where there are two arguments for GetRefAlleles.sh which are: (1) the character string for the filename up to the number of the chromosome, and (2) everything after the chromosome. It should create a file called ref_alleles.txt (which can be gzipped). 
 </div>
 <div class="Standard">
 This file (or a gzipped version of it) can then be input into the option on the File Input Menu of Mega2 by choosing the Reference Allele File option. Selecting this will pull up a text prompt where you can enter in your reference allele file. If you enter a file of the form of the reference file and enter your data you wish to use in Mega2, you can continue into database creation. At database creation Mega2 will join your reference panel with your provided dataset to match reference alleles to those in the data. 
@@ -6877,20 +6841,26 @@ Untyped pedigree exclusion options:
 This is a floating-point value that defines when to flag discrepancies between observed and input allele-frequencies. The smaller this value, the more sensitive it is to such differences. Since the squared sum of differences between input and observed frequencies is expected to be less than 1.0, any value 1 and above would automatically disable flagging. By default flagging is turned off. <b>Note:</b> This menu item is not displayed unless a frequency file is specified in the input menu.
 </div>
 <div class="Standard">
-See also Mega2’s error checking procedure for allele-frequencies. 
+See also Mega2’s error checking procedure for allele-frequencies.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-14.19">14.19</a> File input menu item: Unknown allele and affection definition 
+<a class="toc" name="toc-Subsection-14.19">14.19</a> File input menu item: Show pedigree typing statistics <a class="Label" name="subsec:PedTypeStats"> </a>
+</h2>
+<div class="Standard">
+For each person, compute the number of typed, halftyped, and untyped markers. Print these sums and also print the count of male, female and individuals, typed and untyped. Normally, this calculation is done several times during the database DUMP phase as the data are cleaned. With tens of millions of markers, this calculation can become slow and the user may choose to eliminate these intermediate presentations. But, since this information may be used in later analysis steps, it is always calculated at least one and stored in the database. You are give the option in menu <a class="Reference" href="#sec:The-alternate-input-menu">15↓</a> (below) to request this calculation be done and printed before an analysis.
+</div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-14.20">14.20</a> File input menu item: Unknown allele and affection definition 
 </h2>
 <div class="Standard">
 This is read in as a string value and compared against affection phenotypes and marker genotypes for an exact match. The unknown allele and affection status indicator is used only for Mega2 files.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-14.20">14.20</a> File input menu item: Maximum number of alleles per marker <a class="Label" name="subsec:Input-menu-item:"> </a>
+<a class="toc" name="toc-Subsection-14.21">14.21</a> File input menu item: Maximum number of alleles per marker <a class="Label" name="subsec:Input-menu-item:"> </a>
 </h2>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 5.0.0 Maximum alleles per marker menu:
+              Mega2 5.0.1 Maximum alleles per marker menu:
 ==========================================================
 0) Done with this menu - please proceed 
 *1) 2 alleles (2 bits/marker) 
@@ -6905,10 +6875,10 @@ In the first case, each genotype is represented internally with two bits; this i
 Note that in the 2 byte mode, if the input data are in Linkage format, all allele labels are integers used as is. This means that an allele with the label ’256’ would not be allowed. However, if the input data are in Mega2 format, then allele labels are treated as strings, and will be recoded to sequential integers; so ’256’ might be allowed if the labeling is sparse.
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-14.21">14.21</a> Errors in input data 
+<a class="toc" name="toc-Subsection-14.22">14.22</a> Errors in input data 
 </h2>
 <h3 class="Subsubsection">
-<a class="toc" name="toc-Subsubsection-14.21.1">14.21.1</a> Problems with locus data 
+<a class="toc" name="toc-Subsubsection-14.22.1">14.22.1</a> Problems with locus data 
 </h3>
 <ol>
 <li>
@@ -6944,7 +6914,7 @@ Marker loci in the map file are matched against those in the locus file for miss
 
 </ol>
 <h3 class="Subsubsection">
-<a class="toc" name="toc-Subsubsection-14.21.2">14.21.2</a> Problems with pedigree data.
+<a class="toc" name="toc-Subsubsection-14.22.2">14.22.2</a> Problems with pedigree data.
 </h3>
 <div class="Standard">
 Mega2 reports problems such as incomplete pedigree records, invalid sex and proband fields, and missing parent records. In most cases, Mega2 will read in the entire pedigree file, and attempt to identify as many errors as it can. Here are a list of errors flagged by Mega2. 
@@ -6958,7 +6928,7 @@ Linkage format pedigree file format assigns the first parent to be the father, a
 </li>
 <li>
 One or both parents are missing\begin_inset Separator latexpar\end_inset<div class="Standard">
-Most pedigree analysis programs require that individual records for both parents are included within the pedigree data, therefore, so does Mega2. Missing parental records are fatal errors.
+Most pedigree analysis programs require that individual records for both parents are included within the pedigree data, therefore, so does Mega2. Missing parental records are fatal errors. As the SimWalk2 documentation explains: “To reconstruct the relationships between individuals properly, often people must be included who are dead or otherwise unavailable for study. One rule is important to keep in mind. Either both parents or neither parent of a person must be listed in the pedigree. Those people without parents in the pedigree can be thought of as founders of the pedigree.”
 </div>
 
 </li>
@@ -7003,7 +6973,7 @@ Mega2 checks that the entire pedigree is one connected structure, i.e. each indi
 
 </ol>
 <h3 class="Subsubsection">
-<a class="toc" name="toc-Subsubsection-14.21.3">14.21.3</a> Genotype reset menu 
+<a class="toc" name="toc-Subsubsection-14.22.3">14.22.3</a> Genotype reset menu 
 </h3>
 <div class="Standard">
 This menu is displayed for Mega2 to look for problems with the pedigree data. It will display all four options or a subset depending on which problems were detected. 
@@ -7047,20 +7017,20 @@ There is no need to again specify the files that are in the database when using 
 The Database input menu is shown below and explained immediately following:
 </div>
 <pre class="LyX-Code">
-              Mega2 5.0.0 Database input menu:
+              Mega2 5.0.1 Database input menu:
 ==========================================================
 0) Done with this menu - please proceed
  1) Output Directory:                            [ Current directory ]
  2) Database filename:                           dbmega2.db
- 3) Align strands with reference:                [ no ]
  3) Simulate genotyping errors:                  [ no ] 
  4) Include all pedigrees whether typed or not 
- 5) Allele frequency error measure threshold:    No limit 
+ 5) Show pedigree typing statistics:             [ no ]
+ 6) Allele frequency error measure threshold:    No limit 
  q) Exit Mega2.
-Select from options 0-5 or q&gt; 0 
+Select from options 0-6 or q&gt; 0 
 </pre>
 <div class="Standard">
-The <i>Output Directory</i> item specifies a directory for storing all the output Mega2 generates for the analysis. This allows different analysis to be run on the same SQLite3 database and the outputs kept separate. The <i>Database filename</i> item specifies the file path of the SQLite3 database. You can also provide the <i>Database filename</i> on the Mega2 command line after the, <b><i>-<span class="unknown">\/</span>-</i>DBfile</b>, flag. If both methods are used for the filename, the command line value takes precedence. Align Strands with reference allows you to use an uploaded reference panel (see: <a class="Reference" href="#subsec:Using-an-external-reference">14.15↑</a>), this then will set the reference allele to the same as the panel, and will also do T/G &lt;-&gt;A/C strand alignment. <i>Simulate genotyping errors</i> is the same item that was defined earlier in section <a class="Reference" href="#subsec:Simulate-errors">14.16↑</a>.<i> Include all pedigrees whether typed or not</i> is the same item that was defined earlier in section <a class="Reference" href="#subsec:UntypedPedigree">14.17↑</a>.<i> Allele frequency error measure threshold</i> is the same item that was defined earlier in section <a class="Reference" href="#subsec:AlleleFreq">14.18↑</a>.
+The <i>Output Directory</i> item specifies a directory for storing all the output Mega2 generates for the analysis. This allows different analysis to be run on the same SQLite3 database and the outputs kept separate. The <i>Database filename</i> item specifies the file path of the SQLite3 database. You can also provide the <i>Database filename</i> on the Mega2 command line after the, <b><i>-<span class="unknown">\/</span>-</i>DBfile</b>, flag. If both methods are used for the filename, the command line value takes precedence. <i>Simulate genotyping errors</i> is the same item that was defined earlier in section <a class="Reference" href="#subsec:Simulate-errors">14.16↑</a>.<i> Include all pedigrees whether typed or not</i> is the same item that was defined earlier in section <a class="Reference" href="#subsec:UntypedPedigree">14.17↑</a>.<i> Show pedigree typing statistics </i>for males, females and people individuals typed vs halftyped and total markers typed and halftyped.<i> Allele frequency error measure threshold</i> is the same item that was defined earlier in section <a class="Reference" href="#subsec:AlleleFreq">14.18↑</a>.
 </div>
 <div class="Standard">
 If a database is used for a Mega2 run, a brief summary shows when the SQLite3 database was created as well as its file and data contents. An example is shown below:
@@ -7068,7 +7038,7 @@ If a database is used for a Mega2 run, a brief summary shows when the SQLite3 da
 <pre class="LyX-Code">
 =========================================================== 
 The path to this SQLite3 database is dbmega2.db. 
-This database was created using Mega2 version 5.0.0. 
+This database was created using Mega2 version 5.0.1. 
 This database was created using   SQLite3 3.9.2 on 2016-5-21-02-14. 
 This database was processed using SQLite3 3.9.2 on 2016-5-25-13-51. 
 This database was created from Mega2 format data with header using the following files: 
@@ -7121,11 +7091,11 @@ After all the input files and the chromosome number have been specified, the Ana
 19 Test loci for HWE               42 ROADTRIPS format                
 20 Allegro format                  43 MaCH/minimac3 format            
 21 MLBQTL format                   44 SHAPEIT/minimac3 format         
-22 SAGE format                     45 VCF format                      
-23 Pre-makeped format                                          
+22 SAGE format                     45 BCF/VCF format                     
+23 Pre-makeped format              46 MQLS-XM/KinInbcoef format                           
 
 
-Select an option between 0-45 &gt;
+Select an option between 0-46 &gt;
 
 </pre>
 <div class="Standard">
@@ -7270,7 +7240,10 @@ Convert to MaCH/Minimac3 format (Section <a class="Reference" href="#ext:minimac
 Convert to SHAPEIT/Minimac3 format (Section <a class="Reference" href="#ext:minimac-shapeit">28.44↓</a>)
 </li>
 <li>
-Convert to VCF format (Section <a class="Reference" href="#ext:vcf">28.45↓</a>) 
+Convert to BCF/VCF format (Section <a class="Reference" href="#ext:vcf">28.45↓</a>) 
+</li>
+<li>
+Conver to MQLS-XM/KinInbcoef format (Section <a class="Reference" href="#subsec:Conver-to-MQLS-XM/KinInbcoef">28.46↓</a> )
 </li>
 
 </ol>
@@ -7282,7 +7255,7 @@ This menu is used to indicate what values in the input data represents a missing
 </div>
 <pre class="LyX-Code">
 ==========================================================
-              Mega2 5.0.0 Missing Value menu:
+              Mega2 5.0.1 Missing Value menu:
 ==========================================================
 If it is necessary, specify a different value to indicate that a trait is missing 
 both for input to Mega2 and/or output from Mega2.
@@ -8217,7 +8190,7 @@ By default, Mega2 processes the <b>dbmega2.db</b> SQLite3 database to produced c
 Mega2 starts by presenting a ’database mode’ menu (see <a class="Reference" href="#sec:The-database-mode">13↑</a>) that chooses between database creation and database use. This menu is superseded if there are specific command line arguments. The <i>-<span class="unknown">\/</span>-DBdump</i> flag forces database creation while the <i>-<span class="unknown">\/</span>-DBread</i> flag forces Mega2 to use an existing database.
 </div>
 <div class="Standard">
-Two other flags, <i>-<span class="unknown">\/</span>-DBread</i> and <i>-<span class="unknown">\/</span>-DBoff</i>, support old functions and will eventually be removed. <i>-<span class="unknown">\/</span>-DBread</i> with <i>-<span class="unknown">\/</span>-DBdump</i> performs as Mega2 v.4.9.0 and creates a new database file for each analysis and then processes each to produce the data for the specified analysis. Since all database files for a given set of inputs are NOW the same regardless of the analysis, this is no longer a necessary feature. <i>-<span class="unknown">\/</span>-DBoff</i> short circuits the database creation and use and behaves like the old Mega2 (before v4.9.0). For now you can use this feature, but in the future it will not be supported. It requires the internal Mega2 validations and cleaning to be done for each analysis which is unnecessary and slow. It precludes optimizations performed when the database is being read.
+The flags, <i>-<span class="unknown">\/</span>-DBread</i>, may eventually be removed and become the default. <i>-<span class="unknown">\/</span>-DBread</i> with <i>-<span class="unknown">\/</span>-DBdump</i> performs as Mega2 v.4.9.0 and creates a new database file for each analysis and then processes each to produce the data for the specified analysis. Since all database files for a given set of inputs are NOW the same regardless of the analysis, this is no longer a necessary feature. 
 </div>
 <pre class="LyX-Code">
 <table>
@@ -8272,18 +8245,6 @@ if <i>-<span class="unknown">\/</span>-DBdump</i> is not also specified, indicat
 if specified with <i>-<span class="unknown">\/</span>-DBdump</i> first create the database then reinvoke Mega2 and process the database. (This was how Mega2 version v4.9.0 operated.) 
 </div>
 
-</td>
-
-</tr>
-<tr>
-<td align="left" valign="top">
-<i>-<span class="unknown">\/</span>-DBoff</i>
-</td>
-<td align="center" valign="top">
-deprecated
-</td>
-<td align="left" valign="top" style="width: 4in;">
-perform Mega2 analysis without creating or reading a database as was the case in earlier releases of Mega2.
 </td>
 
 </tr>
@@ -11178,7 +11139,7 @@ The Perl scripts make_hwe_table.pl and make_gen_table.pl create the summary tabl
 <pre class="LyX-Code">
 These results are produced by the HWE program by
 Sun-Wei Guo and Elizabeth Thompson.  If you publish
-any of these results,please cite:
+any of these results, please cite:
  
 Guo, S.-W., Thompson, E. T. (1992)
 Performing the Exact Test of Hardy-Weinberg Proportion
@@ -11620,7 +11581,7 @@ If the pedigree data contains either loops (pre-makeped format) or loop-breakers
 <a class="toc" name="toc-Subsection-28.31">28.31</a> <a class="Label" name="ext:plink"> </a>Convert to PLINK format <a class="Label" name="subsec:Analysis-PLINK-option"> </a>
 </h2>
 <div class="Standard">
-<b>This Analysis Menu options</b> sets up pedigree, genotype, phenotype and map files in PLINK format. <br/>
+<b>This Analysis Menu option</b> sets up pedigree, genotype, phenotype and map files in PLINK format. <br/>
 <b>Name</b>: PLINK<br/>
 <b>Web</b>: <a class="FlexURL" href="http://pngu.mgh.harvard.edu/~purcell/plink/">http://pngu.mgh.harvard.edu/~purcell/plink/</a> <br/>
 <b>Primary reference</b>: Purcell S, Neale B, Todd-Brown K, Thomas L, Ferreira MAR, Bender D, Maller J, Sklar P, de Bakker PIW, Daly MJ &amp; Sham PC (2007) PLINK: a toolset for whole-genome association and population-based linkage analysis. American Journal of Human Genetics, 81. 
@@ -12696,13 +12657,13 @@ Shapeit reference sample file
 
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-28.45">28.45</a> <a class="Label" name="ext:vcf"> </a>Convert to VCF (Variant Call Format) <a class="Label" name="subsec:Detailed-info-convert-vcf"> </a>
+<a class="toc" name="toc-Subsection-28.45">28.45</a> <a class="Label" name="ext:vcf"> </a>Convert to BCF/VCF format <a class="Label" name="subsec:Detailed-info-convert-vcf"> </a>
 </h2>
 <div class="Standard">
-<b>This analysis menu option</b> allows the creation of Variant Call format (VCF) from genetic data read in by Mega2. Variant Call Format (VCF) was designed to store information about genetic variants. Information on the VCF format standard can be found at <a class="FlexURL" href="https://samtools.github.io/hts-specs/VCFv4.2.pdf">https://samtools.github.io/hts-specs/VCFv4.2.pdf</a>. A VCF file is divided into three sections: the first section contains the meta information (lines from the beginning of the file that begin with the double hash mark ’##’), the second section contains only one line which is the header line (this line follows the last meta information line and begins with a single hash mark ’#’), and the third section follows the header line and contains all of the variant call information. 
+<b>This Analysis Menu option</b> allows the creation of Variant Call format (VCF) and its compressed binary counterpart (BCF) from genetic data read in by Mega2. Variant Call Format (VCF) was designed to store information about genetic variants. Information about the VCF and BCF format standards can be found at <a class="FlexURL" href="https://github.com/samtools/hts-specs">https://github.com/samtools/hts-specs</a>. A VCF file is divided into three sections: the first section contains the meta information (lines from the beginning of the file that begin with the double hash mark ’##’), the second section contains only one line which is the header line (this line follows the last meta information line and begins with a single hash mark ’#’), and the third section follows the header line and contains all of the variant call information. 
 </div>
 <div class="Standard">
-In addition to creating the standard VCF output file, Mega2 also will create a .fam file similar to a PLINK .fam file for storing pedigree information (this is not standard for VCF data ). Also Mega2 will create a .phe file for storing additional phenotype information as well as a mapping between sample ID and the pedigree. Mega2 will also output any map information it has into a .map file. Similarly a .freq file containing allele frequency information, whether calculated by Mega2 or provided on input, will be output. Finally penetrance of affection status traits will be output into a .pen file. Below are these files are explained in more detail.
+BCF (the new default), VCF gzipped, and VCF formats are now all output via an internal implementation of BCFtools (<a class="Reference" href="#subsec:Input-Format:-BCFTools">14.9↑</a>) This means that BCF is the new default as internally this is how BCFTools represents data as and is therefore the fastest. For large datasets we recommend not outputting VCF as the file size will scale accordingly and write time will increase.
 </div>
 <div class="Standard">
 The VCF analysis menu looks as follows:
@@ -12710,17 +12671,22 @@ The VCF analysis menu looks as follows:
 <pre class="LyX-Code">
 VCF Analysis Menu: 
 0) Done with this menu - please proceed 
-1) File name stem:                                             vcf 
-2) Human Genome Build                                          B37 
-3) Reference Alleles                                           Major Allele 
-4) VCF/BCF/VCF.gz:                                             VCF 
-Enter selection: 0 - 4 &gt;
+1) VCF format file:                             BCF 
+2) File name stem:                              bcf 
+3) Human Genome Build                           B37 
+4) Reference Allele                             Original_Order 
+5) Person id in output pedigree file:           Original pre makeped person
+6) Pedigree id in output pedigree file:         Original pre makeped pedigree
+Enter selection: 0 - 6 &gt;
 </pre>
 <div class="Standard">
-This menu has four prompts: the file name stem option which simply lets the user specify the prefix of the output files is (in this example vcf.05.vcf, vcf. 05.fam etc.). The human genome build option allows the user to change which human genome build version is listed in the contig portion of the VCF header. The reference allele decision, which allows you to use Mega2’s computed frequencies to use the major or minor allele as your reference, or an external reference allele panel . If using an external reference panel and one has not been created already Mega2 will prompt you to create one, you can do that by following the instructions here <a class="Reference" href="#subsec:Using-an-external-reference">14.15↑</a>. If the reference allele table already exists it will continue with that data. The final choice is the output format as either a VCF, BCF, or gzipped VCF file.
+This menu has six prompts: First is the output format as either a BCV, VCF, or gzipped VCF file, next the file name stem option which simply lets the user specify the prefix of the output files is (in this example vcf.05.vcf, vcf. 05.fam etc.). The human genome build option allows the user to change which human genome build version is listed in the contig portion of the VCF header. The reference allele decision, which allows you to use Mega2’s computed frequencies to use the major or minor allele as your reference, or an external reference allele panel (if one was specified during the creation of the input Mega2 database; for more information see the instructions here <a class="Reference" href="#subsec:Using-an-external-reference">14.15↑</a>). The last two fields determine how Mega2 represents your family and person ID data, the default is to use the values put in by the input data but this can be changed to values such as monotonically increasing numbers, etc.
 </div>
 <div class="Standard">
-If more than one chromosome is selected, there will be an additional option to either combine or split chromsomes.
+If more than one chromosome is selected, there will be an additional option to either combine or split chromosomes.
+</div>
+<div class="Standard">
+In addition to creating the standard BCF or VCF output file, Mega2 also will create several matched files: it will a .fam file similar to a PLINK .fam file for storing pedigree information. Also Mega2 will create a .phe file for storing additional phenotype information as well as a mapping between sample ID and the pedigree. Mega2 will also output any map information it has into a .map file. Similarly a .freq file containing allele frequency information, whether calculated by Mega2 or provided on input, will be output. Finally penetrance of affection status traits will be output into a .pen file. Now these files are explained in more detail:
 </div>
 <pre class="LyX-Code">
 
@@ -12733,10 +12699,10 @@ If more than one chromosome is selected, there will be an additional option to e
 <span class="footnotesize">##FORMAT=&lt;ID=GT,Number=1,Type=String,Description="Genotype"&gt; </span>
 <span class="footnotesize">##FILTER=&lt;ID=PASS,Description="Passed variant FILTERs"&gt; </span>
 <span class="footnotesize">##contig=&lt;ID=5,length=4,assembly=hg19&gt; </span>
-<span class="footnotesize">#CHROM POS ID REF ALT	QUAL	FILTER	INFO	FORMAT	1_1	1_2	1_3	1_4	1_5	1_6	1_7	1_8	1_9</span>
-<span class="footnotesize">5	1    M1	A	T	.	PASS	CM=0.00,-99.99,-99.99;RF=0.50;AF=0.50;	GT	0/1	0/1	1/1	0/1	1/1	1/1	1/1	1/1	1/1</span>
-<span class="footnotesize">5    2    M3	C	G	.	PASS	CM=5.00,-99.99,-99.99;RF=0.50;AF=0.50;	GT	1/0	0/0	1/0	1/0	1/0	1/0	1/0	1/1	1/1</span>
-<span class="footnotesize">5    3    M2	A	T	.	PASS	CM=8.00,-99.99,-99.99;RF=0.50;AF=0.50;	GT	1/1	0/0	1/0	1/0	1/0	1/1	1/0	1/1	1/1</span>
+<span class="footnotesize">#CHROM POS ID REF ALT	QUAL	FILTER	INFO	FORMAT	1_1	1_2	1_3	1_4	1_5	1_6	1_7</span>
+<span class="footnotesize">5	1    M1	A	T	.	PASS	CM=0.00,-99.99,-99.99;RF=0.50;AF=0.50;	GT	0/1	0/1	1/1	0/1	1/1	1/1	1/1	</span>
+<span class="footnotesize">5    2    M3	C	G	.	PASS	CM=5.00,-99.99,-99.99;RF=0.50;AF=0.50;	GT	1/0	0/0	1/0	1/0	1/0	1/0	1/0</span>
+<span class="footnotesize">5    3    M2	A	T	.	PASS	CM=8.00,-99.99,-99.99;RF=0.50;AF=0.50;	GT	1/1	0/0	1/0	1/0	1/0	1/1	1/0</span>
 </pre>
 <div class="Standard">
 This is an example VCF file with 9 sample IDs (1_1, 1_2, etc.) which correspond to the SAMPLEID column in the phenotype column (or can be inferred from the pedigree and person id). After the header line, in each line that follows, the first column represents the chromosome of the marker, the second is its physical position. Next is the marker name. Next are the reference and alternate alleles. The next is the quality field and the filter field. The info field contains information on the map position in centimorgans as well as the allele frequencies. The next column indicates the format (genotyped). Finally we have the columns for individuals’ genotypes, here we have 0/1, 1/1, 1/2 etc. here 0 refers to the reference allele, 1 refers to the first alternate allele, 2 to the second alternate allele and so on. Additional information about VCF files is available in the section <a class="Reference" href="#subsec:VCF-File">9.4.1↑</a>
@@ -12756,6 +12722,108 @@ The frequency file (.freq) is a Mega2 file which is discussed here <a class="Ref
 <div class="Standard">
 The penetrance file (.pen) is a Mega2 file which can be found here <a class="Reference" href="#subsec:Annotated-penetrance-file">9.1.6↑</a>.
 </div>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-28.46">28.46</a> Convert to MQLS-XM/KinInbcoef format <a class="Label" name="subsec:Conver-to-MQLS-XM/KinInbcoef"> </a>
+</h2>
+<div class="Standard">
+<b>This Analysis Menu option</b> allows for the creation of data to be used with the MQLS-XM application. MQLS-XM is a C program that performs single-SNP, case-control association testing for the autosomal chromosomes and the X-chromosome in samples with known relatedness (<a class="URL" href="https://www.stat.uchicago.edu/~mcpeek/software/MQLS_XM/index.html">MQLS-XM Webpage</a>). To set up the kinship matrix that MQLS-XM utilizes there are two other pieces of software used, the first is KinInbcoef which is a C++ program that computes inbreeding and kinship coefficients for general pedigrees (<a class="URL" href="https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoef/index.html">KinInbcoef Webpage</a>). The other is KinInbcoefX which is a C++ program that calculates X-chromosome kinship coefficients for pairs of individuals (and X-chromosome inbreeding coefficients for each individual), based on pedigree and sex information (<a class="URL" href="https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoefX/index.htm">KinInbcoefX Webpage</a>). For the autosomes KinInbcoef is used, whereas on the X chromosome KinInbcoefX is used.
+</div>
+<div class="Standard">
+The MQLS-XM/KinInbcoef format menu looks like the following:
+</div>
+<pre class="LyX-Code">
+MQLS-XM/KinInbcoef Analysis Menu:
+0) Done with this menu - please proceed 
+1) Filename stem:                            &ldquo;mqls&rdquo; 
+2) Prevalence file name:                     &ldquo;prevalence.txt" 
+3) Additional arguments:                     "&lt;none specified&gt;"
+Enter options 0-3 &gt; 
+</pre>
+<div class="Standard">
+The first menu prompt defines the filename stem which all the files created will have. The second specifies the name of the required prevalence file used by MQLS-XM, it is a two value file that contains decimal male and female prevalence values from an appropriate reference population. The last are additional optional arguments for MQLS-XM, which are as follows:
+</div>
+<ul>
+<li>
+-u Allows the user to exclude individuals with unknown phenotype from the analysis for the three test statistics. All individuals will be included in the analysis if this option is not used.
+</li>
+<li>
+-m Allows the user to specify that only individuals who have non-missing genotypes at a marker will be included when calculating the MQLS and XM statistics at that SNP, i.e., phenotype information for individuals with missing genotype data at a SNP will not be used. If this option is not used, the MQLS and XM statistics will incorporate phenotype information for individuals with missing genotype data at a SNP being tested, provided that those individuals have a sampled relative who is genotyped at the marker. 
+</li>
+<li>
+-h Allows the user to specify that the association test statistics will be calculated using a variance estimator that assumes HWE. The association test statistics will be calculated using a robust variance estimator if this option is not used.
+</li>
+
+</ul>
+<div class="Standard">
+When using the MQLS-XM option, you should be careful about the choices made in the Genetic Map Selection Menu. Mega2 is designed to filter data based on the map data. However when running analysis on the X chromosome if you selected an autosomal genetic map that has no known map positions for markers on the X chromosome, then it will filter out the data. This can lead to empty files being output by Mega2. 
+</div>
+<div class="Standard">
+This mode creates several files to be used with KinInbcoef, KinInbcoefX, and MQLS-XM. The first is the .gen file, which is the genotype file (in ’tped’ format) that stores the genetic marker data. Next is the MQLS-XM phenotype information .fam file which is used by MQLS-XM to organize family structure and phenotype information for analysis. Next are the .kininbcoef and .kininbcoefx kinship coefficient files which are used by their respective applications and will only be created if the appropriate chromosome type (autosome or X) is selected. Next is the Kininbcoef list file (.txt file) which is used by both the KinInbcoef and KinInbcoefX programs and is a two column list of all related pairs within families. Finally there are shell files per chromosome and a top shell file that run all subsequent shell files.
+</div>
+<div class="Standard">
+<b>Name:</b> MQLS-XM (version 1.0, released 2012) 
+</div>
+<div class="Standard">
+<b>Web:</b> <a class="FlexURL" href="https://www.stat.uchicago.edu/~mcpeek/software/MQLS_XM/index.html">https://www.stat.uchicago.edu/~mcpeek/software/MQLS_XM/index.html</a>
+</div>
+<div class="Standard">
+<b>References:</b> Thornton T., McPeek M. S. "Case-Control Association Testing with Related Individuals: A More Powerful Quasi-Likelihood Score Test" (2007) American Journal of Human Genetics, vol 81, pp. 321-337 
+</div>
+<div class="Standard">
+Thornton T, Zhang Q, Cai X, Ober C, and McPeek MS XM: Association Testing on the X-Chromosome in Case-Control Samples with Related Individuals" (2012) Genetic Epidemiology 36, vol 36:438-450 
+</div>
+<div class="Standard">
+<b>Contact</b>:
+</div>
+<pre class="LyX-Code">
+Timothy A. Thornton 
+Department of Biostatistics 
+University of Washington 
+Health Sciences Building 
+F-600 Box 357232 
+Seattle, WA 98195-7232 
+email: <a class="URL" href="mailto:tathornt@u.washington.edu">tathornt@u.washington.edu</a>
+</pre>
+<div class="Standard">
+<b>Name:</b> KinInbcoef (version 1.1, released 2009) 
+</div>
+<div class="Standard">
+<b>Web:</b> <a class="FlexURL" href="https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoef/index.html">https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoef/index.html</a>
+</div>
+<div class="Standard">
+<b>Contact</b>:
+</div>
+<pre class="LyX-Code">
+Catherine Bourgain 
+INSERM U535 
+Bat.Leriche 
+Hopital Paul Brousse 
+BP 1000 
+94817 Villejuif Cedex France 
+Tel : +33 1 45 59 53 85 
+Fax : +33 1 45 59 53 31 
+email: <a class="URL" href="mailto:bourgain@vjf.inserm.fr">bourgain@vjf.inserm.fr</a>
+</pre>
+<div class="Standard">
+<b>Name:</b> KinInbcoefX (version 2.0, release 200912) 
+</div>
+<div class="Standard">
+<b>Web:</b> <a class="FlexURL" href="https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoefX/index.html">https://www.stat.uchicago.edu/~mcpeek/software/KinInbcoefX/index.html</a>
+</div>
+<div class="Standard">
+<b>Contact</b>:
+</div>
+<pre class="LyX-Code">
+Catherine Bourgain 
+INSERM U535 
+Bat.Leriche 
+Hopital Paul Brousse 
+BP 1000 
+94817 Villejuif Cedex France 
+Tel : +33 1 45 59 53 85 
+Fax : +33 1 45 59 53 31 
+email: <a class="URL" href="mailto:bourgain@vjf.inserm.fr">bourgain@vjf.inserm.fr</a>
+</pre>
 <h1 class="Section">
 <a class="toc" name="toc-Section-29">29</a> Utilities included with Mega2 
 </h1>
@@ -12968,7 +13036,7 @@ To use it, first run pedcheck to create a ’pedcheck.err’ error file. Then us
 omit.awk pedcheck.err &gt; omit.01
 </pre>
 <div class="Standard">
-The resulting omit file will contain instructions to zero out all genotypes within a given pedigree for each marker that is Mendelianly-inconsistent. This approach is conservative, and works well when one has large numbers of small pedigrees. It does not work well if one has a few extremely large pedigrees, as then this approach ends up zeroing out an entire large pedigree at each Mendelianly-inconsistent marker.
+The resulting omit file will contain instructions to zero out all genotypes within a given pedigree for each marker that is Mendelianly inconsistent. This approach is conservative, and works well when one has large numbers of small pedigrees. It does not work well if one has a few extremely large pedigrees, as then this approach ends up zeroing out an entire large pedigree at each Mendelianly inconsistent marker.
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-29.4">29.4</a> Scripts to generate formatted output for Hardy-Weinberg test:
@@ -13182,6 +13250,21 @@ Writing and then reading the SQLite3 database does make Mega2 processing a bit s
 </td>
 <td align="none" valign="middle">
 <b>Valid until</b>
+</td>
+
+</tr>
+<tr>
+<td align="center" valign="top">
+Patched version
+</td>
+<td align="right" valign="top">
+5.0.1
+</td>
+<td align="none" valign="middle">
+December 13, 2018
+</td>
+<td align="none" valign="middle">
+June 15, 2019
 </td>
 
 </tr>
@@ -13597,7 +13680,43 @@ March 31, 2008
 
 </div>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.3">31.3</a> Changes from Version 4.9.2 to Version 5.0.0 (Released June 14, 2018)
+<a class="toc" name="toc-Subsection-31.3">31.3</a> Changes from Version 5.0.0 to Version 5.0.1 (Released December 13, 2018)
+</h2>
+<ul>
+<li>
+The Mega2 ’No database’ legacy mode (also known as the DBoff option) is no longer supported. Now Mega2 always must generate/use a database.
+</li>
+<li>
+We have added a new output format: MQLS-XM/KinInbcoef.
+</li>
+<li>
+In the ’Mega2 database create mode’, we now ask all questions that need answers upfront, before any input data are processed. Thus, processing, which may be time-consuming, is not interrupted with questions.
+</li>
+<li>
+We have added an input menu item line to control whether to calculate and print statistics about markers typed per individual. Choosing to not print these statistics results in faster run times.
+</li>
+<li>
+Performance: Mega2 now writes BCF and VCF.gz files using bcftools directly rather than first generating an intermediate VCF file.
+</li>
+<li>
+Performance: Fixed a memory leak in write_vcf and use faster technique to build VCF text lines.
+</li>
+<li>
+Performance: Fixed allele frequency counting when there are a large number of indels (which appear as alleles).
+</li>
+<li>
+Bug: The pangaea routines now store the file name stem in the batch file, permitting more flexible creation of shell scripts.
+</li>
+<li>
+Bug: The dbCompress flag was not set correctly during an interactive vs batch run, causing data not to be compressed when Mega2 was used interactively.
+</li>
+<li>
+There is no Mega2 program compiled using the native Microsoft compiler. You should use Msys2 Mega2 or Cygwin Mega2 instead.
+</li>
+
+</ul>
+<h2 class="Subsection">
+<a class="toc" name="toc-Subsection-31.4">31.4</a> Changes from Version 4.9.2 to Version 5.0.0 (Released June 14, 2018)
 </h2>
 <ul>
 <li>
@@ -13630,7 +13749,7 @@ There is no Mega2 program compiled using the native Microsoft compilers. This sh
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.4">31.4</a> Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
+<a class="toc" name="toc-Subsection-31.5">31.5</a> Changes from Version 4.9.1 to Version 4.9.2 (Released June 14, 2017)
 </h2>
 <ul>
 <li>
@@ -13666,7 +13785,7 @@ Bug: Remove all C++ lambda constructs.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.5">31.5</a> Changes from Version 4.9.0 to Version 4.9.1 (Released November 1, 2016)
+<a class="toc" name="toc-Subsection-31.6">31.6</a> Changes from Version 4.9.0 to Version 4.9.1 (Released November 1, 2016)
 </h2>
 <ul>
 <li>
@@ -13720,7 +13839,7 @@ Internals: Define Map of void * to int.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.6">31.6</a> Changes from Version 4.8.2 to Version 4.9.0 (Released June 14, 2016)
+<a class="toc" name="toc-Subsection-31.7">31.7</a> Changes from Version 4.8.2 to Version 4.9.0 (Released June 14, 2016)
 </h2>
 <ul>
 <li>
@@ -13771,7 +13890,7 @@ internals: Allele &ldquo;index&rdquo; values were not always set; sometimes they
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.7">31.7</a> Changes from Version 4.8.1 to Version 4.8.2 (Released January 15, 2016)
+<a class="toc" name="toc-Subsection-31.8">31.8</a> Changes from Version 4.8.1 to Version 4.8.2 (Released January 15, 2016)
 </h2>
 <ul>
 <li>
@@ -13810,7 +13929,7 @@ Internals: The token, file_name, was a function and an array and a parameter. No
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.8">31.8</a> Changes from Version 4.8.0 to Version 4.8.1 (Released October 22, 2015)
+<a class="toc" name="toc-Subsection-31.9">31.9</a> Changes from Version 4.8.0 to Version 4.8.1 (Released October 22, 2015)
 </h2>
 <ul>
 <li>
@@ -13840,7 +13959,7 @@ The example data and example_output directories for vcf, bcf, and impute2 input 
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.9">31.9</a> Changes from Version 4.7.1 to Version 4.8.0 (Released June 13, 2015)
+<a class="toc" name="toc-Subsection-31.10">31.10</a> Changes from Version 4.7.1 to Version 4.8.0 (Released June 13, 2015)
 </h2>
 <ul>
 <li>
@@ -13870,7 +13989,7 @@ Bug: Several compilation flags have been made unnecessary and hence removed.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.10">31.10</a> Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)
+<a class="toc" name="toc-Subsection-31.11">31.11</a> Changes from Version 4.6.2 to Version 4.7.1 (Released Oct 16, 2014)
 </h2>
 <ul>
 <li>
@@ -13891,7 +14010,7 @@ Bug Fix: Detect missing suboption when it is required.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.11">31.11</a> Changes from Version 4.6.2 to Version 4.7.0 (Released May 15, 2014)
+<a class="toc" name="toc-Subsection-31.12">31.12</a> Changes from Version 4.6.2 to Version 4.7.0 (Released May 15, 2014)
 </h2>
 <ul>
 <li>
@@ -13909,7 +14028,7 @@ Bug Fix: Problems discovered via the CLANG/LLVM compiler have been addressed.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.12">31.12</a> Changes from Version 4.6.1 to Version 4.6.2 (Released Feb 28, 2014)
+<a class="toc" name="toc-Subsection-31.13">31.13</a> Changes from Version 4.6.1 to Version 4.6.2 (Released Feb 28, 2014)
 </h2>
 <ul>
 <li>
@@ -13924,7 +14043,7 @@ Bug Fix: Binary file support (mainly .bed files) was broken on Windows and Mingw
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.13">31.13</a> Changes from Version 4.6.0 to Version 4.6.1 (Released Oct 21st, 2013)
+<a class="toc" name="toc-Subsection-31.14">31.14</a> Changes from Version 4.6.0 to Version 4.6.1 (Released Oct 21st, 2013)
 </h2>
 <ul>
 <li>
@@ -13939,7 +14058,7 @@ Enhancement: Added binaries for native Microsoft Windows 8 and MinGW built on Mi
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.14">31.14</a> Changes from Version 4.5.9 to Version 4.6.0 (Released Sept 6th, 2013)
+<a class="toc" name="toc-Subsection-31.15">31.15</a> Changes from Version 4.5.9 to Version 4.6.0 (Released Sept 6th, 2013)
 </h2>
 <ul>
 <li>
@@ -13948,7 +14067,7 @@ Enhancement: Mega2 compresses allele data to handle much larger datasets.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.15">31.15</a> Changes from Version 4.5.8 to Version 4.5.9 (Released July 5th, 2013)
+<a class="toc" name="toc-Subsection-31.16">31.16</a> Changes from Version 4.5.8 to Version 4.5.9 (Released July 5th, 2013)
 </h2>
 <ul>
 <li>
@@ -13957,7 +14076,7 @@ Bug fix: Mega2 will now compile properly on Red Hat (RHEL), CentOS, and Solaris 
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.16">31.16</a> Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)
+<a class="toc" name="toc-Subsection-31.17">31.17</a> Changes from Version 4.5.7 to Version 4.5.8 (Released June 6th, 2013)
 </h2>
 <ul>
 <li>
@@ -13981,7 +14100,7 @@ Bug fix: You can now specific a value to represent the missing value code for a 
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.17">31.17</a> Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) 
+<a class="toc" name="toc-Subsection-31.18">31.18</a> Changes from Version 4.5.6 to Version 4.5.7 (Released January 11th, 2013) 
 </h2>
 <ul>
 <li>
@@ -14017,7 +14136,7 @@ Bug-fix: Allow menus to input and output X, Y, XY, MT and U as chromosomes witho
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.18">31.18</a> Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) 
+<a class="toc" name="toc-Subsection-31.19">31.19</a> Changes from Version 4.5.5 to Version 4.5.6 (Released July 6th, 2012) 
 </h2>
 <ul>
 <li>
@@ -14032,7 +14151,7 @@ Bug-fix: Generate better error diagnostics.
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.19">31.19</a> Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) 
+<a class="toc" name="toc-Subsection-31.20">31.20</a> Changes from Version 4.5.4 to Version 4.5.5 (Released June 15th, 2012) 
 </h2>
 <ul>
 <li>
@@ -14068,7 +14187,7 @@ Bug-fix: In general, code in critical loops or using large memory allocations ha
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.20">31.20</a> Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) 
+<a class="toc" name="toc-Subsection-31.21">31.21</a> Changes from Version 4.5.3 to Version 4.5.4 (Released July 26th, 2011) 
 </h2>
 <ul>
 <li>
@@ -14086,7 +14205,7 @@ Bug-fix: The mega2log2html.pl Perl program in some cases tried to read from a cl
 
 </ul>
 <h2 class="Subsection">
-<a class="toc" name="toc-Subsection-31.21">31.21</a> Changes from Version 4.0 R5.2 Beta -<span class="formula"> &gt; </span> Version 4.5.3 (Released June 15th, 2011) 
+<a class="toc" name="toc-Subsection-31.22">31.22</a> Changes from Version 4.0 R5.2 Beta -<span class="formula"> &gt; </span> Version 4.5.3 (Released June 15th, 2011) 
 </h2>
 <ul>
 <li>
@@ -16813,7 +16932,7 @@ Weeks DE, Ott J, Lathrop GM (1990) SLINK: a general simulation program for linka
 
 <hr class="footer"/>
 <div class="footer" id="generated-by">
-Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.5 (2013-03-10)</a> on <span class="create-date">2018-06-14T10:57:34.362110</span>
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.5 (2013-03-10)</a> on <span class="create-date">2018-12-13T16:29:52.033138</span>
 </div>
 </div>
 </body>
