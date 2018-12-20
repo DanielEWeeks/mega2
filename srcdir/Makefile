@@ -281,6 +281,7 @@ libvcftools.a: vcftools
 libz.a: zlib-1.2.8
 
 libbcftools.a: lib/bcftools-$(BCFTOOLS_VERSION)
+lib/bcftools-$(BCFTOOLS_VERSION): zlib-1.2.8
 
 CFG = bcftool-$(BCFTOOLS_VERSION)scfg
 
