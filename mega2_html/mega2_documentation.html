@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="generator" content="http://www.nongnu.org/elyxer/"/>
-<meta name="create-date" content="2018-12-13"/>
+<meta name="create-date" content="2019-01-04"/>
 <link rel="stylesheet" href="Mega2_Documentation.css" type="text/css" media="all"/>
 <title>Mega2Manipulation Environment for Genetic AnalysesA data-handling program for facilitatinggenetic linkage and association analyses</title>
 </head>
@@ -17,7 +17,7 @@ A data-handling program for facilitating<br/>
 genetic linkage and association analyses
 </h1>
 <h2 class="Date">
-Dec 13, 2018
+<span class="unknown">\today</span>
 </h2>
 <div class="Standard">
 <div class="center">
@@ -36,7 +36,7 @@ Department of Human Genetics, University of Pittsburgh
 </tr>
 <tr>
 <td align="center" valign="top">
-Copyright © 1997-2018 by the University of Pittsburgh 
+Copyright © 1997-2019 by the University of Pittsburgh 
 </td>
 
 </tr>
@@ -1335,6 +1335,7 @@ Creation of extensive data analysis logs, both during database creation: (files 
 <div class="Standard">
 <span class="environment"><span class="arrayrow">
 <span class="arraycell align-l">
+ − 1.5cm − 1.5cm
 </span>
 
 </span>
@@ -1345,7 +1346,7 @@ Creation of extensive data analysis logs, both during database creation: (files 
 
 </div>
 <div class="Standard">
-<span class="unknown">\end</span>
+<span class="unknown">\end</span>adjustwidth*
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-1.3">1.3</a> Overview of Mega2R
@@ -1401,6 +1402,7 @@ Mega2R contains the Mega2gdsfmt function for outputting data from a Mega2 databa
 <div class="Standard">
 <span class="environment"><span class="arrayrow">
 <span class="arraycell align-l">
+ − 1.5cm − 1.5cm
 </span>
 
 </span>
@@ -1411,7 +1413,7 @@ Mega2R contains the Mega2gdsfmt function for outputting data from a Mega2 databa
 
 </div>
 <div class="Standard">
-<span class="unknown">\end</span>
+<span class="unknown">\end</span>adjustwidth*
 </div>
 <h2 class="Subsection">
 <a class="toc" name="toc-Subsection-1.5">1.5</a> Supported formats
@@ -1455,6 +1457,7 @@ Mega2 supports the following output file formats (For more detail, see Sections 
 <div class="Standard">
 <span class="environment"><span class="arrayrow">
 <span class="arraycell align-l">
+2
 </span>
 
 </span>
@@ -1593,7 +1596,7 @@ MQLS-XM/KinInbcoef
 
 </ol>
 <div class="Standard">
-<span class="unknown">\end</span>
+<span class="unknown">\end</span>multicols
 </div>
 <h3 class="Subsubsection">
 <a class="toc" name="toc-Subsubsection-1.5.3">1.5.3</a> Mega2R output formats <a class="Label" name="subsec:Output-formats-1"> </a>
@@ -5171,11 +5174,11 @@ The marker information is stored in the first five columns. The first column is 
 Some examples follow; the ellipses start the genotype probabilities part of the line:
 </div>
 <pre class="LyX-Code">
---- rs188162445:1499924:T:C 1499924 T C        ...
---- 20:1499962:T:C 1499962 T C                 ...
---- 20:1499962 1499962 T G                     ...
+— rs188162445:1499924:T:C 1499924 T C        ...
+— 20:1499962:T:C 1499962 T C                 ...
+— 20:1499962 1499962 T G                     ...
 20  rs7261002 1002656 G A                      ...
---- rs35306660:1020991:GTAAA:G 1020991 GTAAA G ...
+— rs35306660:1020991:GTAAA:G 1020991 GTAAA G ...
 </pre>
 <div class="Standard">
 Note: If there are duplicate entries as determined by markers having the same chromosome and the same position, then Mega2 ignores all but the first marker.
@@ -5419,7 +5422,7 @@ Affection and unknown allele values are always interpreted as strings:
 <ul>
 <li class="nested">
 <pre class="LyX-Code">
-----Unknown allele 0----
+—-Unknown allele 0—-
 </pre>
 
 </li>
@@ -8065,7 +8068,7 @@ This file contains a list of input and output pedigree and person identifiers. I
  Here is an example MEGA2.KEYS file. 
 </div>
 <pre class="LyX-Code">
----------------------
+———————
 Fri Oct 11 13:15:05 2002
 Input file names
 locus file:    datain.ex
@@ -8073,7 +8076,7 @@ pedigree file: pedin.ex1
 map file:      map.ex
 omit file:     omit.ex
 Untyped pedigree option: Include all pedigrees whether typed or not
----------------------
+———————
  INPUT                                                OUTPUT
  Pedigree    Person      Ped:       Per:    Loop id   Pedigree    Person
          1          1        1          1                  1          1
@@ -8113,7 +8116,7 @@ This file is created if the user selects random-genotyping error generation in t
 This file contains a list of recoded marker loci with the original allele names, recoded identifiers, allele frequencies, the type of individuals counted for the purpose of estimating allele frequencies, and total number of alleles counted for each allele and each marker. Given below is an excerpt for a recode summary file. 
 </div>
 <pre class="LyX-Code">
-----------------------------------------------
+———————————————-
         Mega2 version 3.0 R5
 Run date:                  2006-1-20-13-53
 This file created on       Fri Jan 20 13:53:20 2006
@@ -8127,9 +8130,9 @@ Half-typed individuals’ genotypes included in output.
 Allele frequency computed from:
      Genotyped founders or a randomly chosen individual
      excluding half-typed individuals.
----------------------
+———————
 Recoded loci:
----------------------------------------------
+———————————————
 Frequencies and counts:
    1=Founders       2=1+Random       3=2+Unique     4=Everyone
 Marker 2: marker2 has 6 alleles; frequencies computed using 11 individuals:
@@ -10194,7 +10197,7 @@ If user selected to set up R-graphics for the non-parametric analysis option, th
 Given below is an example of this combined shell script for two traits on a single chromosome: 
 </div>
 <pre class="LyX-Code">
-#----------------------------------------------
+#———————————————-
 #   Mega2 version 4.2
 #   Run date:                2009-4-15-09-49
 #   This script created on   Wed Apr 15 09:49:08 2009
@@ -10203,7 +10206,7 @@ Given below is an example of this combined shell script for two traits on a sing
 #          Locus file:              names.01
 #            Map file:              map.01
 #    Untyped pedigree option  Include all pedigrees whether typed or not
-#----------------------------------------------
+#———————————————-
 echo SimWalk2 analysis for chromosome 1 ,trait 1 ...
 echo This may take a while.
 cd Trait-1
@@ -10698,7 +10701,7 @@ Selection Menu: Summary file options
 0 unaffected members with status 1.
  Segregation Mating Table Counts:
 Mo Fa              0           1           2 Seg Ratio Aff/(Unaff + Aff)
-------           —         —         —  -------- --------
+——           —         —         —  ——-- ——--
 0 x 0 -&gt;           0           0           0                 
 0 x 1 -&gt;           0           0           0                 
 0 x 2 -&gt;           0           0           4   100.000  100.000
@@ -10812,23 +10815,23 @@ HINT: If one has case-control data, one can use Mega2 to generate the appropriat
  
 </div>
 <pre class="LyX-Code">
----------------------
+———————
 Thu Jun  6 14:18:47 2002
 Input file names
 locus file:    datain.01
 pedigree file: pedin.01
 map file:      map.01
 Untyped pedigree option: Include all pedigrees whether typed or not
----------------------
+———————
  Genotyping success rate summary for chromosome 1
----------------------------------------------------
+—————————————————
 Per person genotyping rate :
 Number of markers: 4
 Maximum number of markers typed 4
 Minimum number of markers typed 0
----------------------------------------------------
+—————————————————
 Ped      Person   #Markers typed  Success Rate
----------------------------------------------------
+—————————————————
 3         1                   4         1.00
 3         2                   4         1.00
 3         3                   4         1.00
@@ -10843,22 +10846,22 @@ Per marker genotyping rate:
 Total number of individuals: 384
 Maximum number of individuals typed at a marker 364
 Minimum number of individuals typed at a marker 356
----------------------------------------------------
+—————————————————
 Marker      Alleles   #Individuals   #Percentage
                        Typed          Typed
----------------------------------------------------
+—————————————————
 d1s196            4            356          0.93
 d1s238            4            364          0.95
 d1s229            4            364          0.95
 d1s103            4            364          0.95
----------------------------------------------------
+—————————————————
 </pre>
 <div class="Standard">
 <i>Option 5) Quantitative phenotype summary .</i> <br/>
  This creates a summary of phenotype values for selected quantitative loci present in the pedigree file. The user can create separate file for each quantitative trait locus or a combined file for all loci. The output file is called <i>phenotyping_rate.##</i> . Here is an excerpt form a typical output file: 
 </div>
 <pre class="LyX-Code">
----------------------
+———————
 Mon Mar  8 15:04:59 2004
 Input file names
 locus file:    datain.06
@@ -10866,9 +10869,9 @@ pedigree file: pedin.06
 map file:      map.06
 omit file:     omit.06
 Untyped pedigree option: Include all pedigrees whether typed or not
----------------------
+———————
 Phenotype Summary for Q1
----------------------------------------
+—————————————
                         All                             Founders
 Pedigree        Members Phenotyped       %Phenotyped    Total   Phenotyped      %
 1               52              37              0.71    17      8               0.47
@@ -11144,7 +11147,7 @@ any of these results, please cite:
 Guo, S.-W., Thompson, E. T. (1992)
 Performing the Exact Test of Hardy-Weinberg Proportion
 for Multiple Alleles. Biometrics 48:361-372
----------------------
+———————
 Mon Feb 12 14:27:44 2001
 Input file names
 locus file:    datain.01
@@ -11152,7 +11155,7 @@ pedigree file: pedin.01
 map file:      map.01
 Counted individuals consist of:
     Genotyped founders or a randomly chosen genotyped person from each pedigree
----------------------
+———————
  
  
 Marker       Alleles   Expected      Observed       P-value    Std Error   #Genotypes
@@ -16932,7 +16935,7 @@ Weeks DE, Ott J, Lathrop GM (1990) SLINK: a general simulation program for linka
 
 <hr class="footer"/>
 <div class="footer" id="generated-by">
-Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.5 (2013-03-10)</a> on <span class="create-date">2018-12-13T16:29:52.033138</span>
+Document generated by <a href="http://elyxer.nongnu.org/">eLyXer 1.2.2 (2011-06-12)</a> on <span class="create-date">2019-01-04T12:41:38.751933</span>
 </div>
 </div>
 </body>

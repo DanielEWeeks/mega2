@@ -2,7 +2,7 @@
 
 #   Mega2: Manipulation Environment for Genetic Analysis.
 #  
-#   Copyright 2017-2018, University of Pittsburgh. All Rights Reserved.
+#   Copyright 2017-2019, University of Pittsburgh. All Rights Reserved.
 #  
 #   Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
 #   Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
