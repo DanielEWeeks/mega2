@@ -5392,12 +5392,239 @@ reference "sec:List-of-third-party"
  If you need these programs, you will have to load them onto Windows.
 \end_layout
 
-\begin_layout Labeling
-\labelwidthstring 00.00.0000
-\begin_inset VSpace defskip
+\begin_layout Subsection
+Windows Linux Subsystem installation
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Windows-Subsystem-Linux-installation"
+
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+NOTE: As of version 5.0.1, the Native Windows version is not supported because
+ the BCFtools library does not compile in this environment.
+ But, Windows 10 now supports a 
+\begin_inset Quotes eld
+\end_inset
+
+Windows Subsystem for Linux
+\begin_inset Quotes erd
+\end_inset
+
+(WSL)
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://docs.microsoft.com/en-us/windows/wsl/about
+\end_layout
+
+\end_inset
+
+.
+ You can get a good overview of the facility (and how to install it) in
+ 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://github.com/michaeltreat/Windows-Subsystem-For-Linux-Setup-Guide/blob/mast
+er/readmes/01_preface.md
+\end_layout
+
+\end_inset
+
+.
+ If you feel comfortable with this mechanism, we will explain how to make
+ Mega2 available as a program under Ubuntu Linux 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://www.ubuntu.com
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Installation of Windows for Linux
+\end_layout
+
+\begin_layout Standard
+Both of the first two URL's given above explain how to enable the WSL feature
+ and load a Linux.
+ I prefer the first technique.
+ Start a Windows PowerShell as Admin and type the command:
+\end_layout
+
+\begin_layout LyX-Code
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-L
+inux
+\end_layout
+
+\begin_layout Standard
+You will be eventually be asked to reboot to complete the 
+\begin_inset Quotes eld
+\end_inset
+
+operation
+\begin_inset Quotes erd
+\end_inset
+
+; answer y.
+\end_layout
+
+\begin_layout Standard
+Then you must go to the Windows Store and Get a Linux.
+ The illustration below uses Ubuntu.
+ Open the Windows Store and search for Ubuntu.
+ Click on the Ubuntu icon (without a release id) and then click on install.
+ Microsoft will ask for your ID and eventually bring up a new screen that
+ lets you click on 
+\begin_inset Quotes eld
+\end_inset
+
+get
+\begin_inset Quotes erd
+\end_inset
+
+ to get Ubuntu.
+ It will install rather quickly and then bring up a final screen that lets
+ you click on 
+\begin_inset Quotes eld
+\end_inset
+
+launch
+\begin_inset Quotes erd
+\end_inset
+
+.
+ You will see a typescript window that reads 
+\begin_inset Quotes eld
+\end_inset
+
+Installing, this may take a few minutes...
+\begin_inset Quotes erd
+\end_inset
+
+ and it certainly does take a while.
+\end_layout
+
+\begin_layout Standard
+The Ubuntu that was installed is probably a bit old, that can be fixed by
+ typing:
+\end_layout
+
+\begin_layout LyX-Code
+sudo apt-get update
+\end_layout
+
+\begin_layout LyX-Code
+sudo apt-get upgrade
+\end_layout
+
+\begin_layout Standard
+The Ubuntu that was installed is a minimal set of package that you are expected
+ to expand to your needs.
+ In particular, you will find that make and g++ are missing.
+ So type:
+\end_layout
+
+\begin_layout LyX-Code
+sudo apt-get install build-essentials
+\end_layout
+
+\begin_layout LyX-Code
+sudo apt-get install g++
+\end_layout
+
+\begin_layout Standard
+and for completeness let's get two more packages.
+\end_layout
+
+\begin_layout LyX-Code
+sudo apt-get install python
+\end_layout
+
+\begin_layout LyX-Code
+sudo apt-get install csh
+\end_layout
+
+\begin_layout Standard
+Now we are ready to clone a copy of Mega2; in the /home/<username> directory,
+ type:
+\end_layout
+
+\begin_layout LyX-Code
+cd
+\end_layout
+
+\begin_layout LyX-Code
+git clone https://bitbucket.org/dweeks/mega2
+\end_layout
+
+\begin_layout Standard
+The compilation is easy; type:
+\end_layout
+
+\begin_layout LyX-Code
+cd mega2
+\end_layout
+
+\begin_layout LyX-Code
+bash
+\end_layout
+
+\begin_layout LyX-Code
+SAVE=True ./install.sh mega2compile
+\end_layout
+
+\begin_layout Standard
+(The installation step will fail because you are do not have write permissions
+ for the install directory; So type
+\end_layout
+
+\begin_layout LyX-Code
+sudo ./install.sh all
+\end_layout
+
+\begin_layout Standard
+to complete the installation.
+ When it asks where to install, answer 
+\begin_inset Quotes eld
+\end_inset
+
+/usr/bin
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Now you can cd to the directory with your data and type:
+\end_layout
+
+\begin_layout LyX-Code
+mega2
+\end_layout
+
+\begin_layout Standard
+and answer the prompts to build a database.
+ Note: if you data are on the Windows File System at <path> on drive x:,
+\end_layout
+
+\begin_layout Standard
+you would refer to it via /mnt/x/<path> in Linux programs (like mega2).
 \end_layout
 
 \begin_layout Section
