@@ -540,19 +540,19 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
                 //pr_printf("echo\n");
                 //pr_printf("%s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoefx.out", file_names[7]/*prevalencefilename*/, additional_arguments);
                 sprintf(pgm3,"%s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoefx.out", file_names[7]/*prevalencefilename*/, additional_arguments);
-                sh->sh_run(cmd3,pgm3);
+
             }
             else {
                 //pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
                 //pr_printf("echo\n");
                 //pr_printf("%s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
                 sprintf(pgm3,"%s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
-                sh->sh_run(cmd3,pgm3);
 
             }
-            sh->pr_printf("echo \n");
+            sh_run(cmd3,pgm3);
+            pr_printf("echo \n");
             pr_printf("echo MQLS-XM Done.\n");
-            sh->pr_printf("echo \n");
+            pr_printf("echo \n");
             pr_printf("echo Renaming MQLS-XM results.\n");
             if(_numchr == 23) {
                 pr_printf("mv %s/XMtest.out %s/MQLS.X.out \n", *_opath,*_opath);
