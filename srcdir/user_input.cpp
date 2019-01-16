@@ -3967,3 +3967,82 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
     
     free(bppi);
 }
+
+void multinode_menus(){
+    int line_len = 40;
+    char selectstr[16];
+    int select1 = -1, select2 = -1, set = 1;
+    int nodememory = 4;
+    int memchoice = -1, argchoice = -1;
+    Str additional_program_args;
+    char selection[MAX_NAMELEN];
+    char *selectionp = selection;
+
+    if (InputMode == INTERACTIVE_INPUTMODE) {
+        while (select1 != 0) {
+            newline;
+            printf("        NODE CHOICE MENU\n");
+            draw_line();
+            printf("0) Done with this menu - please proceed\n");
+            int idx = 1;
+
+            printf("%c%d", idx == set ? '*' : ' ', idx);
+            printf(") %-*s\n", line_len, "Use Mega2 without node management");
+            idx++;
+
+            printf("%c%d", idx == set ? '*' : ' ', idx);
+            printf(") %-*s\n", line_len, "Use Sun Grid Engine (qsub)");
+            idx++;
+
+            printf("%c%d", idx == set ? '*' : ' ', idx);
+            printf(") %-*s\n", line_len, "Use Slurm (srun)");
+            idx++;
+
+            printf("Select from options 0-%d> ", idx - 1);
+
+            fcmap(stdin, "%s", selectstr);
+            newline;
+            sscanf(selectstr, "%d", &select1);
+            if (select1 && select1 < idx)
+                set = select1;
+        }
+        if(set != 1) {
+            while (select2 != 0) {
+                printf("        NODE OPTION MENU\n");
+                draw_line();
+                printf("0) Done with this menu - please proceed\n");
+                int idy = 1;
+
+                printf(" %d) Node Memory Limit:                               %dGB\n", idy, nodememory);
+                memchoice = idy++;
+
+                printf(" %d) Additional arguments:               %-s\n", idy,
+                       (additional_program_args.size() > 0 ? C(additional_program_args) :
+                        "<none specified>"));
+                argchoice = idy++;
+
+                printf("Select from options 0-%d> ", idy - 1);
+
+                fcmap(stdin, "%s", selectstr);
+                newline;
+                draw_line();
+                sscanf(selectstr, "%d", &select2);
+
+                if (select2 == memchoice) {
+                    printf("Enter node memory limit in gigabytes > ");
+                    fcmap(stdin, "%d", nodememory);
+                    newline;
+                    //BatchValueSet( );
+                } else if (select2 == argchoice) {
+                    printf("Enter additional arguments for ROADTRIP > ");
+                    IgnoreValue(fgets(selection, MAX_NAMELEN - 1, stdin));
+                    int nl = strlen(selection);
+                    if (selection[nl - 1] == '\n') selection[nl - 1] = 0;
+                    additional_program_args = selectionp;
+                    //BatchValueSet( );
+                }
+            }
+        }
+      }
+
+}

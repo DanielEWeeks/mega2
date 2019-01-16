@@ -148,6 +148,8 @@ namespace dataloop {
 
         void sh_sh(sh_util *sub_shell) {
             pr_nl();
+
+            //THIS IS THE FUNCTION THAT WILL NEED JOB MANAGER WRAPPING
             if (strcmp(sub_shell->dir_, ".")) {
                 pr_printf("echo pushd %s\n", sub_shell->dir_);
                 pr_printf("pushd %s\n", sub_shell->dir_);
