@@ -350,8 +350,7 @@ int             HasLocFileBeenRead;
 int             *UntypedPeds; /* vector of flags to indicate whether to leave out a pedigree */
 int             NumTypedPeds; /* just a count of positive flags */
 int             show_ped_stats; /* count typed markers by sex * marker * persons */
-int             *ChrLoci; /* Contains selected marker loci on selected
-			     chromosomes
+int             *ChrLoci; /* Contains selected marker loci on selected chromosomes.
 			     For LoopOverTrait=0, list may have trait_loci as well */
 int             NumChrLoci; /* Number of ChrLoci */
 int             dump_dbCompress;  /* compress genotypes if non zero save as dbCompress in DB */
@@ -656,16 +655,6 @@ int             main(int argc, char **argv, char **env)
 
     mega2_opts(argc, argv);
 
-//  ask IS READ BY DEFAULT
-/*
-    if (database_off)
-        database_read = database_dump = 0;
-    else if (database_dump || database_read) ;
-    else if (db_exists_db())
-        database_read = 1;
-    else
-        database_dump = 1;
- */
     init_analysis();
     // Initialize these just in case we are not getting the data from a batch file...
 
@@ -773,6 +762,7 @@ int             main(int argc, char **argv, char **env)
         mega2_version_check();
     }
 
+    extern linkage_ped_top SQLop;
     main_chromocnt = 1; numchr = 1;
 
     for (ii=0; ii<NUM_OUTFILES; ii++) {
@@ -784,6 +774,7 @@ int             main(int argc, char **argv, char **env)
 
     plink_info = CALLOC((size_t)1, plink_info_type);
 /*
+
  Display the input menu, and return when the user enters option '0'... 
  
  ==========================================================
@@ -806,7 +797,7 @@ int             main(int argc, char **argv, char **env)
  Select from options 0-13 >
  */
 
-    if (database_dump || ! database_read) {
+    if (database_dump) {
         mega2_input_file_type[BED][0] = 0;  // just to be safe
         Tod tod_menu1("menu1");
         char *dbf = DBfile;
@@ -815,6 +806,7 @@ int             main(int argc, char **argv, char **env)
               &freqfl_name, &penfl_name, &bedfl_name, &phefl_name,
               &UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath, &dbf,
               &FreqMismatchThreshold, &reffl_name, &StrandFlipOpt);
+        _strand_flips = StrandFlipOpt;
         tod_menu1();
 
         Input_Files& inf = Input->input_files;  // Input is set in menu1 as soon as possible.
@@ -872,44 +864,6 @@ int             main(int argc, char **argv, char **env)
 
         check_size_dos();
         log_line(mssgf);
-    } else {
-        Tod tod_menu1a("menu1a");
-        char *dbf = DBfile;
-        menu1a(&UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath, &dbf,
-               &FreqMismatchThreshold, &StrandFlipOpt);
-        tod_menu1a();
-    }
-
-    _strand_flips = StrandFlipOpt;
-
-//    log_line(mssgf);
-    /*
-     Display the Analysis Menu, and return when the user enters a valid analysis number...
-     
-     ===========================================================
-     ANALYSIS MENU 
-     ==========================================================
-      1 SimWalk2 format                 18 Linkage format                 
-      2 Vintage Mendel format           19 Test loci for HWE              
-      3 ASPEX format                    20 Allegro format                 
-      4 GeneHunter-Plus format          21 MLBQTL format                  
-      5 GeneHunter format               22 SAGE format                    
-      6 APM format [DISBALED]           23 Pre-makeped format             
-      7 APM-MULT format [DISABLED]      24 Merlin/SimWalk2-NPL format     
-      8 Create nuclear families         25 PREST format                   
-      9 SLINK format                    26 PAP format                     
-     10 SPLINK format                   27 Merlin format                  
-     11 Homogeneity analyses            28 Loki format                    
-     12 SIMULATE format                 29 Mendel format                  
-     13 Create summary files            30 SUP format                     
-     14 Old SAGE format                 31 PLINK format                   
-     15 TDTMax analyses [DISABLED]      32 CRANEFOOT format               
-     16 SOLAR format                    33 Mega2 format         
-     17 Vitesse format                  34 IQLS/Idcoefs format            
-     
-     Select an option between 1-34 > 
-     */
-    if (database_dump && ! database_read) {
 
         extern Missing_Value missing_value;
         extern Missing_Value missing_values[];
@@ -933,8 +887,352 @@ int             main(int argc, char **argv, char **env)
             }
         }
 
-    } else {
+#ifndef HIDESTATUS
+        int guess;
+#endif
+        int af;
+        if (Input_Format == in_format_traditional) {
+            af = check_annotated_file_format(mega2_input_files);
+            if (af == 0) {
+                if (locusfl_name && *locusfl_name != 0) {
+                    FILE *tfp = fopen(locusfl_name, "r");
+                    if (check_locus_file_format(tfp) == NAMES)
+                        Input_Format = in_format_extended_linkage;
+                    else
+                        Input_Format = in_format_linkage;
+                    fclose(tfp);
+                } else {
+                    errorvf("The input format is linkage and the locus file is missing.\n");
+                    EXIT(EARLY_TERMINATION);
+                }
+            } else if ((af == 3) || (af == 4))
+                Input_Format = in_format_mega2;
+            msgvf("\nInput Format Deduced as: %s\n", INPUT_FORMAT_STR[Input_Format]);
+#ifndef HIDESTATUS
+            guess = 1;
+#endif
 
+        } else {
+            msgvf("\nInput Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
+#ifndef HIDESTATUS
+            guess = 0;
+#endif
+        }
+//
+        Value_Missing_get(&analysis);  // needed before file read
+
+        int count_halftyped = 0;
+        (void) get_count_option(1, &count_halftyped,
+                                "Select individuals to compute allele frequencies\n       for recoded marker loci:");
+
+        extern void hwe_menu(void);
+        hwe_menu();
+
+        (void) break_no_founders_menu();
+
+        Tod tod_files("read all files");
+        if (Input_Format == in_format_mega2) {
+#ifndef HIDESTATUS
+            if (mega2_input_files[3] == NULL) {
+                msgvf("Pedigree, names and map file %s Mega2 format.\n",
+                      guess ? "appear to be in" : "specified as");
+            } else {
+                msgvf("Pedigree, names, map and omit file %s Mega2 format.\n",
+                      guess ? "appear to be in" : "specified as");
+            }
+            mssgf("Input files will be read in as Mega2 format files.");
+#endif
+            add_allele("NA", zero);
+            REC_UNKNOWN = zero;
+
+            LPedTreeTop = read_annotated_files(pedfl_name,  locusfl_name,  mapfl_name,
+                                               freqfl_name, penfl_name,    omitfl_name,
+                                               bedfl_name,  phefl_name,
+                                               UntypedPedOpt, analysis, plink_info);
+        } else if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED) {
+            it = PLINK_Args;
+            if (Mega2BatchItems[it].items_read == 0) {
+                errorvf("PLINK arguments not specified.\n");
+                EXIT(BATCH_FILE_ITEM_ERROR);
+            }
+
+#ifndef HIDESTATUS
+            msgvf("Pedigree and map files %s PLINK format.\n",
+                  guess ? "appear to be in" : "specified as");
+            mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
+            mssgf("Input files will be read in as PLINK or Mega2 format files as appropriate.");
+#endif
+            add_allele("NA", zero);
+            REC_UNKNOWN = zero;
+
+            LPedTreeTop = read_annotated_files(pedfl_name,  pmapfl_name,
+                                               ((mapfl_name && *mapfl_name != 0) ? mapfl_name : pmapfl_name),
+                                               freqfl_name, penfl_name,    omitfl_name,
+                                               bedfl_name,  phefl_name,
+                                               UntypedPedOpt, analysis, plink_info);
+        } else if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
+                   Input_Format == in_format_VCF) {
+
+            it = PLINK_Args;
+            if (Mega2BatchItems[it].items_read)
+                PLINK_args(Mega2BatchItems[it].value.name, 1);
+
+            it = VCF_Args;
+            if (Mega2BatchItems[it].items_read == 0) {
+                errorvf("VCF arguments not specified.\n");
+                EXIT(BATCH_FILE_ITEM_ERROR);
+            }
+            char *cp = CALLOC(FILENAME_LENGTH, char);
+            strcpy(cp, Mega2BatchItems[it].value.name);
+            if (Input_Format == in_format_binary_VCF) {
+              strcat(cp, " --bcf ");
+            } else if (Input_Format == in_format_compressed_VCF) {
+              strcat(cp, " --gzvcf ");
+            } else if (Input_Format == in_format_VCF) {
+              strcat(cp, " --vcf ");
+            }
+            strcat(cp, bedfl_name);
+
+            if (VCFtools_process_cmd_line_if_necessary_inclusive(cp) != -1) {
+              errorvf("VCF arguments can not be processed.\n");
+              EXIT(BATCH_FILE_ITEM_ERROR);
+            }
+            free(cp);
+
+            mssgf("\nProcessing VCF file meta information and header.");
+            VCFtools_process_file_meta_information_and_header();
+
+#ifndef HIDESTATUS
+            mssgf("Pedigree (.fam) file appears to be in PLINK format.");
+            mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
+#endif
+            add_allele("NA", zero);
+            REC_UNKNOWN = zero;
+
+            LPedTreeTop = read_annotated_files(pedfl_name,  pmapfl_name, mapfl_name,
+                                               freqfl_name, penfl_name, omitfl_name,
+                                               bedfl_name,  phefl_name,
+                                               UntypedPedOpt, analysis, plink_info);
+        } else if (Input_Format == in_format_linkage ||
+                   Input_Format == in_format_extended_linkage) {
+
+#ifndef HIDESTATUS
+            if (Input_Format == in_format_linkage) {
+                msgvf("Pedigree, names and map file %s LINKAGE format.\n",
+                      guess ? "appear to be in" : "specified as");
+                mssgf("Input files will be read in as LINKAGE format files.");
+            } else if (Input_Format == in_format_extended_linkage) {
+                msgvf("Pedigree and map file %s LINKAGE format.\n",
+                      guess ? "appear to be in" : "specified as");
+                mssgf("Names (aka locus) file appears to be in Mega2 format w/o header.");
+                mssgf("Input files will be read appropriately.");
+            }
+
+            if (penfl_name != NULL) {
+                warnvf("Penetrance file %s will not be read in (only available in Mega2 format.\n",
+                       penfl_name);
+            }
+            if (freqfl_name != NULL) {
+                warnvf("Frequency file %s will not be read in (only available in Mega2 format.\n",
+                       freqfl_name);
+            }
+#endif
+            REC_UNKNOWN = zero;
+            LPedTreeTop = read_linkage2(pedfl_name, locusfl_name,
+                                        omitfl_name, mapfl_name,
+                                        UntypedPedOpt, analysis);
+        } else if (Input_Format < 8 ||
+                   Input->GetOps()->use_getops() ||
+                   Input_Format == in_format_traditional) { 
+
+            Input->GetOps()->do_batch2local();
+
+            add_allele("NA", zero);
+            REC_UNKNOWN = zero;
+
+            LPedTreeTop = read_annotated_files(pedfl_name,  pmapfl_name, mapfl_name,
+                                               freqfl_name, penfl_name, omitfl_name,
+                                               bedfl_name,  phefl_name,
+                                               UntypedPedOpt, analysis, plink_info);
+        } else {
+            errorf("Input files appear to be in mixed Mega2 format and LINKAGE format.");
+            errorf("Please use only Mega2 files or only LINKAGE files.");
+            errorf("Unsuccessful in reading input files - aborting mega2!\n");
+            EXIT(INPUT_DATA_ERROR);
+        }
+
+        if (LPedTreeTop == NULL) {
+            errorvf("Unsuccessful in reading input files - aborting mega2!\n");
+            EXIT(INPUT_DATA_ERROR);
+        }
+        tod_files();
+
+        // ?
+        if (LPedTreeTop->pedfile_type == POSTMAKEPED_PFT) {
+            infl_type = LINKAGE;
+        } else {
+            infl_type = PREMAKEPED;
+        }
+
+        Mega2Status = INPUT_FILES_READ;
+        LPedTreeTop->analysis = analysis;
+
+        Input->GetOps()->do_gc();  
+
+//orig  Tod tod_makeped("makeped");
+//orig  makeped(LPedTreeTop, analysis);  // if --db, might connect loops based on analysis
+//orig  tod_makeped();
+
+#ifdef DELAY_ZERO
+        extern void pedtree_dozero(linkage_ped_top *LPedTreeTop, analysis_type analysis);
+        pedtree_dozero(LPedTreeTop, analysis);
+#endif
+
+        LPedTreeTop->IndivCnt = 0;
+        for (int ped = 0; ped < LPedTreeTop->PedCnt; ped++) {
+            LPedTreeTop->IndivCnt += LPedTreeTop->Ped[ped].EntryCnt;
+        }
+        LPedTreeTop->LocusTop->SexLinked = x_linked_check(main_chromocnt,
+                                                          global_chromo_entries, analysis);
+
+        // Since the input mapfile may specify more than one genetic distance,
+        // or base pair_position. Determine the appropriate one to use.
+        // These get_* routines are found in the file user_input.c.
+        //
+        // fills genetic_distance_index and genetic_distance_sex_type_map; as a side effect...
+        // see user_input.c:analysis_type RequiresGeneticlMap[]
+        //
+        // If these variables are -1 then they have not been specified by the batch file...
+
+        distance_init_dump(LPedTreeTop, &analysis);
+
+        /* Now set the default names of the output files */
+        if (main_chromocnt >= 1) {
+            // When the user selects more than one chromosome, this is the vector that holds their numbers.
+            // Here we are choosing the first entry...
+            numchr = global_chromo_entries[0];
+        } else {
+            numchr = 0;
+        }
+
+        /* Convert to PedTree for checking purposes,
+           don't need to assign affecteds */
+        recode_check(LPedTreeTop, analysis);
+
+        Tod tod_stat1("write_ped_stat [again]");
+        /* Output ped stats one more time */
+        if (analysis != QUANT_SUMMARY) {
+            log_line(mssgf);
+            mssgf("Pedigree statistics after selecting chromosomes and marker loci:");
+            write_ped_stats(LPedTreeTop);
+        }
+        /* Insert error simulation steps here */
+        if (ErrorSimOpt) {
+            simulate_errors(LPedTreeTop, numchr, Outfile_Names);
+        }
+        tod_stat1();
+
+        Mega2Status = INSIDE_ANALYSIS;
+
+        ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
+        write_key_file(Mega2KeysRun, LPedTreeTop);
+        set_output_paths(analysis, LPedTreeTop);
+
+        Tod dbexport("db_export");
+        extern void dbmega2_export(linkage_ped_top *Top);
+        if (dump_dbCompress) {
+            int redd = BatchValueRead("DBcompression");
+            BatchValueSet(dbCompress, "DBcompression");
+            if (! redd)
+                batchf("DBcompression");
+        }
+        db_open_db();
+        if (InputMode == INTERACTIVE_INPUTMODE && BatchValueRead("DBfile_name"))
+            batchf("DBfile_name");
+
+        db_init_all();
+        dbmega2_export(LPedTreeTop);
+        db_fini_all();
+        dbexport();
+
+        if (database_read) {
+            int i, j;
+            char *name = argv[0];
+            char **argvn = CALLOC((size_t) argc+6, char *);
+            argvn[0] = argv[0];
+            argvn[1] = (char *)"--dbread";
+            argvn[2] = (char *)"--dbfile";
+            argvn[3] = (char *)DBfile;
+            j = 4;
+
+            if (InputMode == BATCH_FILE_INPUTMODE)
+                argvn[j++] = (char *)"--batch_file";
+            else if (InputMode == INTERACTIVE_INPUTMODE)
+                argvn[j++] = (char *)"--interactive";
+
+            argvn[j++] = (char *)"--run_date";
+            argvn[j++] = RunDate;
+
+            for (i = 1; i < argc; i++) {
+                if (strcasecmp(argv[i], "--dbdump") && strcasecmp(argv[i], "--dbread"))
+                    argvn[j++] = argv[i];
+            }
+
+            if (InputMode == INTERACTIVE_INPUTMODE)
+                argvn[j++] = Mega2Batch;
+
+            argvn[j++] = 0;
+            int eans = 0;
+            fflush(stdin);
+            fflush(stdout);
+            fflush(stderr);
+            close_logs();
+#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
+            eans = _spawnvpe(P_WAIT, name, argvn, env);
+            exit(eans);
+#else
+            eans = execvp(name, argvn);
+            printf("exec failed: eans = %d, errno %d\n", eans, errno);
+            fflush(stdout);
+#endif
+        }
+    }
+
+    if (database_read) {
+        Tod tod_menu1a("menu1a");
+        char *dbf = DBfile;
+        menu1a(&UntypedPedOpt, &ErrorSimOpt, &Mega2OutputPath, &dbf,
+               &FreqMismatchThreshold, &StrandFlipOpt);
+        _strand_flips = StrandFlipOpt;
+        tod_menu1a();
+
+    //    log_line(mssgf);
+        /*
+         Display the Analysis Menu, and return when the user enters a valid analysis number...
+
+         ===========================================================
+         ANALYSIS MENU 
+         ==========================================================
+          1 SimWalk2 format                 18 Linkage format                 
+          2 Vintage Mendel format           19 Test loci for HWE              
+          3 ASPEX format                    20 Allegro format                 
+          4 GeneHunter-Plus format          21 MLBQTL format                  
+          5 GeneHunter format               22 SAGE format                    
+          6 APM format [DISBALED]           23 Pre-makeped format             
+          7 APM-MULT format [DISABLED]      24 Merlin/SimWalk2-NPL format     
+          8 Create nuclear families         25 PREST format                   
+          9 SLINK format                    26 PAP format                     
+         10 SPLINK format                   27 Merlin format                  
+         11 Homogeneity analyses            28 Loki format                    
+         12 SIMULATE format                 29 Mendel format                  
+         13 Create summary files            30 SUP format                     
+         14 Old SAGE format                 31 PLINK format                   
+         15 TDTMax analyses [DISABLED]      32 CRANEFOOT format               
+         16 SOLAR format                    33 Mega2 format         
+         17 Vitesse format                  34 IQLS/Idcoefs format            
+
+         Select an option between 1-34 > 
+         */
         analysis_menu1(&analysis);
         Mega2Status = ANALYSIS_NAME_READ;
         AnalysisOpt = analysis;
@@ -957,57 +1255,11 @@ int             main(int argc, char **argv, char **env)
             }
         }
 #endif
-    }
 
 #ifndef HIDESTATUS
     int guess;
 #endif
-    if (database_dump || ! database_read) {
-        int af;
-        if (Input_Format == in_format_traditional) {
-            af = check_annotated_file_format(mega2_input_files);
-            if (af == 0) {
-                if (locusfl_name && *locusfl_name != 0) {
-                    FILE *tfp = fopen(locusfl_name, "r");
-                    if (check_locus_file_format(tfp) == NAMES)
-                        Input_Format = in_format_extended_linkage;
-                    else
-                        Input_Format = in_format_linkage;
-                    fclose(tfp);
-                } else {
-                    errorvf("The input format is linkage and the locus file is missing.\n");
-                    EXIT(EARLY_TERMINATION);
-                }
-            } else if ((af == 3) || (af == 4))
-                Input_Format = in_format_mega2;
-            msgvf("\nInput Format Deduced as: %s\n", INPUT_FORMAT_STR[Input_Format]);
-    #ifndef HIDESTATUS
-            guess = 1;
-    #endif
 
-        } else {
-            msgvf("\nInput Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
-    #ifndef HIDESTATUS
-            guess = 0;
-    #endif
-        }
-//
-        Value_Missing_get(&analysis);  // needed before file read
-
-        int count_halftyped = 0;
-        (void) get_count_option(1, &count_halftyped,
-                                "Select individuals to compute allele frequencies\n       for recoded marker loci:");
-
-        extern void hwe_menu(void);
-        hwe_menu();
-
-        (void) break_no_founders_menu();
-
-    }
-
-    extern linkage_ped_top SQLop;
-    Tod tod_files("read all files");
-    if (!database_dump && database_read) {
         extern void dbmega2_import(linkage_ped_top *Top);
         extern void check_both_pos_index();
 
@@ -1015,14 +1267,12 @@ int             main(int argc, char **argv, char **env)
         REC_UNKNOWN = zero;
 
         Tod dbimport("db_import");
-
         db_open_db();
         if (InputMode == INTERACTIVE_INPUTMODE && BatchValueRead("DBfile_name"))
             batchf("DBfile_name");
         db_init_all();
         dbmega2_import(&SQLop);
         db_fini_all();
-
         dbimport();
 
         check_both_pos_index();
@@ -1046,246 +1296,77 @@ int             main(int argc, char **argv, char **env)
 
 //      Mega2OutputPath = strdup((char *)".");
 
-    } else if (Input_Format == in_format_mega2) {
-#ifndef HIDESTATUS
-        if (mega2_input_files[3] == NULL) {
-            msgvf("Pedigree, names and map file %s Mega2 format.\n",
-                  guess ? "appear to be in" : "specified as");
+        // ?
+        if (LPedTreeTop->pedfile_type == POSTMAKEPED_PFT) {
+            infl_type = LINKAGE;
         } else {
-            msgvf("Pedigree, names, map and omit file %s Mega2 format.\n",
-                  guess ? "appear to be in" : "specified as");
-        }
-        mssgf("Input files will be read in as Mega2 format files.");
-#endif
-        add_allele("NA", zero);
-        REC_UNKNOWN = zero;
-
-        LPedTreeTop = read_annotated_files(pedfl_name,  locusfl_name,  mapfl_name,
-                                           freqfl_name, penfl_name,    omitfl_name,
-                                           bedfl_name,  phefl_name,
-                                           UntypedPedOpt, analysis, plink_info);
-    } else if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED) {
-        it = PLINK_Args;
-        if (Mega2BatchItems[it].items_read == 0) {
-            errorvf("PLINK arguments not specified.\n");
-            EXIT(BATCH_FILE_ITEM_ERROR);
+            infl_type = PREMAKEPED;
         }
 
-#ifndef HIDESTATUS
-        msgvf("Pedigree and map files %s PLINK format.\n",
-              guess ? "appear to be in" : "specified as");
-        mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
-        mssgf("Input files will be read in as PLINK or Mega2 format files as appropriate.");
-#endif
-        add_allele("NA", zero);
-        REC_UNKNOWN = zero;
-
-        LPedTreeTop = read_annotated_files(pedfl_name,  pmapfl_name,
-                                           ((mapfl_name && *mapfl_name != 0) ? mapfl_name : pmapfl_name),
-                                           freqfl_name, penfl_name,    omitfl_name,
-                                           bedfl_name,  phefl_name,
-                                           UntypedPedOpt, analysis, plink_info);
-    } else if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
-               Input_Format == in_format_VCF) {
-
-        it = PLINK_Args;
-        if (Mega2BatchItems[it].items_read)
-            PLINK_args(Mega2BatchItems[it].value.name, 1);
-
-        it = VCF_Args;
-        if (Mega2BatchItems[it].items_read == 0) {
-            errorvf("VCF arguments not specified.\n");
-            EXIT(BATCH_FILE_ITEM_ERROR);
-        }
-	char *cp = CALLOC(FILENAME_LENGTH, char);
-	strcpy(cp, Mega2BatchItems[it].value.name);
-	if (Input_Format == in_format_binary_VCF) {
-	  strcat(cp, " --bcf ");
-	} else if (Input_Format == in_format_compressed_VCF) {
-	  strcat(cp, " --gzvcf ");
-	} else if (Input_Format == in_format_VCF) {
-	  strcat(cp, " --vcf ");
-	}
-	strcat(cp, bedfl_name);
-
-	if (VCFtools_process_cmd_line_if_necessary_inclusive(cp) != -1) {
-	  errorvf("VCF arguments can not be processed.\n");
-	  EXIT(BATCH_FILE_ITEM_ERROR);
-	}
-        free(cp);
-        
-        mssgf("\nProcessing VCF file meta information and header.");
-        VCFtools_process_file_meta_information_and_header();
-        
-        
-#ifndef HIDESTATUS
-        mssgf("Pedigree (.fam) file appears to be in PLINK format.");
-        mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
-#endif
-        add_allele("NA", zero);
-        REC_UNKNOWN = zero;
-        
-        LPedTreeTop = read_annotated_files(pedfl_name,  pmapfl_name, mapfl_name,
-                                           freqfl_name, penfl_name, omitfl_name,
-                                           bedfl_name,  phefl_name,
-                                           UntypedPedOpt, analysis, plink_info);
-    } else if (Input_Format == in_format_linkage || Input_Format == in_format_extended_linkage) {
-
-#ifndef HIDESTATUS
-        if (Input_Format == in_format_linkage) {
-            msgvf("Pedigree, names and map file %s LINKAGE format.\n",
-                  guess ? "appear to be in" : "specified as");
-            mssgf("Input files will be read in as LINKAGE format files.");
-        } else if (Input_Format == in_format_extended_linkage) {
-            msgvf("Pedigree and map file %s LINKAGE format.\n",
-                  guess ? "appear to be in" : "specified as");
-            mssgf("Names (aka locus) file appears to be in Mega2 format w/o header.");
-            mssgf("Input files will be read appropriately.");
-        }
-
-        if (penfl_name != NULL) {
-            warnvf("Penetrance file %s will not be read in (only available in Mega2 format.\n", penfl_name);
-        }
-        if (freqfl_name != NULL) {
-            warnvf("Frequency file %s will not be read in (only available in Mega2 format.\n", freqfl_name);
-        }
-#endif
-        REC_UNKNOWN = zero;
-        LPedTreeTop = read_linkage2(pedfl_name, locusfl_name,
-                                    omitfl_name, mapfl_name,
-                                    UntypedPedOpt, analysis);
-    } else if (Input_Format < 8 ||
-               Input->GetOps()->use_getops() ||
-               Input_Format == in_format_traditional) { 
-
-        Input->GetOps()->do_batch2local();
-
-        add_allele("NA", zero);
-        REC_UNKNOWN = zero;
-        
-        LPedTreeTop = read_annotated_files(pedfl_name,  pmapfl_name, mapfl_name,
-                                           freqfl_name, penfl_name, omitfl_name,
-                                           bedfl_name,  phefl_name,
-                                           UntypedPedOpt, analysis, plink_info);
-    } else {
-        errorf("Input files appear to be in mixed Mega2 format and LINKAGE format.");
-        errorf("Please use only Mega2 files or only LINKAGE files.");
-        errorf("Unsuccessful in reading input files - aborting mega2!\n");
-        EXIT(INPUT_DATA_ERROR);
-    }
-    if (LPedTreeTop == NULL) {
-        errorvf("Unsuccessful in reading input files - aborting mega2!\n");
-        EXIT(INPUT_DATA_ERROR);
-    }
-
-    tod_files();
-
-    if (LPedTreeTop->pedfile_type == POSTMAKEPED_PFT) {
-        infl_type = LINKAGE;
-    } else {
-        infl_type = PREMAKEPED;
-    }
-
-    Mega2Status = INPUT_FILES_READ;
-    LPedTreeTop->analysis = analysis;
-
-    if (database_dump || ! database_read) {
-        Input->GetOps()->do_gc();
-    } else {
+        Mega2Status = INPUT_FILES_READ;
+        LPedTreeTop->analysis = analysis;
         LPedTreeTop->pedfile_type = POSTMAKEPED_PFT;
         if (UntypedPeds == NULL) {
             UntypedPeds = CALLOC((size_t) LPedTreeTop->PedCnt, int);
         }
-    }
 
-    if (database_dump || ! database_read) {
-//orig  Tod tod_makeped("makeped");
-//orig  makeped(LPedTreeTop, analysis);  // if --db, might connect loops based on analysis
-//orig  tod_makeped();
-
-#ifdef DELAY_ZERO
-        extern void pedtree_dozero(linkage_ped_top *LPedTreeTop, analysis_type analysis);
-        pedtree_dozero(LPedTreeTop, analysis);
-#endif
-    }
-
-    if (database_dump) {
-    } else {
         if ( (basefile_type == POSTMAKEPED_PFT && analysis->maintain_broken_loops()) ||
              (basefile_type != POSTMAKEPED_PFT && analysis->break_loops()) ) 
             LPedTreeTop->Ped = LPedTreeTop->PedBroken;
         else
             LPedTreeTop->Ped = LPedTreeTop->PedRaw;
-    }
 
-    LPedTreeTop->IndivCnt = 0;
-    for (int ped = 0; ped < LPedTreeTop->PedCnt; ped++) {
-        LPedTreeTop->IndivCnt += LPedTreeTop->Ped[ped].EntryCnt;
-    }
-
-
-    if (database_dump || ! database_read) {
-        // Since the input mapfile may specify more than one genetic distance,
-        // or base pair_position. Determine the appropriate one to use.
-        // These get_* routines are found in the file user_input.c.
-        //
-        // fills genetic_distance_index and genetic_distance_sex_type_map; as a side effect...
-        // see user_input.c:analysis_type RequiresGeneticlMap[]
-        //
-        // If these variables are -1 then they have not been specified by the batch file...
-
-        distance_init_dump(LPedTreeTop, &analysis);
-    }else if(database_read && analysis == MQLS) {
-        if(!ITEM_READ(Value_Genetic_Distance_Index)) {
-            genetic_distance_index = -1;
-            genetic_distance_sex_type_map = -1;
-        }
-        else {
-            BatchValueGet(genetic_distance_index,"Value_Genetic_Distance_Index");
-            BatchValueGet(genetic_distance_sex_type_map,"Value_Genetic_Distance_SexTypeMap");
-        }
-        distance_init_dump(LPedTreeTop, &analysis);
-        //get_genetic_distance_index(LPedTreeTop->EXLTop);
-        if(!ITEM_READ(Value_Genetic_Distance_Index)) {
-            batchf(Value_Genetic_Distance_Index);
-            batchf(Value_Genetic_Distance_SexTypeMap);
+        LPedTreeTop->IndivCnt = 0;
+        for (int ped = 0; ped < LPedTreeTop->PedCnt; ped++) {
+            LPedTreeTop->IndivCnt += LPedTreeTop->Ped[ped].EntryCnt;
         }
 
-        /* Reorder the loci */
-        Tod tod_reorder("ReOrderLoci");
-        LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
-        tod_reorder();
-    }
-    else {
-        /* Reorder the loci */
-        Tod tod_reorder("ReOrderLoci");
-        LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
-        tod_reorder();
-    }
 
-    LPedTreeTop->LocusTop->SexLinked = x_linked_check(main_chromocnt, global_chromo_entries, analysis);
+        if(database_read && analysis == MQLS) {
+            if(!ITEM_READ(Value_Genetic_Distance_Index)) {
+                genetic_distance_index = -1;
+                genetic_distance_sex_type_map = -1;
+            } else {
+                BatchValueGet(genetic_distance_index,"Value_Genetic_Distance_Index");
+                BatchValueGet(genetic_distance_sex_type_map,"Value_Genetic_Distance_SexTypeMap");
+            }
+            distance_init_dump(LPedTreeTop, &analysis);
+            //get_genetic_distance_index(LPedTreeTop->EXLTop);
+            if(!ITEM_READ(Value_Genetic_Distance_Index)) {
+                batchf(Value_Genetic_Distance_Index);
+                batchf(Value_Genetic_Distance_SexTypeMap);
+            }
 
-    /* Now set the default names of the output files */
-    if (main_chromocnt >= 1) {
-        // When the user selects more than one chromosome, this is the vector that holds their numbers.
-        // Here we are choosing the first entry...
-        numchr = global_chromo_entries[0];
-    } else {
-        numchr = 0;
-    }
+            /* Re   order the loci */
+            Tod tod_reorder("ReOrderLoci");
+            LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
+            tod_reorder();
+        } else {
+            /* Reorder the loci */
+            Tod tod_reorder("ReOrderLoci");
+            LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
+            tod_reorder();
+        }
 
-    int recount_typed = LPedTreeTop->LocusTop->MarkerCnt != num_reordered;
-//  msgvf("LPedTreeTop->LocusTop->MarkerCnt %d, num_reordered %d\n",
-//        LPedTreeTop->LocusTop->MarkerCnt, num_reordered);
+        // ?
+        LPedTreeTop->LocusTop->SexLinked = x_linked_check(main_chromocnt, global_chromo_entries, analysis);
 
-    /* Convert to PedTree for checking purposes,
-       don't need to assign affecteds */
+        /* Now set the default names of the output files */
+        if (main_chromocnt >= 1) {
+            // When the user selects more than one chromosome, this is the vector that holds their numbers.
+            // Here we are choosing the first entry...
+            numchr = global_chromo_entries[0];
+        } else {
+            numchr = 0;
+        }
 
-    if (database_dump || ! database_read) {
+        int recount_typed = LPedTreeTop->LocusTop->MarkerCnt != num_reordered;
+//      msgvf("LPedTreeTop->LocusTop->MarkerCnt %d, num_reordered %d\n",
+//            LPedTreeTop->LocusTop->MarkerCnt, num_reordered);
 
-        recode_check(LPedTreeTop, analysis);
+        /* Convert to PedTree for checking purposes,
+           don't need to assign affecteds */
 
-    } else {
         extern int set_uniq_check(linkage_ped_top *LPedTop, analysis_type analysis);
         if (set_uniq_check(LPedTreeTop, analysis)) {
             extern void create_unique_ids(linkage_ped_top *Top, analysis_type analysis);
@@ -1304,153 +1385,84 @@ int             main(int argc, char **argv, char **env)
 
         extern void strand_flip_reference_alleles(linkage_ped_top *Top);
         strand_flip_reference_alleles(LPedTreeTop);
-    }
 
-//  if ( true || database_dump || ! database_read) 
-//  if (show_ped_stats || database_read)
-    if ( database_dump || 
-         (database_read && analysis->IsTypedNgeno() &&
-          ( (LPedTreeTop->Ped == LPedTreeTop->PedBroken) || (recount_typed)) ) )
-    {
-        Tod tod_stat1("write_ped_stat [again]");
-        /* Output ped stats one more time */
-        if (analysis != QUANT_SUMMARY) {
-            log_line(mssgf);
-            mssgf("Pedigree statistics after selecting chromosomes and marker loci:");
-            write_ped_stats(LPedTreeTop);
-        }
-        /* Insert error simulation steps here */
-        if (ErrorSimOpt) {
-            simulate_errors(LPedTreeTop, numchr, Outfile_Names);
-        }
-        tod_stat1();
-    }
-
-    Mega2Status = INSIDE_ANALYSIS;
-    /*  printf("num-traits = %d\n", num_traits); sleep(2); */
-
-    // EXPORTS
-    if (database_dump) {
-        if (dump_dbCompress) {
-            int redd = BatchValueRead("DBcompression");
-            BatchValueSet(dbCompress, "DBcompression");
-            if (! redd)
-                batchf("DBcompression");
+        if (analysis->IsTypedNgeno() &&
+            ( (LPedTreeTop->Ped == LPedTreeTop->PedBroken) || (recount_typed)) ) {
+                Tod tod_stat1("write_ped_stat [again]");
+                /* Output ped stats one more time */
+                if (analysis != QUANT_SUMMARY) {
+                    log_line(mssgf);
+                    mssgf("Pedigree statistics after selecting chromosomes and marker loci:");
+                    write_ped_stats(LPedTreeTop);
+                }
+                /* Insert error simulation steps here */
+                if (ErrorSimOpt) {
+                    simulate_errors(LPedTreeTop, numchr, Outfile_Names);
+                }
+                tod_stat1();
         }
 
-        Tod dbexport("db_export");
+        Mega2Status = INSIDE_ANALYSIS;
+        /*  printf("num-traits = %d\n", num_traits); sleep(2); */
 
-        extern void dbmega2_export(linkage_ped_top *Top);
-        db_open_db();
-        if (InputMode == INTERACTIVE_INPUTMODE && BatchValueRead("DBfile_name"))
-            batchf("DBfile_name");
 
-        db_init_all();
-        dbmega2_export(LPedTreeTop);
-        db_fini_all();
+        InputMode = AnalyInputMode;  //What was it before the exec
+        // Create the data files, and then the shell scripts...
 
-        dbexport();
-    }
+        Tod tod_out("create_output_files");
 
-    if (database_dump && database_read) {
-        int i, j;
-        char *name = argv[0];
-        char **argvn = CALLOC((size_t) argc+6, char *);
-        argvn[0] = argv[0];
-        argvn[1] = (char *)"--dbread";
-        argvn[2] = (char *)"--dbfile";
-        argvn[3] = (char *)DBfile;
-        j = 4;
-
-        if (InputMode == BATCH_FILE_INPUTMODE)
-            argvn[j++] = (char *)"--batch_file";
-        else if (InputMode == INTERACTIVE_INPUTMODE)
-            argvn[j++] = (char *)"--interactive";
-
-        argvn[j++] = (char *)"--run_date";
-        argvn[j++] = RunDate;
-
-        for (i = 1; i < argc; i++) {
-            if (strcasecmp(argv[i], "--dbdump") && strcasecmp(argv[i], "--dbread"))
-                argvn[j++] = argv[i];
+        if (! analysis->new_set_file_name_and_paths() ) {
+            extern void set_file_names_and_paths(const analysis_type analysis,
+                                                 linkage_ped_top *LPedTreeTop);
+            set_file_names_and_paths(analysis, LPedTreeTop);
         }
 
-        if (InputMode == INTERACTIVE_INPUTMODE)
-            argvn[j++] = Mega2Batch;
+        /* Now to analysis-specific options */
+        ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
+        analysis->create_output_file(LPedTreeTop, 
+                                     &analysis, Outfile_Names,
+                                     UntypedPedOpt, &numchr, &Top2);
+        tod_out();
 
-        argvn[j++] = 0;
-        int eans = 0;
-        fflush(stdin);
-        fflush(stdout);
-        fflush(stderr);
-        close_logs();
-#if defined(_WIN) || (defined(MINGW) && ! defined(MSYS2_7))
-        eans = _spawnvpe(P_WAIT, name, argvn, env);
-        exit(eans);
-#else
-        eans = execvp(name, argvn);
-        printf("exec failed: eans = %d, errno %d\n", eans, errno);
-        fflush(stdout);
-#endif
-    }
+        Tod tod_sh("create_shell_file");
+        analysis->create_sh_file(LPedTreeTop, Outfile_Names, numchr);
+        tod_sh();
 
-    InputMode = AnalyInputMode;  //What was it before the exec
-    // Create the data files, and then the shell scripts...
-    Tod tod_out("create_output_files");
-
-    if (! analysis->new_set_file_name_and_paths() ) {
-        extern void set_file_names_and_paths(const analysis_type analysis,
-                                             linkage_ped_top *LPedTreeTop);
-
-        set_file_names_and_paths(analysis, LPedTreeTop);
-    }
-
-    /* Now to analysis-specific options */
-    ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
-
-    analysis->create_output_file(LPedTreeTop, 
-                                 &analysis, Outfile_Names,
-                                 UntypedPedOpt, &numchr, &Top2);
-    tod_out();
-
-    Tod tod_sh("create_shell_file");
-    analysis->create_sh_file(LPedTreeTop, Outfile_Names, numchr);
-    tod_sh();
-
-    if (InputMode == INTERACTIVE_INPUTMODE) {
-	analysis->batch_out();
-        int sel = 0;
-        if (FirstIterMenu == 1) {
-            sel = 'y';
-        } else {
-            if (BatchValueRead("file_name_stem")) {
-                sel = 'n';
-            } else if (analysis == SHAPEIT) {
-//              sel = 'y';
-            } else 
+//    Processing Done! Need to finish batchf
+        if (InputMode == INTERACTIVE_INPUTMODE) {
+            analysis->batch_out();
+            int sel = 0;
+            if (FirstIterMenu == 1) {
                 sel = 'y';
+            } else {
+                if (BatchValueRead("file_name_stem")) {
+                    sel = 'n';
+                } else if (analysis == SHAPEIT) {
+//              sel = 'y';      
+                } else 
+                    sel = 'y';
+            }
+            BatchValueSet(sel, "Default_Outfile_Names");
+            batchf(/* 25 */ Default_Outfile_Names);
         }
-        BatchValueSet(sel, "Default_Outfile_Names");
-        batchf(/* 25 */ Default_Outfile_Names);
-    }
-    Mega2Status = TERM_MEGA2;
+        Mega2Status = TERM_MEGA2;
 
-    Tod tod_nuke_key("nuclear key");
-    if (NUKE_OPTS) {
-        if (Top2 != NULL) {
-            write_nuc_ped_key_file(Mega2KeysRun, LPedTreeTop, Top2);
-            free_lpedtop_pedinfo(Top2);
+        Tod tod_nuke_key("nuclear key");
+        if (NUKE_OPTS) {
+            if (Top2 != NULL) {
+                write_nuc_ped_key_file(Mega2KeysRun, LPedTreeTop, Top2);
+                free_lpedtop_pedinfo(Top2);
+            }
+        } else {
+            write_key_file(Mega2KeysRun, LPedTreeTop);
         }
-    } else {
-        write_key_file(Mega2KeysRun, LPedTreeTop);
+        tod_nuke_key();
     }
-    tod_nuke_key();
 
     Tod tod_fin("epilogue");
 #ifndef HIDEPATH
-    if (database_read)
-        msgvf("SQLite3 database \"%s\" was processed to generate this output.\n",
-              DBfile);
+    msgvf("SQLite3 database \"%s\" was processed to generate this output.\n",
+          DBfile);
 #endif
     if (output_paths == 0) {
     } else if (!strcmp(output_paths[0], ".") &&
