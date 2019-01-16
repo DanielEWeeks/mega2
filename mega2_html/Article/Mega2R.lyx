@@ -655,6 +655,139 @@ Methods
 \end_layout
 
 \begin_layout Subsection
+Implementation
+\end_layout
+
+\begin_layout Standard
+Mega2R is an R package which loads a Mega2-created SQLite database of genetic
+ information into R as data frames for further analysis (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Mega2R-overview:-Input"
+
+\end_inset
+
+).
+ Parts of Mega2R are written in C++ for speed and efficiency.
+ Mega2R is memory efficient, keeping its genotype data in a compressed format,
+ portions of which are only expanded when needed.
+ Mega2R has functions that ease the process of applying gene-based tests
+ by looping over genes, efficiently pulling out genotypes for variants within
+ the desired boundaries (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Mega2R-provides-an"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Mega2Rfig1.pdf
+	width 4in
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Mega2R-overview:-Input"
+
+\end_inset
+
+Input data (PLINK in this example) are converted into a SQLite database
+ by Mega2; this database is then read by Mega2R, making the data accessible
+ within R as dataframes.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Mega2Rfig2.pdf
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Mega2R-provides-an"
+
+\end_inset
+
+Mega2R provides an efficient and flexible wrapper for iterating through
+ gene regions, running R functions on variants within the desired boundaries.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Operation
+\end_layout
+
+\begin_layout Standard
+The Mega2R package is available from the CRAN repository, and can be run
+ within the R environment on Windows, Mac OS X, and Linux computers.
+ The Mega2R CRAN page documents package dependencies.
+ To prepare an input database for Mega2R, the C++ program Mega21,2 is needed;
+ it can be obtained from the University of Pittsburgh site or via BitBucket.
+\end_layout
+
+\begin_layout Subsection
 Environments
 \end_layout
 
@@ -1436,7 +1569,7 @@ getgenotypes
 \emph on
 getgenotypesraw
 \emph default
- retruns for each sample a single integer with the integer for the first
+ returns for each sample a single integer with the integer for the first
  allele shifted 16 bits and or'ed to the integer for the second allele.
 \end_layout
 
@@ -3217,7 +3350,7 @@ status open
 
 \begin_layout Plain Layout
 
-       print("** Genotypes **")
+       print("** Genotypes (individuals in rows, markers in columns) **")
 \end_layout
 
 \begin_layout Plain Layout
@@ -3700,15 +3833,7 @@ print(as.numeric(raw.allele.representation))
 \end_layout
 
 \begin_layout Subsubsection
-A more realistic 
-\begin_inset Quotes eld
-\end_inset
-
-show
-\begin_inset Quotes erd
-\end_inset
-
- function
+How to use applyFnToGenes to apply a user-defined statistical test
 \end_layout
 
 \begin_layout Standard
@@ -3720,9 +3845,10 @@ show
 \begin_inset Quotes erd
 \end_inset
 
- function that we were using does not compute any statistics; it just shows
- the data that are available to analyze.
- The two functions below, 
+ function used above does not compute any statistics; it just shows the
+ data that are available to analyze.
+ To more usefully illustrate how to apply a user-defined statistical test
+ of interest, we construct here a toy example, the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3730,17 +3856,9 @@ show2
 \begin_inset Quotes erd
 \end_inset
 
- and 
-\begin_inset Quotes eld
-\end_inset
-
-show3
-\begin_inset Quotes erd
-\end_inset
-
-, compute the fisher exact test for the trait vs marker and a chisq test
- of the same data and show the p-value.
- Hopefully, the code with comments is easy to understand.
+ function, which computes Fisher's exact test for the trait vs marker and
+ shows the p-value.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -3774,7 +3892,7 @@ show.stat = function(m, r, e, fn) {
 
 \begin_layout Plain Layout
 
-# apply chisq.test of trait vs marker (accumulating samples)
+# apply fisher.test of trait vs marker for each marker 
 \end_layout
 
 \begin_layout Plain Layout
@@ -3823,10 +3941,6 @@ show2 = function(m, r, e) {
 
 \begin_layout Plain Layout
 
-\end_layout
-
-\begin_layout Plain Layout
-
     show.stat(m, r, e, f)
 \end_layout
 
@@ -3841,7 +3955,13 @@ show2 = function(m, r, e) {
 \end_layout
 
 \begin_layout Standard
-Now this function yields:
+Now we can use the 
+\shape italic
+applyFnToGenes
+\shape default
+ function to apply Fisher's exact test to each marker within the CEP104
+ gene.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -3864,8 +3984,8 @@ applyFnToGenes(show2, genes_arg = c("CEP104"))
 \end_layout
 
 \begin_layout Standard
-Note: Since both test functions just count unique categorical values, the
- 
+Note: Since the fisher test is a function of unique categorical values,
+ the 
 \emph on
 getgenotypes
 \emph default
