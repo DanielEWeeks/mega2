@@ -438,7 +438,7 @@ mega2.o: write_files_ext.h write_ghfiles_ext.h write_loki_ext.h
 mega2.o: write_mfiles_ext.h write_pap_ext.h write_premakeped_ext.h
 mega2.o: write_prest_ext.h write_sage_files_ext.h write_simulate_files_ext.h
 mega2.o: write_solar_files_ext.h write_vitesse_ext.h write_MQLS_ext.h
-mega2.o: version.h class_old.h analysis.h write_plink_ext.h plink_core_ext.h
+mega2.o: analysis.h version.h class_old.h write_plink_ext.h plink_core_ext.h
 mega2.o: write_shapeit_ext.h database_dump_ext.h
 write_apm.o: common.h types.hh typedefs.h errorno.h allutil.h linkage.h
 write_apm.o: linkage_external.h makeped.h pedtree.h batch_input.h
@@ -1066,4 +1066,4 @@ write_MQLS.o: error_messages_ext.h utils_ext.h entry.h create_summary_ext.h
 write_MQLS.o: output_routines_ext.h linkage_ext.h sh_util.h fcmap_ext.h
 write_MQLS.o: omit_ped_ext.h output_file_names_ext.h user_input_ext.h
 write_MQLS.o: input_ops.hh str_utils.hh annotated_ped_file.h
-write_MQLS.o: write_files_ext.h write_MQLS_ext.h
+write_MQLS.o: write_files_ext.h write_MQLS_ext.h analysis.h

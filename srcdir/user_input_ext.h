@@ -101,7 +101,7 @@ extern int genetic_distance_index;
 extern int genetic_distance_sex_type_map; // see common.h
 extern int base_pair_position_index;
 
-extern void multinode_menus();
+extern void job_manager_menus();
 
 /*
 

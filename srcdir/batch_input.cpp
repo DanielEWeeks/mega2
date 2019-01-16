@@ -284,6 +284,9 @@ static keyw_t keywords[] = {
     {"MQLS_male_prevalence",                  FLOAT,      "0.1"},
     {"MQLS_female_prevalence",                FLOAT,      "0.1"},
 
+    {"Job_Manager_Index",                     INT,        "1"},
+    {"Job_Manager_Memory",                    INT,        "4"},
+    {"Job_Manager_Additional_Args",           STRING,     ""},
 };
 
 int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);

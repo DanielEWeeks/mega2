@@ -143,6 +143,9 @@ int genetic_distance_index;
 int genetic_distance_sex_type_map; // see common.h
 int base_pair_position_index;
 char _hgbuild[FILENAME_LENGTH];
+int _job_manager_index;
+int _job_manager_mem;
+Str _job_manager_args;
 
 /*===========================================================================*/
 /*
@@ -3968,7 +3971,7 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
     free(bppi);
 }
 
-void multinode_menus(){
+void job_manager_menus(){
     int line_len = 40;
     char selectstr[16];
     int select1 = -1, select2 = -1, set = 1;
@@ -3995,7 +3998,7 @@ void multinode_menus(){
             idx++;
 
             printf("%c%d", idx == set ? '*' : ' ', idx);
-            printf(") %-*s\n", line_len, "Use Slurm (srun)");
+            printf(") %-*s\n", line_len, "Use Slurm (sbatch)");
             idx++;
 
             printf("Select from options 0-%d> ", idx - 1);
@@ -4005,44 +4008,57 @@ void multinode_menus(){
             sscanf(selectstr, "%d", &select1);
             if (select1 && select1 < idx)
                 set = select1;
-        }
-        if(set != 1) {
-            while (select2 != 0) {
-                printf("        NODE OPTION MENU\n");
-                draw_line();
-                printf("0) Done with this menu - please proceed\n");
-                int idy = 1;
 
-                printf(" %d) Node Memory Limit:                               %dGB\n", idy, nodememory);
-                memchoice = idy++;
+            //only want this menu for option 2 and 3
+            if (set > 1 && select1 != 0) {
+                while (select2 != 0) {
+                    printf("        NODE OPTION MENU\n");
+                    draw_line();
+                    printf("0) Done with this menu - please proceed\n");
+                    int idy = 1;
 
-                printf(" %d) Additional arguments:               %-s\n", idy,
-                       (additional_program_args.size() > 0 ? C(additional_program_args) :
-                        "<none specified>"));
-                argchoice = idy++;
+                    printf(" %d) Node Memory Limit:                               %dGB\n", idy, nodememory);
+                    memchoice = idy++;
 
-                printf("Select from options 0-%d> ", idy - 1);
+                    printf(" %d) Additional arguments:               %-s\n", idy,
+                           (additional_program_args.size() > 0 ? C(additional_program_args) :
+                            "<none specified>"));
+                    argchoice = idy++;
 
-                fcmap(stdin, "%s", selectstr);
-                newline;
-                draw_line();
-                sscanf(selectstr, "%d", &select2);
+                    printf("Select from options 0-%d> ", idy - 1);
 
-                if (select2 == memchoice) {
-                    printf("Enter node memory limit in gigabytes > ");
-                    fcmap(stdin, "%d", nodememory);
+                    fcmap(stdin, "%s", selectstr);
                     newline;
-                    //BatchValueSet( );
-                } else if (select2 == argchoice) {
-                    printf("Enter additional arguments for ROADTRIP > ");
-                    IgnoreValue(fgets(selection, MAX_NAMELEN - 1, stdin));
-                    int nl = strlen(selection);
-                    if (selection[nl - 1] == '\n') selection[nl - 1] = 0;
-                    additional_program_args = selectionp;
-                    //BatchValueSet( );
+                    draw_line();
+                    sscanf(selectstr, "%d", &select2);
+
+                    if (select2 == memchoice) {
+                        printf("Enter node memory limit in gigabytes > ");
+                        fcmap(stdin, "%d", &nodememory);
+                        newline;
+                    } else if (select2 == argchoice) {
+                        printf("Enter additional arguments for job manager > ");
+                        IgnoreValue(fgets(selection, MAX_NAMELEN - 1, stdin));
+                        int nl = strlen(selection);
+                        if (selection[nl - 1] == '\n') selection[nl - 1] = 0;
+                        additional_program_args = selectionp;
+                    }
                 }
+                select2 = -1;
             }
         }
-      }
+    }
+
+    BatchValueSet(set, "Job_Manager_Index");
+    BatchValueSet(nodememory, "Job_Manager_Memory");
+    BatchValueSet(additional_program_args, "Job_Manager_Additional_Args");
+    batchf("Job_Manager_Index");
+    batchf("Job_Manager_Memory");
+    batchf("Job_Manager_Additional_Args");
+
+    _job_manager_index = set;
+    _job_manager_mem = nodememory;
+    _job_manager_args = additional_program_args;
+    //strcpy(_job_manager_args,additional_program_args);
 
 }

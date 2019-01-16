@@ -1365,6 +1365,9 @@ int             main(int argc, char **argv, char **env)
         extern void strand_flip_reference_alleles(linkage_ped_top *Top);
         strand_flip_reference_alleles(LPedTreeTop);
 
+        //call to the menu to handle various job queueing options
+        job_manager_menus();
+
         if (analysis->IsTypedNgeno() &&
             ( (LPedTreeTop->Ped == LPedTreeTop->PedBroken) || (recount_typed)) ) {
                 Tod tod_stat1("write_ped_stat [again]");
