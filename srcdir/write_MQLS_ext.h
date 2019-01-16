@@ -61,6 +61,8 @@ public:
 
     void option_menu (char *file_names[], char *prefix, int *combine_chromo, linkage_ped_top *Top);
 
+    void genetic_distance_menu(linkage_ped_top *Top);
+
     //called to create all files
     void create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *analysis, char *file_names[], int untyped_ped_opt, int *numchr, linkage_ped_top **Top2);
 

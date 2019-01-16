@@ -1322,31 +1322,10 @@ int             main(int argc, char **argv, char **env)
         }
 
 
-        if(database_read && analysis == MQLS) {
-            if(!ITEM_READ(Value_Genetic_Distance_Index)) {
-                genetic_distance_index = -1;
-                genetic_distance_sex_type_map = -1;
-            } else {
-                BatchValueGet(genetic_distance_index,"Value_Genetic_Distance_Index");
-                BatchValueGet(genetic_distance_sex_type_map,"Value_Genetic_Distance_SexTypeMap");
-            }
-            distance_init_dump(LPedTreeTop, &analysis);
-            //get_genetic_distance_index(LPedTreeTop->EXLTop);
-            if(!ITEM_READ(Value_Genetic_Distance_Index)) {
-                batchf(Value_Genetic_Distance_Index);
-                batchf(Value_Genetic_Distance_SexTypeMap);
-            }
-
-            /* Re   order the loci */
-            Tod tod_reorder("ReOrderLoci");
-            LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
-            tod_reorder();
-        } else {
-            /* Reorder the loci */
-            Tod tod_reorder("ReOrderLoci");
-            LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
-            tod_reorder();
-        }
+        /* Reorder the loci */
+        Tod tod_reorder("ReOrderLoci");
+        LPedTreeTop = ReOrderLoci(LPedTreeTop, &numchr, &analysis);
+        tod_reorder();
 
         // ?
         LPedTreeTop->LocusTop->SexLinked = x_linked_check(main_chromocnt, global_chromo_entries, analysis);

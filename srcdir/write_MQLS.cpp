@@ -65,6 +65,10 @@ void CLASS_MQLS::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type 
     this->femaleprevalence = .1;
 
     if ( InputMode == INTERACTIVE_INPUTMODE ) {
+        genetic_distance_index = -1;
+        genetic_distance_sex_type_map = -1;
+
+        genetic_distance_menu(Top);
         option_menu(file_names,file_name_stem, &combine_chromo, Top);
     }
     else {
@@ -182,6 +186,15 @@ void CLASS_MQLS::option_menu(char **file_names, char *prefix, int *combine_chrom
         }
     }
 
+}
+
+//this should run if the genetic distance is unknown
+//causing the genetic map menu to come up allowing the user to select a map for output
+void CLASS_MQLS::genetic_distance_menu(linkage_ped_top *Top) {
+    if(!ITEM_READ(Value_Genetic_Distance_Index))
+        distance_init_dump(Top, &Top->analysis);
+    BatchValueSet(genetic_distance_index,"Value_Genetic_Distance_Index");
+    BatchValueSet(genetic_distance_sex_type_map, "Value_Genetic_Distance_SexTypeMap");
 }
 
 //MQLS-XM genofile, it is effectively a tped file
@@ -647,6 +660,14 @@ void CLASS_MQLS::batch_in() {
     BatchValueGet(femaleprevalence, "MQLS_female_prevalence");
     BatchValueGet(additional_arguments, "additional_program_args");
     LoopOverChrm = (c == 'y' || c == 'Y');
+
+    if(!ITEM_READ(Value_Genetic_Distance_Index)) {
+        genetic_distance_index = -1;
+        genetic_distance_sex_type_map = -1;
+    } else {
+        BatchValueGet(genetic_distance_index,"Value_Genetic_Distance_Index");
+        BatchValueGet(genetic_distance_sex_type_map,"Value_Genetic_Distance_SexTypeMap");
+    }
 }
 
 void CLASS_MQLS::batch_out() {
@@ -655,7 +676,10 @@ void CLASS_MQLS::batch_out() {
     Cstr Values[] =  { "file_name_stem",
                        "MQLS_male_prevalence",
                        "MQLS_female_prevalence",
-                       "additional_program_args"
+                       "additional_program_args",
+                       "Value_Genetic_Distance_Index",
+                       "Value_Genetic_Distance_SexTypeMap",
+
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -673,6 +697,8 @@ void CLASS_MQLS::batch_show() {
     msgvf("Additional ROADTRIPS program args:        %s\n",
           (additional_arguments.size() > 0 ? C(additional_arguments) :
            "<none specified>"));
+    msgvf("Genetic Distance Index                    %d\n",    genetic_distance_index);
+    msgvf("Genetic Distance Sex Type Map             %d\n",    genetic_distance_sex_type_map);
     msgvf("\n");
 }
 
