@@ -603,7 +603,17 @@ https://www.bioconductor.org/
  Also, researchers regularly use R to develop new analysis algorithms because
  R provides a rich environment for statistical computing with many useful
  libraries.
- 
+ Indeed, there are are many other R packages that can handle genetic data.
+ For example, VariantAnnotation, seqminer, and SeqArray support efficient
+ processing of VCF/BCF files, while SeqVarTools and GENESIS support association
+ testing and other relevant statistical methods 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Obenchain:2014aa,Zhan:2015aa,Zheng:2017aa,Gogarten:2018aa,Conomos:2018aa"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -780,11 +790,49 @@ Operation
 \end_layout
 
 \begin_layout Standard
-The Mega2R package is available from the CRAN repository, and can be run
- within the R environment on Windows, Mac OS X, and Linux computers.
- The Mega2R CRAN page documents package dependencies.
- To prepare an input database for Mega2R, the C++ program Mega21,2 is needed;
- it can be obtained from the University of Pittsburgh site or via BitBucket.
+The 
+\begin_inset CommandInset href
+LatexCommand href
+name "Mega2R package"
+target "https://cran.r-project.org/package=Mega2R"
+
+\end_inset
+
+ is available from the CRAN repository, and can be run within the R environment
+ on Windows, Mac OS X, and Linux computers.
+ The 
+\begin_inset CommandInset href
+LatexCommand href
+name "Mega2R CRAN page"
+target "https://cran.r-project.org/package=Mega2R"
+
+\end_inset
+
+ documents package dependencies.
+ To prepare an input database for Mega2R, the C++ program Mega2 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "mega2,Baron:2014aa"
+
+\end_inset
+
+ is needed; it can be obtained from the 
+\begin_inset CommandInset href
+LatexCommand href
+name "University of Pittsburgh site"
+target "https://watson.hgen.pitt.edu/register/"
+
+\end_inset
+
+ or via 
+\begin_inset CommandInset href
+LatexCommand href
+name "BitBucket"
+target "https://bitbucket.org/dweeks/mega2"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -3872,7 +3920,22 @@ status open
 
 \begin_layout Plain Layout
 
-show.stat = function(m, r, e, fn) {
+show2 = function(m, r, e) {
+\end_layout
+
+\begin_layout Plain Layout
+
+   fn = function(x) {
+\end_layout
+
+\begin_layout Plain Layout
+
+          tryCatch(fisher.test(table(e$fam$trait, x)),
+\end_layout
+
+\begin_layout Plain Layout
+
+                   error = function(e) {list(p.value = NA)}) $p.value }
 \end_layout
 
 \begin_layout Plain Layout
@@ -3915,40 +3978,6 @@ show.stat = function(m, r, e, fn) {
 }
 \end_layout
 
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-show2 = function(m, r, e) {
-\end_layout
-
-\begin_layout Plain Layout
-
-    f = function(x) {
-\end_layout
-
-\begin_layout Plain Layout
-
-          tryCatch(fisher.test(table(e$fam$trait, x)),
-\end_layout
-
-\begin_layout Plain Layout
-
-                   error = function(e) {list(p.value = NA)}) $p.value }
-\end_layout
-
-\begin_layout Plain Layout
-
-    show.stat(m, r, e, f)
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
 \end_inset
 
 
@@ -3984,8 +4013,8 @@ applyFnToGenes(show2, genes_arg = c("CEP104"))
 \end_layout
 
 \begin_layout Standard
-Note: Since the fisher test is a function of unique categorical values,
- the 
+Note: Since Fisher's test is a function of unique categorical values, the
+ 
 \emph on
 getgenotypes
 \emph default

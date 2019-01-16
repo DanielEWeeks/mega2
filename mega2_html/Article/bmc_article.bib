@@ -2,12 +2,73 @@
 %% http://bibdesk.sourceforge.net/
 
 
-%% Created for Daniel E. Weeks at 2018-08-10 14:10:30 -0400 
+%% Created for Daniel E. Weeks at 2019-01-16 17:41:40 -0500 
 
 
 %% Saved with string encoding Unicode (UTF-8) 
 
 
+
+@article{Zhan:2015aa,
+	Abstract = {Next-generation sequencing has enabled the study of a comprehensive catalogue of genetic variants for their impact on various complex diseases. Numerous consortia studies of complex traits have publically released their summary association statistics, which have become an invaluable resource for learning the underlying biology, understanding the genetic architecture, and guiding clinical translations. There is great interest in the field in developing novel statistical methods for analyzing and interpreting results from these genotype-phenotype association studies. One popular platform for method development and data analysis is R. In order to enable these analyses in R, it is necessary to develop packages that can efficiently query files of summary association statistics, explore the linkage disequilibrium structure between variants, and integrate various bioinformatics databases. The complexity and scale of sequence datasets and databases pose significant computational challenges for method developers. To address these challenges and facilitate method development, we developed the R package SEQMINER for annotating and querying files of sequence variants (e.g., VCF/BCF files) and summary association statistics (e.g., METAL/RAREMETAL files), and for integrating bioinformatics databases. SEQMINER provides an infrastructure where novel methods can be distributed and applied to analyzing sequence datasets in practice. We illustrate the performance of SEQMINER using datasets from the 1000 Genomes Project. We show that SEQMINER is highly efficient and easy to use. It will greatly accelerate the process of applying statistical innovations to analyze and interpret sequence-based associations. The R package, its source code and documentations are available from http://cran.r-project.org/web/packages/seqminer and http://seqminer.genomic.codes/. },
+	Author = {Zhan, Xiaowei and Liu, Dajiang J},
+	Date-Added = {2019-01-16 22:41:33 +0000},
+	Date-Modified = {2019-01-16 22:41:33 +0000},
+	Doi = {10.1002/gepi.21918},
+	Journal = {Genet Epidemiol},
+	Journal-Full = {Genetic epidemiology},
+	Keywords = {genome annotation; R; information retrieval; next-generation sequencing; statistical genetics},
+	Mesh = {Base Sequence; Computational Biology; Data Interpretation, Statistical; Databases, Factual; Genetic Association Studies; Genetic Variation; Genome, Human; High-Throughput Nucleotide Sequencing; Humans; Programming Languages; Sequence Analysis, DNA; Software},
+	Month = {Dec},
+	Number = {8},
+	Pages = {619-23},
+	Pmc = {PMC4794281},
+	Pmid = {26394715},
+	Pst = {ppublish},
+	Title = {SEQMINER: An R-Package to Facilitate the Functional Interpretation of Sequence-Based Associations},
+	Volume = {39},
+	Year = {2015},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1002/gepi.21918}}
+
+@manual{Gogarten:2018aa,
+	Annote = {R package version 1.20.0},
+	Author = {Stephanie M. Gogarten and Xiuwen Zheng and Adrienne Stilp},
+	Date-Added = {2019-01-16 22:30:32 +0000},
+	Date-Modified = {2019-01-16 22:31:14 +0000},
+	Title = {SeqVarTools: Tools for variant data. R package version 1.20.0.},
+	Url = {https://github.com/smgogarten/SeqVarTools},
+	Year = {2018},
+	Bdsk-Url-1 = {https://github.com/smgogarten/SeqVarTools}}
+
+@manual{Conomos:2018aa,
+	Author = {Matthew P. Conomos and Stephanie M. Gogarten and Lisa Brown and Han Chen and Ken Rice and Tamar Sofer and Timothy Thornton and Chaoyu Yu},
+	Date-Added = {2019-01-16 22:26:06 +0000},
+	Date-Modified = {2019-01-16 22:28:34 +0000},
+	Title = {GENESIS: GENetic EStimation and Inference in Structured samples (GENESIS): Statistical methods for analyzing genetic data from samples with population structure and/or relatedness. R package version 2.12.1.},
+	Url = {https://github.com/UW-GAC/GENESIS},
+	Year = {2018},
+	Bdsk-Url-1 = {https://github.com/UW-GAC/GENESIS}}
+
+@article{Obenchain:2014aa,
+	Abstract = {UNLABELLED: VariantAnnotation is an R / Bioconductor package for the exploration and annotation of genetic variants. Capabilities exist for reading, writing and filtering variant call format (VCF) files. VariantAnnotation allows ready access to additional R / Bioconductor facilities for advanced statistical analysis, data transformation, visualization and integration with diverse genomic resources.
+AVAILABILITY AND IMPLEMENTATION: This package is implemented in R and available for download at the Bioconductor Web site (http://bioconductor.org/packages/2.13/bioc/html/VariantAnnotation.html). The package contains extensive help pages for individual functions and a 'vignette' outlining typical work flows; it is made available under the open source 'Artistic-2.0' license. Version 1.9.38 was used in this article.},
+	Author = {Obenchain, Valerie and Lawrence, Michael and Carey, Vincent and Gogarten, Stephanie and Shannon, Paul and Morgan, Martin},
+	Date-Added = {2019-01-16 22:18:38 +0000},
+	Date-Modified = {2019-01-16 22:18:38 +0000},
+	Doi = {10.1093/bioinformatics/btu168},
+	Journal = {Bioinformatics},
+	Journal-Full = {Bioinformatics (Oxford, England)},
+	Mesh = {Genetic Variation; Genomics; Molecular Sequence Annotation; Software},
+	Month = {Jul},
+	Number = {14},
+	Pages = {2076-8},
+	Pmc = {PMC4080743},
+	Pmid = {24681907},
+	Pst = {ppublish},
+	Title = {VariantAnnotation: a Bioconductor package for exploration and annotation of genetic variants},
+	Volume = {30},
+	Year = {2014},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1093/bioinformatics/btu168}}
 
 @article{Zheng:2017aa,
 	Abstract = {Motivation: Whole-genome sequencing (WGS) data are being generated at an unprecedented rate. Analysis of WGS data requires a flexible data format to store the different types of DNA variation. Variant call format (VCF) is a general text-based format developed to store variant genotypes and their annotations. However, VCF files are large and data retrieval is relatively slow. Here we introduce a new WGS variant data format implemented in the R/Bioconductor package 'SeqArray' for storing variant calls in an array-oriented manner which provides the same capabilities as VCF, but with multiple high compression options and data access using high-performance parallel computing.
