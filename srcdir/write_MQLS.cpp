@@ -384,11 +384,13 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
         sh->pr_printf("#For the top shell we will have the KinInbcoef/X running code\n");
         char cmd1[2*FILENAME_LENGTH];
         char cmd2[2*FILENAME_LENGTH];
+        char pgm1[2*FILENAME_LENGTH];
+        char pgm2[2*FILENAME_LENGTH];
 
         sprintf(cmd1, "%s/%s", "KININBCOEF", "KININBCOEF");
 
         sh->pr_printf("if ( $?%s  ) then\n", "KININBCOEF");
-        sh->pr_printf("  set %s_def=\"%s\"\n", "KININBCOEF", "KININBCOEF/KININBCOEF");
+        sh->pr_printf("  set %s_def=\"%s\"\n", "KININBCOEF", "$KININBCOEF/KinInbcoef");
         sh->pr_printf("else\n");
         sh->pr_printf("  set %s_def=0\n", "KININBCOEF");
         sh->pr_printf("endif\n");
@@ -400,7 +402,7 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
         sh->pr_printf("  echo set %s_program=\"$%s_def\"\n", "KININBCOEF", "KININBCOEF");
         sh->pr_printf("  set %s_program=\"`$%s_def`\"\n", "KININBCOEF", "KININBCOEF");
         sh->pr_printf("else\n");
-        sh->pr_printf("  echo The %s executable was not found - \n", "KININBCOEF/KININBCOEF");
+        sh->pr_printf("  echo The %s executable was not found - \n", "$KININBCOEF/KinInbcoef");
         sh->pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", "KININBCOEF", "KinInbcoef");
         sh->pr_printf("  echo\n");
         sh->pr_printf("    if (\"$%s_def\" == \"0\") then\n", "KININBCOEF");
@@ -421,14 +423,14 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
         sh->pr_printf("endif\n");
         sh->pr_nl();
 
-        sprintf(cmd1, "$%s_program ", "KININBCOEF");
+        sprintf(cmd1, "$%s_program", "KININBCOEF");
 
 
         if(hasXdata)  {
             sprintf(cmd2, "%s/%s", "KININBCOEFX", "KinInbcoefX");
 
             sh->pr_printf("if ( $?%s  ) then\n", "KININBCOEFX");
-            sh->pr_printf("  set %s_def=\"%s\"\n", "KININBCOEFX", "KININBCOEFX/KININBCOEFX");
+            sh->pr_printf("  set %s_def=\"%s\"\n", "KININBCOEFX", "$KININBCOEFX/KinInbcoefX");
             sh->pr_printf("else\n");
             sh->pr_printf("  set %s_def=0\n", "KININBCOEFX");
             sh->pr_printf("endif\n");
@@ -440,7 +442,7 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
             sh->pr_printf("  echo set %s_program=\"$%s_def\"\n", "KININBCOEFX", "KININBCOEFX");
             sh->pr_printf("  set %s_program=\"`$%s_def`\"\n", "KININBCOEFX", "KININBCOEFX");
             sh->pr_printf("else\n");
-            sh->pr_printf("  echo The %s executable was not found - \n", "KININBCOEFX/KININBCOEFX");
+            sh->pr_printf("  echo The %s executable was not found - \n", "$KININBCOEFX/KinInbcoefX");
             sh->pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", "KININBCOEFX", "KinInbcoefX");
             sh->pr_printf("  echo\n");
             sh->pr_printf("    if (\"$%s_def\" == \"0\") then\n", "KININBCOEFX");
@@ -464,21 +466,34 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
             sprintf(cmd2, "$%s_program ", "KININBCOEFX");
         }
 
-        sh->pr_printf("#use KinInbcoef on output to create to calculate autosomal breeding coeficients\n");
+        sh->pr_printf("#use KinInbcoef on output to create to calculate autosomal breeding coefficients\n");
         sh->pr_printf("echo\n");
         // Try ./KinInbcoef pedtest listtest out
-        sh->pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.out");
-        sh->pr_printf("%s %s %s %s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.out");
+        //sh->pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.out");
+        //sh->pr_printf("%s %s %s %s\n", cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.out");
+
+        //want to use sh_run instead of a pr_printf
+        sprintf(pgm1, "%s %s %s %s\n",cmd1, file_names[2]/*.kininbcoef*/, file_names[4]/*.list*/, "kininbcoef.out");
+        sh->sh_run(cmd1,pgm1);
+        sh->pr_printf("echo\n");
+        sh->pr_printf("echo KinInbcoef Done \n");
+        sh->pr_printf("echo\n");
+
+
+
+
         if(hasXdata) {
             sh->pr_printf("#use KinInbcoefX on output to create to calculate X-Chromosome breeding coeficients\n");
             // ./KinInbcoefX pedtestX listtestX out error
-            sh->pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.out", "kininbcoefx.error");
-            sh->pr_printf("%s %s %s %s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.out", "kininbcoefx.error");
-        }
-        sh->pr_printf("echo\n");
-        sh->pr_printf("echo KinInbcoef/X Done \n");
-        sh->pr_printf("echo\n");
+            //sh->pr_printf("echo Running the KinInbcoef command:\n echo %s %s %s %s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.out", "kininbcoefx.error");
+            //sh->pr_printf("%s %s %s %s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.out", "kininbcoefx.error");
+            sprintf(pgm2, "%s %s %s %s %s\n", cmd2, file_names[3]/*.kininbcoefx*/, file_names[4]/*.list*/, "kininbcoefx.out", "kininbcoefx.error");
+            sh->sh_run(cmd2,pgm2);
 
+            sh->pr_printf("echo\n");
+            sh->pr_printf("echo KinInbcoefX Done \n");
+            sh->pr_printf("echo\n");
+        }
     }
 
     vlpCLASS(mqls_sh, both, sh_exec) {
@@ -508,9 +523,10 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
         }
         void inner() {
             char cmd3[2*FILENAME_LENGTH];
+            char pgm3[2*FILENAME_LENGTH];
 
             //always use MQLS-XM
-            sprintf(cmd3, "%s/%s", "MQLSXM", "MQLS-XM");
+            sprintf(cmd3, "%s/%s", "$MQLSXM", "MQLS-XM");
             sh_find_pgm("MQLSXM", cmd3, "MQLS-XM");
             sprintf(cmd3, "$%s_program ", "MQLSXM");
 
@@ -520,34 +536,41 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
             //kinfile is the output from KinInbcoef/X
             //if chromsome 23 we need the -x flag otherwise no
             if(_numchr == 23) {
-                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoefx.out", file_names[7]/*prevalencefilename*/, additional_arguments);
-                pr_printf("echo\n");
-                pr_printf("%s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoefx.out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                //pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoefx.out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                //pr_printf("echo\n");
+                //pr_printf("%s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoefx.out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                sprintf(pgm3,"%s -g %s -p %s -k %s -r %s -x %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoefx.out", file_names[7]/*prevalencefilename*/, additional_arguments);
+
             }
             else {
-                pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
-                pr_printf("echo\n");
-                pr_printf("%s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                //pr_printf("echo Running the MQLS-XM command:\n echo %s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                //pr_printf("echo\n");
+                //pr_printf("%s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
+                sprintf(pgm3,"%s -g %s -p %s -k %s -r %s %s\n", cmd3, file_names[0]/*.gen*/, file_names[1]/*.fam*/, "kininbcoef.out", file_names[7]/*prevalencefilename*/, additional_arguments);
+
             }
+            sh_run(cmd3,pgm3);
+            pr_printf("echo \n");
             pr_printf("echo MQLS-XM Done.\n");
+            pr_printf("echo \n");
             pr_printf("echo Renaming MQLS-XM results.\n");
             if(_numchr == 23) {
-                pr_printf("mv XMtest.out MQLS.X.out \n", _numchr);
-                pr_printf("mv XMtest.top MQLS.X.top\n", _numchr);
-                pr_printf("mv XMtest.testvalues MQLS.X.testvalues\n", _numchr);
-                pr_printf("mv XMtest.pvalues MQLS.X.pvalues\n", _numchr);
+                pr_printf("mv %s/XMtest.out %s/MQLS.X.out \n", *_opath,*_opath);
+                pr_printf("mv %s/XMtest.top %s/MQLS.X.top\n",*_opath,*_opath);
+                pr_printf("mv %s/XMtest.testvalues %s/MQLS.X.testvalues\n", *_opath,*_opath);
+                pr_printf("mv %s/XMtest.pvalues %s/MQLS.X.pvalues\n", *_opath,*_opath);
             }
             else if(_numchr<10) {
-                pr_printf("mv MQLStest.out MQLS.0%d.out \n", _numchr);
-                pr_printf("mv MQLStest.top MQLS.0%d.top\n", _numchr);
-                pr_printf("mv MQLStest.testvalues MQLS.0%d.testvalues\n", _numchr);
-                pr_printf("mv MQLStest.pvalues MQLS.0%d.pvalues\n", _numchr);
+                pr_printf("mv %s/MQLStest.out %s/MQLS.0%d.out \n",*_opath,*_opath,_numchr);
+                pr_printf("mv %s/MQLStest.top %s/MQLS.0%d.top\n",*_opath,*_opath,_numchr);
+                pr_printf("mv %s/MQLStest.testvalues %s/MQLS.0%d.testvalues\n", *_opath,*_opath,_numchr);
+                pr_printf("mv %s/MQLStest.pvalues %s/MQLS.0%d.pvalues\n", *_opath,*_opath,_numchr);
             }
             else {
-                pr_printf("mv MQLStest.out MQLS.%d.out \n", _numchr);
-                pr_printf("mv MQLStest.top MQLS.%d.top\n", _numchr);
-                pr_printf("mv MQLStest.testvalues MQLS.%d.testvalues\n", _numchr);
-                pr_printf("mv MQLStest.pvalues MQLS.%d.pvalues\n", _numchr);
+                pr_printf("mv %s/MQLStest.out %s/MQLS.%d.out \n", *_opath,*_opath,_numchr);
+                pr_printf("mv %s/MQLStest.top %s/MQLS.%d.top\n",*_opath,*_opath,_numchr);
+                pr_printf("mv %s/MQLStest.testvalues %s/MQLS.%d.testvalues\n",*_opath,*_opath,_numchr);
+                pr_printf("mv %s/MQLStest.pvalues %s/MQLS.%d.pvalues\n",*_opath,*_opath,_numchr);
             }
             pr_printf("exit 0\n");
 
