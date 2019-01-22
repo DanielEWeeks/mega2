@@ -3984,7 +3984,7 @@ void job_manager_menus(){
     if (InputMode == INTERACTIVE_INPUTMODE) {
         while (select1 != 0) {
             newline;
-            printf("        NODE CHOICE MENU\n");
+            printf("       JOB MANAGEMENT MENU\n");
             draw_line();
             printf("0) Done with this menu - please proceed\n");
             int idx = 1;
@@ -4047,18 +4047,23 @@ void job_manager_menus(){
                 select2 = -1;
             }
         }
+
+
+        BatchValueSet(set, "Job_Manager_Index");
+        BatchValueSet(nodememory, "Job_Manager_Memory");
+        BatchValueSet(additional_program_args, "Job_Manager_Additional_Args");
+        batchf("Job_Manager_Index");
+        batchf("Job_Manager_Memory");
+        batchf("Job_Manager_Additional_Args");
+
+        _job_manager_index = set;
+        _job_manager_mem = nodememory;
+        _job_manager_args = additional_program_args;
+        //strcpy(_job_manager_args,additional_program_args);
     }
-
-    BatchValueSet(set, "Job_Manager_Index");
-    BatchValueSet(nodememory, "Job_Manager_Memory");
-    BatchValueSet(additional_program_args, "Job_Manager_Additional_Args");
-    batchf("Job_Manager_Index");
-    batchf("Job_Manager_Memory");
-    batchf("Job_Manager_Additional_Args");
-
-    _job_manager_index = set;
-    _job_manager_mem = nodememory;
-    _job_manager_args = additional_program_args;
-    //strcpy(_job_manager_args,additional_program_args);
-
+    if(InputMode == BATCH_FILE_INPUTMODE){
+        BatchValueGet(_job_manager_index, "Job_Manager_Index");
+        BatchValueSet(_job_manager_mem, "Job_Manager_Memory");
+        BatchValueSet(_job_manager_args, "Job_Manager_Additional_Args");
+    }
 }
