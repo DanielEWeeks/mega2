@@ -845,7 +845,7 @@ int             main(int argc, char **argv, char **env)
             if (mega2_input_files[ii]) {
                 if ((fp=fopen(mega2_input_files[ii], "r")) == NULL) {
                     if(ii == PEDIGREE &&
-                       (Input_Format == in_format_bcfs ||
+                       (Input_Format == in_format_vcfs ||
                         Input_Format == in_format_bcfs ||
                         Input_Format == in_format_gzcfs ) &&
                        (strcmp(pedfl_name,"-.fam") == 0)) {
