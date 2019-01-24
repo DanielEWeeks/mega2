@@ -1794,7 +1794,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 
     //here we need to call BCFTools to do something equivalent to VCFtools_process_entries
     if(Input->GetOps()->use_getops())
-        Input->GetOps()->do_genotypes(LTop, persons, VecAlleles);
+        Input->GetOps()->do_genotypes(LTop, persons, VecAlleles, num_ped_records);
 
     else if (xcf) {
 //      if (! getenv("_")) { asm("int $3"); }
@@ -4403,6 +4403,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
             phe_types[tot_cols] = PLINK.traitType;
             tot_cols++;
         }
+        
         Input->GetOps()->do_phe_names(phe_file, phe_names, phe_types, tot_cols);
 
         LTop = Input->GetOps()->do_names(names_fn);

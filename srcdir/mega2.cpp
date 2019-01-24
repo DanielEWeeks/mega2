@@ -1366,7 +1366,7 @@ int             main(int argc, char **argv, char **env)
         strand_flip_reference_alleles(LPedTreeTop);
 
         //call to the menu to handle various job queueing options
-        job_manager_menus();
+        //job_manager_menus();
 
         if (analysis->IsTypedNgeno() &&
             ( (LPedTreeTop->Ped == LPedTreeTop->PedBroken) || (recount_typed)) ) {

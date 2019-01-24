@@ -50,6 +50,7 @@
 #include "common.h"
 #include "tod.hh"
 #include "error_messages_ext.h"
+#include "phe_lookup_ext.h"
 
 extern "C" {
     #include "bcftools.h"
@@ -415,12 +416,12 @@ void ReadBCFs::build_markers_and_samples() {
             //first file just add
             if (i == 0) {
                 this->samples.push_back(name);
-                Pairsi pair(name,1);
-                sampleMap.insert(pair);
+                Pairsi pair(name, j);
+                hdrMap.insert(pair);
             }
-            //other files use sampleMap to check the names are the same
+            //other files use hdrMap to check the names are the same
             else {
-                if (sampleMap.find(name) == sampleMap.end())
+                if (hdrMap.find(name) == hdrMap.end())
                     errorvf("Sample in file %s not found in first file from manifest\n", files[i].c_str());
             }
         }
@@ -712,7 +713,7 @@ static void phenotype_file_SAMPLEID_entry_checks()
 }
 
 void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
-                            std::vector<Vecc> &VecAlleles) {
+                            std::vector<Vecc> &VecAlleles, int num_ped_recs) {
     vector <string> files = this->filelist;
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
@@ -734,6 +735,33 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     int mrkindex = LTop->PhenoCnt;
     int zeroed_genotypes_nonx = 0;
     int zeroed_genotypes_x = 0;
+
+    hdrInd = new int[num_ped_recs];
+
+    for(int per = 0; per < num_ped_recs; per++) {
+        char ped_per[FILENAME_LENGTH];
+        sprintf(ped_per,"%s_%s",persons[per].PedID,persons[per].PerID);
+        if(!(hdrMap.find(persons[per].ID) == hdrMap.end())){
+            hdrInd[per] = hdrMap.find(persons[per].ID)->second;
+        }
+        else if(!(hdrMap.find(ped_per) == hdrMap.end())){
+            hdrInd[per] = hdrMap.find(ped_per)->second;
+        }
+        else if(!(hdrMap.find(persons[per].PerID)== hdrMap.end())){
+            hdrInd[per] = hdrMap.find(persons[per].PerID)->second;
+        }
+        else {
+            mssgvf("Cannot find match in VCF file within provided pedigree for %s\n", persons[per].ID);
+            hdrInd[per] = -1;
+        }
+
+        //Str sampleid;
+        //SAMPLEIDS->phesearch(persons[per].PedID,persons[per].PerID,sampleid)
+
+        //printf("%s, %s_%s\n", sampleid, persons[per].PedID, persons[per].PerID);
+        //printf("%d %d\n",per, hdrInd[per]);
+    }
+
 
     for (int i = 0; i < this->filecount; i++) {
         args.push_back(files[i]);
@@ -764,7 +792,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         while (bcf_sr_next_line(bcfargs->files)) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
                 if ( subset_vcf(bcfargs, line) && mrkindex < LTop->LocusCnt) {
-                int m, n, i;
+                int m, n, p;
 
                 //uses convert object so we need our own void * instead
                 void *dat = NULL;
@@ -789,8 +817,14 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
                 //should give number of allele options per marker
                 n /= num_samples;
-                for (i = 0; i < num_samples; i++) {
-                    int32_t *ptr = (int32_t *) dat + i * n;
+                //this used to be p, but now we want p to traverse all ped records from external ped files
+                //int vcf_col = 0;
+                for (p = 0; p < num_ped_recs; p++) {
+                    if(hdrInd[p] == -1) {
+                        set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                        continue;
+                    }
+                    int32_t *ptr = (int32_t *) dat + hdrInd[p] * n;
                     int j;
                     for (j = 0; j < n; j++)
                         if (ptr[j] == bcf_int32_vector_end) break;
@@ -799,21 +833,20 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                     int is_x_chr = 0;
                     if(((strcasecmp(chromosome,"X") == 0) ||
                         (strcasecmp(chromosome,"CHRX") == 0) ||
-                        (strcmp(chromosome,"23") == 0)) && (persons[i].Sex == 1))
+                        (strcmp(chromosome,"23") == 0)) && (persons[p].Sex == 1))
                         is_x_chr = 1;
-
 
                     // diploid
                     if (j == 2) {
                         // ./.
                         if (bcf_gt_is_missing(ptr[0]) && bcf_gt_is_missing(ptr[1]))
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                         // ./ALT
                         else if (bcf_gt_is_missing(ptr[0]) && bcf_gt_allele(ptr[1]) == 1) {
                             if (MARKER_SCHEME > 1)
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[1]);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[1]);
                             else {
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                                 if(is_x_chr)
                                     zeroed_genotypes_x++;
                                 else
@@ -823,9 +856,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                         // ./REF
                         else if (bcf_gt_is_missing(ptr[0])) {
                             if (MARKER_SCHEME > 1)
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[0]);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[0]);
                             else {
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                                 if(is_x_chr)
                                     zeroed_genotypes_x++;
                                 else
@@ -835,9 +868,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                         // ALT/.
                         else if (bcf_gt_is_missing(ptr[1]) && bcf_gt_allele(ptr[0]) == 1) {
                             if(MARKER_SCHEME > 1)
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], zero);
                             else {
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                                 if(is_x_chr)
                                     zeroed_genotypes_x++;
                                 else
@@ -847,9 +880,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                         // REF/.
                         else if (bcf_gt_is_missing(ptr[1])) {
                             if(MARKER_SCHEME > 1)
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], zero);
                             else {
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                                 if(is_x_chr)
                                     zeroed_genotypes_x++;
                                 else
@@ -858,24 +891,24 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                         }
                         // ALT/REF
                         else if (bcf_gt_allele(ptr[0]) != bcf_gt_allele(ptr[1]))
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
                         // ALT/ALT
                         else if (bcf_gt_allele(ptr[0]) == 1)
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
                         // REF/REF
                         else
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
                         // haploid
                     } else if (j == 1) {
                         // single missing genotypes
                         if (bcf_gt_is_missing(ptr[0]))
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                         // single ALT
                         else if (bcf_gt_allele(ptr[0]) == 1)
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
                         // single REF
                         else
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
                     } else error("FIXME: not ready for ploidy %d\n", j);
 
                 }
@@ -920,7 +953,7 @@ linkage_ped_top* ReadBCFs::do_ped(linkage_locus_top *LTop)   {
     //       "All sex values have been set to male as a default.\n");
     annotated_ped_rec *persons = build_bcf_ped(LTop);
 
-    do_genotypes(LTop, persons, VecAlleles);
+    do_genotypes(LTop, persons, VecAlleles, num_samples);
     linkage_ped_top *Top;
 
     Top = mk_ped_top(persons, this->num_samples, LTop, this->num_samples,
@@ -977,8 +1010,8 @@ annotated_ped_rec * ReadBCFs::build_bcf_ped(linkage_locus_top *LTop) {
 
 void ReadBCFs::do_gc() {
 
-    sampleMap.clear();
-    Hmapsi().swap(sampleMap);
+    hdrMap.clear();
+    Hmapsi().swap(hdrMap);
 
     samples.clear();
     vector<string>().swap(samples);
