@@ -723,7 +723,7 @@ name "fig:Mega2R-overview:-Input"
 
 Input data (PLINK in this example) are converted into a SQLite database
  by Mega2; this database is then read by Mega2R, making the data accessible
- within R as dataframes.
+ within R as data frames.
 \end_layout
 
 \end_inset
