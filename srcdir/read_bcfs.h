@@ -42,6 +42,7 @@
 #include "input_ops.hh"
 #include "str_utils.hh"
 #include "annotated_ped_file.h"
+#include "phe_lookup_ext.h"
 
 using namespace std;
 class BCFMarker {
@@ -126,6 +127,7 @@ protected:
 
     Hmapsi hdrMap;
     int * hdrInd;
+    sample_map_type sampleIDs;
 };
 
 

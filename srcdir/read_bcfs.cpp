@@ -598,13 +598,13 @@ void ReadBCFs::build_bcf_map(m2_map &bcf_map) {
  * We want to build "names" and genotypes in one pass to only load these BCF files once
  */
 
-static void phenotype_file_SAMPLEID_entry_checks();
-
 linkage_locus_top *ReadBCFs::do_names(const char *&names_fn)
 {
+    //we need to call this as a getopt function
     linkage_locus_top *LTop = build_BCFs_names();
 
-    phenotype_file_SAMPLEID_entry_checks();
+    //deprecated
+    //phenotype_file_SAMPLEID_entry_checks();
 
     return LTop;
 }
@@ -650,67 +650,12 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
             /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
 }
 
-/**
- This routine processes the SAMPLEID information in the phenotype file, and the sample information
- in the VCF file and will give the user a message if any of the following occurs:
- 1) a SAMPLEID in the Phenotype File is not found (or found multiple times) as a VCF file
-    sample label (found in the VCF file header line)
- 2) a SAMPLEID entry has been excluded through the vcftools filtering mechanism
- 3) a sample label in the VCF file is not found in the SAMPLEID column of the phenotype file.
- */
-extern sample_map_type *SAMPLEIDS;
-static void phenotype_file_SAMPLEID_entry_checks()
-{
-    if (SAMPLEIDS == NULL) {
-        mssgf("The SAMPLEID column was not included in the phenotype file.");
-        return;
-    }
-    mssgf("The SAMPLEID column was included in the phenotype file.");
-    
-#if 0
-    // Iterate over the SAMPLEID information from the phenotype file...
-    for (sample_map_type::iterator it = SAMPLEIDS->begin(); it != SAMPLEIDS->end(); it++) {
-        string map_sample = it->first;
-        int found = 0;
-        
-        // Look for the SAMPLEID (map_sample) in the VCF file...
-        for (int ui=0; ui < vf->N_total_indv(); ui++) {
-            string vcf_file_sample = vf->indv[(size_t)ui];
-            if (vcf_file_sample == map_sample) {
-                // It was found...
-                if (vf->include_indv[(size_t)ui] == false && found == 0) {
-                    mssgvf("SAMPLEID '%s' has been excluded by the vcftools filters.\n", map_sample.c_str());
-                }
-                found++; // SAMPLEID found in the VCF file...
-            }
-        }
-        if (found == 0) {
-            mssgvf("SAMPLEID '%s' was not found in the VCF file.\n", map_sample.c_str());
-        } else if (found > 1) {
-            mssgvf("SAMPLEID '%s' was found multiple times in the VCF file.\n", map_sample.c_str());
-        } // else if (fount == 1) all is well!
-    } // for (sample_map_type::iterator it ...
-    
-    // Look through all of the samples in the VCF file....
-    for (int ui=0; ui < vf->N_total_indv(); ui++) {
-        if (vf->include_indv[(size_t)ui] == false) continue;
-        string vcf_file_sample = vf->indv[(size_t)ui];
-        int found = 0;
-        // Determine if it matches any sample in the SAMPLEID column of the phenotype file...
-        for (sample_map_type::iterator it = SAMPLEIDS->begin(); it != SAMPLEIDS->end(); it++) {
-            string map_sample = it->first;
-            if (vcf_file_sample == map_sample) {
-                found++;
-                break;
-            }
-        }
-        if (found == 0) {
-            mssgvf("The VCF file sample '%s' was not found in the SAMPLEID column\n", vcf_file_sample.c_str());
-            mssgf("included in the phenotype file.");
-        }
-    }
-#endif
-}
+//static void phenotype_file_SAMPLEID_entry_checks()
+//{
+    //this was removed as it didn't work the way I anticipated
+    //sampleID checking against the .phe file
+    // and PED_PER /PER now happens in do_genotypes.
+//}
 
 void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                             std::vector<Vecc> &VecAlleles, int num_ped_recs) {
@@ -738,28 +683,51 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
     hdrInd = new int[num_ped_recs];
 
+    mssgvf("\nChecking SAMPLEID consistency within files.\n");
+    draw_line();
+
     for(int per = 0; per < num_ped_recs; per++) {
+        bool done = false;
         char ped_per[FILENAME_LENGTH];
         sprintf(ped_per,"%s_%s",persons[per].PedID,persons[per].PerID);
-        if(!(hdrMap.find(persons[per].ID) == hdrMap.end())){
-            hdrInd[per] = hdrMap.find(persons[per].ID)->second;
+        //is SAMPLEIDS map null? no phe file column
+        if(SAMPLEIDS != NULL) {
+        //first check SAMPLEIDS map from phenotype file
+            for(sample_map_type::iterator sampleit = SAMPLEIDS->begin(); sampleit != SAMPLEIDS->end(); sampleit++) {
+                for(HMapsip hdrit = hdrMap.begin(); hdrit != hdrMap.end(); hdrit++){
+                    //check if the sample is in both the SAMPLEIDS and the headers from the BCF FILE
+                    if(sampleit->first == hdrit->first) {
+                        //check to see that the values we got from the SAMPLIDS map match the persons table
+                        if(sampleit->second.first == persons[per].PedID && sampleit->second.second ==persons[per].PerID) {
+                            //printf("%s %s %d \n", sampleit->first.c_str(), hdrit->first.c_str(), hdrMap.find(sampleit->first)->second);
+                            hdrInd[per] = hdrMap.find(sampleit->first)->second;
+                            done = true;
+                            break;
+                        }
+                    }
+                }
+            }
         }
-        else if(!(hdrMap.find(ped_per) == hdrMap.end())){
+        //next check BCF FILE header name against PED_PER
+        if(!(hdrMap.find(ped_per) == hdrMap.end()) && !done){
             hdrInd[per] = hdrMap.find(ped_per)->second;
+            done = true;
         }
-        else if(!(hdrMap.find(persons[per].PerID)== hdrMap.end())){
+        //next check against PER
+        else if(!(hdrMap.find(persons[per].PerID)== hdrMap.end()) && !done){
             hdrInd[per] = hdrMap.find(persons[per].PerID)->second;
+            done = true;
         }
+        else if(done){
+            //need a catch for the sample map if it's found so we don't put an warning
+            //but we don't need to do anything
+        }
+        //finally warning and zero out the value, we either got this value in the BCF FILE with  no match
+        //or we got it in the pedigree and couldn't find the match in the BCF FILE
         else {
-            mssgvf("Cannot find match in VCF file within provided pedigree for %s\n", persons[per].ID);
+            mssgvf("Cannot find match in VCF file within provided pedigree for pedigree: %s person: %s\n",persons[per].PedID, persons[per].PerID);
             hdrInd[per] = -1;
         }
-
-        //Str sampleid;
-        //SAMPLEIDS->phesearch(persons[per].PedID,persons[per].PerID,sampleid)
-
-        //printf("%s, %s_%s\n", sampleid, persons[per].PedID, persons[per].PerID);
-        //printf("%d %d\n",per, hdrInd[per]);
     }
 
 
