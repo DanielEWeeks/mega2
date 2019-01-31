@@ -63,6 +63,7 @@ public:
     typedef double d3[3];
     bool getDC(d3 &vec, int cnt=0);
 
+    void set(Cstr& line, char *linc);
     void set(Cstr& line);
     void set(char *line);
 
@@ -118,9 +119,10 @@ private:
  * \brief split line into fields using sep
  */
 void split(Vecs &fields, Cstr& line, Cstr& sep=" \t\n\r", int cnt=0);
-void split(Vecc &fields, char *line, const char *sep=" \t\n\r", int cnt=0);
+void split(Vecc1 &fields, char *line, const char *sep=" \t\n\r", int cnt=0);
 
 void join(Vecs &vec, Str& ans, Cstr& sep);
+void join(Vecc &vec, Str& ans, Cstr& sep);
 
 Str& rtrim(Str& str, Cstr& trim=" \t\n\r");
 

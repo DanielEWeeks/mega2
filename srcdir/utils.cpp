@@ -123,7 +123,8 @@ void           exclaim(void);
 void           delete_file(const char *flname);
 void           copy_file(char *flname1, char *flname2);
 void           move_file(char *flname1, char *flname2);
-void           makedir(char *dirname);
+int            makedir(char *dirname);
+int            makedirpath(char *dirname);
 void           move_logs(char *sumdir) ;
 void           goodbye(int exit);
 char *         strtail(const char *name, const int n);
@@ -435,7 +436,12 @@ const char *mklogdir(void)
   // This is the default. Turned off with the -nosave option
     if (CreateRunFolder == 1) {
         strcpy(sumdir, RunDate);
-        makedir(sumdir);
+        if (is_dir(sumdir) && (! access(sumdir, W_OK)))
+            ;
+        else if (! makedirpath(sumdir)) {
+            errorvf("Can not create log directory: %s\n", sumdir);
+            EXIT(FILE_NOT_FOUND);
+        }
     } else {
         strcpy(sumdir, ".");
     }
@@ -1276,9 +1282,30 @@ void backup_file(char *flname)
     }
 }
 
-void makedir(char *dirname)
+int makedirpath(char *dirpath)
 {
-    int err;
+    char *dirpathp = dirpath;
+    char *dirpathc = CALLOC(strlen(dirpath)+1, char);
+    char *dirpathcp = dirpathc;
+    int   c = 1;
+
+    while(c) {
+        while ( (c = *dirpathp++) && c != '/' && c != '\\')
+            *dirpathcp++ = c;
+        *dirpathcp = 0;
+        if (is_dir(dirpathc)) ;
+        else if (! makedir(dirpathc))
+            return 0;
+        *dirpathcp++ = c;
+    }
+
+    free(dirpathc);
+    return 1;
+}
+
+int makedir(char *dirname)
+{
+    int err = 0;
     if (access(dirname, F_OK)) {
 #ifdef _WIN
         err = _mkdir(dirname);
@@ -1295,8 +1322,11 @@ void makedir(char *dirname)
                 warnvf("makedir: mkdir(%s) failed with errno %d (\"%s\")\n",
 		       dirname, errno, strerror(errno));
             }
-        }
+            err = 0;
+        } else
+            err = 1;
     }
+    return err;
 }
 
 
@@ -1305,9 +1335,13 @@ int is_dir(char *dirname)
     struct stat stbuf;
     int err = stat(dirname, &stbuf);
     if (err < 0) {
-        if (errno) {
+        switch(errno) {
+        case ENOENT:
+            break;
+        default:
             warnvf("can not stat: stat(%s, buf) failed with errno %d (\"%s\")\n",
                    dirname, errno, strerror(errno));
+            break;
         }
         return 0;
     }
@@ -1889,7 +1923,11 @@ extern int missingv_flags;
 extern char *quant_in, *quant_out, *affect_in, *affect_out;
 extern InputModeType InputMode;
 extern int dump_dbCompress, dbCompress;
-int env = 0;
+
+// export arguments for batch file
+int CHRM_argc; char **CHRM_argv;
+extern int queue;
+extern char *CHRM_list;
 
 void mega2_opts(int argc, char **argv)
 {
@@ -1906,8 +1944,11 @@ void mega2_opts(int argc, char **argv)
                 EXIT(INPUT_DATA_ERROR);
             } else if (*(as+1) == '-') {
                 as += 2;
-                if (strcasecmp(as, "dboff") == 0) {
-                    database_off++;
+                if (strcasecmp(as, "chrm") == 0) {
+		    argv++; --argc;
+                    CHRM_list = *argv;
+                } else if (strcasecmp(as, "queue") == 0) {
+		    queue++;
                 } else if (strcasecmp(as, "dbdump") == 0) {
                     database_dump++;
                 } else if (strcasecmp(as, "dbread") == 0) {
@@ -2008,12 +2049,7 @@ void mega2_opts(int argc, char **argv)
 		    affect_out = *argv;
 		    missingv_flags |= 8;
 
-                } else if (strcasecmp(as, "envdefault") == 0 || strcasecmp(as, "ed") == 0)
-                    env |= 1;
-                else if (strcasecmp(as, "envbatch") == 0 || strcasecmp(as, "eb") == 0)
-                    env |= 2;
-
-		else if (strcasecmp(as, "help") == 0) {
+		} else if (strcasecmp(as, "help") == 0) {
                     print_mega2_help();
                     exit(0);
                 } else if (strcasecmp(as, "version") == 0)
@@ -2030,6 +2066,13 @@ void mega2_opts(int argc, char **argv)
                 extern int marker_scheme_mega2_opts;
                 for (c = *++as; c; c = *++as) {
                     switch (c) {
+                    case 'c': case 'C':
+                        argv++; --argc;
+                        CHRM_list = *argv;
+                        break;
+                    case 'q': case 'Q':
+                        queue++;
+                        break;
                     case 'w': case 'W':
                         check_web_ver = 0;
                         break;
@@ -2090,32 +2133,54 @@ void mega2_opts(int argc, char **argv)
     }
 
     /* There should be exactly one command line argument that is not an option. */
+    CHRM_argc = argc;
+    CHRM_argv = argv;
     if (argc == 0) ;
     else if (argc == 1)  {
         strcpy(Mega2Batch, *argv);
-    } else {
-        printf("Invalid arguments to Mega2. %d\n", argc);
+    } else if (!CHRM_list) {
+        printf("First invalid argument to Mega2: %s\n", argv[1]);
         print_mega2_help();
         EXIT(INPUT_DATA_ERROR);
-    }
+    } else
+        strcpy(Mega2Batch, *argv);
     return;
 }
 #endif /*  USE_GETOPT */
+
+using namespace std;
+
+string& param_replace(string& param, size_t start) {
+
+    string::size_type fnd1 = param.find_first_of("$%", start);
+    if (fnd1 == string::npos)
+        return param;
+
+    char& offset = param[fnd1+1];
+    int idx = offset - '1' + 1;
+    if (offset < '0' || offset > '9' || idx >= CHRM_argc) {
+        errorvf("batch_input %c%c: Not enough parameters; index must be >= 0 and < %d\n",
+                param[fnd1], offset, CHRM_argc);
+        exit(0);
+    }
+    string& ret = param.replace(fnd1, 2, 
+                                idx ? CHRM_argv[idx] : CHRM_ );
+    return param_replace(ret, fnd1 + strlen(CHRM_argv[idx]));
+}
 
 void print_mega2_help(void)
 
 {
 
-    printf("Usage: mega2 [options] [batch-file-name]\n");
+    printf("Usage: mega2 [options] [batch-file-name] {arguments}\n");
+
     printf("  acceptable options:\n");
 
-    printf("             --DBoff\n");
-    printf("                Mega2 writes a SQLite database file and then exec’s a new copy of Mega2 to process the database,\n");
-    printf("                 UNLESS --DBoff IS SET.\n");
     printf("             --DBfile\n");
     printf("                change the database name from dbmega2.db to the next argument.\n");
     printf("             --DBdump\n");
-    printf("                only dump the database; do not do any analysis.\n");
+    printf("                dump the database and if --DBread is also present, \n");
+    printf("                then exec’s a new copy of Mega2 to process the database.\n");
     printf("             --DBread\n");
     printf("                read an existing database file and do an analysis.\n");
     printf("             --DBcompress <value>\n");
@@ -2163,6 +2228,9 @@ void print_mega2_help(void)
     printf("             --force_numeric_alleles\n");
     printf("                recode alleles as numbers even though analysis can accept letter alleles.\n");
 
+
+    printf("             -c, --chrm\n");
+    printf("                    iterate (batch file) over specified chromosomes mode.\n");
     printf("             -x, --nosave\n");
     printf("                    Do not create a new run-folder.\n");
     printf("             -w, --noweb\n");

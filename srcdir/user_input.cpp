@@ -142,9 +142,10 @@ int genetic_distance_index;
 //cpk genetic_distance_map_type genetic_distance_sex_type_map; // see common.h
 int genetic_distance_sex_type_map; // see common.h
 int base_pair_position_index;
+
 char _hgbuild[FILENAME_LENGTH];
-int _job_manager_index;
-int _job_manager_mem;
+int _job_manager_index = 1;
+int _job_manager_mem   = 4;
 Str _job_manager_args;
 
 /*===========================================================================*/
@@ -817,16 +818,25 @@ static void menu1_batch_set_files(file_format *infl_type,
 static void menu1_batch_set_outfiles(char **output_path, char **db_name)
 {
     if (Mega2BatchItems[/* 33 */ Output_Path].items_read) {
-        if (access(Mega2BatchItems[/* 33 */ Output_Path].value.name, W_OK) == 0 &&
-            is_dir(Mega2BatchItems[/* 33 */ Output_Path].value.name)) {
-           strcpy(*output_path, Mega2BatchItems[/* 33 */ Output_Path].value.name);
+        if (is_dir(Mega2BatchItems[/* 33 */ Output_Path].value.name)) {
+            if (! access(Mega2BatchItems[/* 33 */ Output_Path].value.name, W_OK))
+                strcpy(*output_path, Mega2BatchItems[/* 33 */ Output_Path].value.name);
+            else {
+                errorvf("file path %s named by keyword %s is not a writable directory.\n",
+                        Mega2BatchItems[/* 33 */ Output_Path].value.name,
+                        C(Mega2BatchItems[/* 33 */ Output_Path].keyword));
+                EXIT(FILE_NOT_FOUND);
+            }
         } else {
-            errorvf("file path %s named by keyword %s is not a writable directory.\n",
-                    Mega2BatchItems[/* 33 */ Output_Path].value.name,
-                    C(Mega2BatchItems[/* 33 */ Output_Path].keyword));
-            EXIT(FILE_NOT_FOUND);
+            if (makedirpath(Mega2BatchItems[/* 33 */ Output_Path].value.name)) {
+                strcpy(*output_path, Mega2BatchItems[/* 33 */ Output_Path].value.name);
+                msgvf("Creating/Using Output_path: %s\n", *output_path);
+            } else {
+                errorvf("Could not create Output_path: %s\n",
+                        Mega2BatchItems[/* 33 */ Output_Path].value.name);
+                EXIT(FILE_NOT_FOUND);
+            }
         }
-
     } else {
         missing_optional_keyword(Output_Path,  "using default '.' (current directory)");
         strcpy(*output_path, ".");
@@ -3971,7 +3981,7 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
     free(bppi);
 }
 
-void job_manager_menus(){
+void job_manager_menus() {
     int line_len = 40;
     char selectstr[16];
     int select1 = -1, select2 = -1, set = 1;
@@ -3981,7 +3991,7 @@ void job_manager_menus(){
     char selection[MAX_NAMELEN];
     char *selectionp = selection;
 
-    if (InputMode == INTERACTIVE_INPUTMODE) {
+    if (InputMode == INTERACTIVE_INPUTMODE || InputMode == BATCH_FILE_INPUTMODE) {
         while (select1 != 0) {
             newline;
             printf("        NODE CHOICE MENU\n");
@@ -4047,18 +4057,22 @@ void job_manager_menus(){
                 select2 = -1;
             }
         }
-    }
 
-    BatchValueSet(set, "Job_Manager_Index");
-    BatchValueSet(nodememory, "Job_Manager_Memory");
-    BatchValueSet(additional_program_args, "Job_Manager_Additional_Args");
+        _job_manager_index = set;
+        _job_manager_mem   = nodememory;
+        _job_manager_args  = additional_program_args;
+
+    }
+}
+
+void set_job_manager_values() {
+
+    BatchValueSet(_job_manager_index, "Job_Manager_Index");
+    BatchValueSet(_job_manager_mem,   "Job_Manager_Memory");
+    BatchValueSet(_job_manager_args,  "Job_Manager_Additional_Args");
     batchf("Job_Manager_Index");
     batchf("Job_Manager_Memory");
     batchf("Job_Manager_Additional_Args");
 
-    _job_manager_index = set;
-    _job_manager_mem = nodememory;
-    _job_manager_args = additional_program_args;
     //strcpy(_job_manager_args,additional_program_args);
-
 }

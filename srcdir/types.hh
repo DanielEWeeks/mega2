@@ -63,10 +63,12 @@ bool inline inSet(Cstr& str, T& set) {
 
 typedef std::vector<std::string>            Vecs;
 typedef std::vector<const char *>           Vecc;
+typedef std::vector<char *>                 Vecc1;
 typedef std::vector<int>                    Veci;
 typedef std::vector<double>                 Vecd;
 typedef std::vector<std::string>::const_iterator            Vecsp;
 typedef std::vector<const char *>::const_iterator           Veccp;
+typedef std::vector<char *>::const_iterator                 Vecc1p;
 typedef std::vector<int>::const_iterator                    Vecip;
 typedef std::vector<double>::const_iterator                 Vecdp;
 

@@ -84,9 +84,12 @@ extern int            columncount(FILE *fp);
 
 extern void           log_line(void (*log_func)(const char *messg));
 
-extern void           makedir(char *dirname);
+extern int            makedir(char *dirname);
+extern int            makedirpath(char *dirname);
 
 extern void           mega2_opts(int argc, char **argv);
+
+extern std::string&   param_replace(std::string& param, size_t start=0);
 
 extern const char*    mklogdir(void);
 

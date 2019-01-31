@@ -35,6 +35,7 @@
 extern int _job_manager_index;
 extern int _job_manager_mem;
 extern Str _job_manager_args;
+extern char *qsub(), *sbatch();
 
 namespace dataloop {
 
@@ -155,9 +156,11 @@ namespace dataloop {
 
             //THIS IS THE FUNCTION THAT WILL NEED JOB MANAGER WRAPPING
             if(_job_manager_index == 2)
-                pr_printf("qsub –l -N h_vmem=%d ",_job_manager_mem);
+                pr_printf(qsub());
+
             if(_job_manager_index == 3)
-                pr_printf("sbatch –n1 –mem=%d ",_job_manager_mem);
+                pr_printf(sbatch());
+
             if (strcmp(sub_shell->dir_, ".")) {
                 pr_printf("echo pushd %s\n", sub_shell->dir_);
                 pr_printf("pushd %s\n", sub_shell->dir_);

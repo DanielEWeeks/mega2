@@ -1178,7 +1178,7 @@ void BatchValueGet(Veci& vec, Cstr &item)   // for lists
 
 static int parse_batch_file(char *batch_file_name, int rc)
 {
-    char nextline[FILENAME_LENGTH];
+    char nextline[FILENAME_LENGTH], *nlp = nextline;
     int errtok = 0, errline = 0, cnt = 0;
 
     FILE *fp = fopen(batch_file_name, "r");
@@ -1208,15 +1208,20 @@ static int parse_batch_file(char *batch_file_name, int rc)
     while (!feof(fp)) {
         get_line(fp, nextline);
         line_n++;
-        if (*nextline == 0) continue;
-        lz = strlen(nextline) - 1;
-        if (nextline[lz] == '\n') nextline[lz] = 0;
-        if (*nextline == 0) continue;
+        if (*nlp == 0) continue;
+        lz = strlen(nlp);
+        if (nlp[lz-1] == '\n') nlp[--lz] = 0;
+        if (*nlp == 0) continue;
 
         // if the line is not the empty string, though this would match a line with one space on it...
         // better would be to search for the leack of a comment character in the first column and
         // an equal sign somewhere in the line....
-        token.set(nextline);
+        if (strcspn(nlp, "$%") == lz) { //missing
+            token.set(nlp);
+        } else {
+            string nls(nlp);
+            token.set(param_replace(nls), 0);
+        }
         if (token.assign(lhs, rhs)) {
 //
             if (debug) warnvf("lhs: |%s| rhs: |%s|\n", C(lhs), C(rhs));

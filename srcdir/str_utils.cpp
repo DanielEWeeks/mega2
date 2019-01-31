@@ -182,6 +182,17 @@ bool Token::getDC(d3 &vec, int cnt) {
     return i == 3;
 }
 
+void Token::set(Cstr& lin, char *linc) {
+    this->line = lin;
+
+    Cline = linc;
+
+    of = line.find_first_not_of(sep);
+    if (of == std::string::npos) of = 0;
+    fo = std::string::npos;
+    mo = true;
+}
+
 void Token::set(Cstr& lin) {
     this->line = lin;
 
@@ -325,7 +336,7 @@ static const char *index(const char *s, char c) {
 }
 #endif
 
-void split(Vecc &fields, char *line, const char *sep, int cnt) {
+void split(Vecc1 &fields, char *line, const char *sep, int cnt) {
     int mult = index(sep, ' ') != 0 ? 1 : 0;
     char *fo = line;
     char *of = fo;
@@ -361,6 +372,15 @@ void split(Vecc &fields, char *line, const char *sep, int cnt) {
 }
 
 void join(Vecs &vec, Str& ans, Cstr& sep) {
+    ans = "";
+    for (int i = 0, l = vec.size(); i < l; i++) {
+        ans.append(vec[i]);
+        if (i < l - 1)
+            ans.append(sep);
+    }
+}
+
+void join(Vecc &vec, Str& ans, Cstr& sep) {
     ans = "";
     for (int i = 0, l = vec.size(); i < l; i++) {
         ans.append(vec[i]);

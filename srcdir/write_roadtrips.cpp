@@ -429,7 +429,7 @@ void CLASS_ROADTRIPS::create_sh_file(linkage_ped_top *Top, char *file_names[], c
             pr_printf("  echo set %s_program=\"$%s_def\"\n", path, NAME);
             pr_printf("  set %s_program=\"$%s_def\"\n", path, NAME);
             pr_printf("else\n");
-            pr_printf("  echo The %s executable was not found - \n", fullpath);
+            pr_printf("  echo The %s/%s executable was not found - \n", NAME, path);
             pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", NAME, path);
             pr_printf("  echo\n");
             pr_printf("    if (\"$%s_def\" == \"0\") then\n", NAME);

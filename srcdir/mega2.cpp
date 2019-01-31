@@ -217,6 +217,7 @@ write_simulate_files_ext.h:  create_SIMULATE_format_files
       write_vitesse_ext.h:  create_vitesse_files
 */
 
+using namespace std;
 
 /*Global vars*/
 
@@ -364,6 +365,9 @@ int             SetMarkerPosToSpecial;
 int             force_numeric_alleles = 0;
 
 int             _strand_flips;
+char            *CHRM_list;
+const char      *CHRM_;
+int              queue;
 
 int lastautosome    = 0;
 int pseudoautosome  = 0;
@@ -526,6 +530,9 @@ static void    init_globals(char *argv0)
     ChrLoci = NULL;
     dump_dbCompress = 0;
     dbCompress = 0;
+    CHRM_list = NULL;
+    CHRM_ = "";
+    queue = 0;
 }
 
 static void free_globals(void)
@@ -610,12 +617,16 @@ int exceeded_max_morgan_value(const double position) {
 /* -------------------------- here is main()----------------------------*/
 
 extern void init_analysis();
+extern int mega2_iterate(int argc, char **argv);
 
 extern int  db_exists_db();
 extern void db_open_db();
 extern void db_init_all();
 extern void db_fini_all();
 extern char DBfile[255];
+
+extern int     CHRM_argc;
+extern char  **CHRM_argv;
 
 int             main(int argc, char **argv, char **env)
 {
@@ -637,7 +648,6 @@ int             main(int argc, char **argv, char **env)
     char           *input_path  = NULL;
     int            num_cols=0;
 /*  int            check_web_ver = 1; */
-
     FILE          *fp;
     int            ferr = 0; /* error opening one or more files*/
 
@@ -654,6 +664,19 @@ int             main(int argc, char **argv, char **env)
     TimeStampWritten[0]=0; TimeStampWritten[1]=0;
 
     mega2_opts(argc, argv);
+
+//    mega2 -a -b -q -c 1,2,3 MX c "" d
+//      qsub mega2 -a -b -c 1 MX c "" d
+//      qsub mega2 -a -b -c 2 MX c "" d
+//      qsub mega2 -a -b -c 3 MX c "" d
+
+//      void join(Vecc &vec, Str& ans, Cstr& sep);
+
+    if (queue)
+        job_manager_menus();
+
+    if ( mega2_iterate(argc, argv) )
+        exit(0);
 
     init_analysis();
     // Initialize these just in case we are not getting the data from a batch file...
@@ -715,6 +738,10 @@ int             main(int argc, char **argv, char **env)
         mssgf(err_msg);
 
         batchfile_process(Mega2Batch, &analysis);
+        if (queue) {
+            extern void set_job_manager_values();
+            set_job_manager_values();
+        }
 
 	// initialize globals form the batch file input if any...
         genetic_distance_index = Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option;
@@ -1366,7 +1393,10 @@ int             main(int argc, char **argv, char **env)
         strand_flip_reference_alleles(LPedTreeTop);
 
         //call to the menu to handle various job queueing options
-        job_manager_menus();
+        if (queue) {
+            extern void set_job_manager_values();
+            set_job_manager_values();
+        }
 
         if (analysis->IsTypedNgeno() &&
             ( (LPedTreeTop->Ped == LPedTreeTop->PedBroken) || (recount_typed)) ) {
@@ -1558,3 +1588,148 @@ int             main(int argc, char **argv, char **env)
 
     return SUCCESS;
 }  /* End of program! */
+
+extern int _job_manager_index, _job_manager_mem;
+extern Str _job_manager_args;
+char *qsub();
+char *sbatch();
+
+static
+void mega2_once(const char *nargv[], int argc)
+{
+    int i, k = 1;
+    string str;
+
+    if (_job_manager_mem != 4) {
+        k += 1 + 2;
+    }
+//    Vecc argv(argc);
+    std::vector<const char *> argv;
+
+    if (queue) {
+        argv.push_back("echo");
+
+        if (_job_manager_index == 2)
+            argv.push_back(qsub());
+
+        else if (_job_manager_index == 3)
+            argv.push_back(sbatch());
+
+    } else {
+        argv.push_back("echo");
+
+    }
+
+    for (i = 0; i < argc; i++) argv.push_back(nargv[i]);
+
+    join(argv, str, " ");
+
+    system(C(str));
+    return;
+}
+
+int mega2_iterate(int argc, char **argv)
+{
+    if (CHRM_list) {
+        int i;
+        printf("args after: %s\n", Mega2Batch);
+        for (i=1; i < CHRM_argc; i++)
+            printf("%d: %s\n", i, CHRM_argv[i]);
+        printf("CHRMs: %s\n", CHRM_list);
+
+        Vecc1 fields, dash;
+        int dash_size = 0;
+        if (index(CHRM_list, '-')) dash_size += 2;
+        split(fields, CHRM_list, ",");
+        if (fields.size() <= 1 && dash_size <= 1) {
+            CHRM_ = CHRM_list;
+            return 0;
+        }
+
+        int j = 0, k = -1;
+        const char *nargv[argc];
+        for (i = 0; i < argc; i++) {
+/*
+            if ( (strcasecmp(argv[i], "--queue")) &&
+                 (strcasecmp(argv[i], "-q")))
+                nargv[j++] = argv[i];
+            if ( (! strcasecmp(argv[i], "--chrm")) ||
+                 (! strcasecmp(argv[i], "-c"))) {
+                k = j++;
+            } else if (! *argv[i])
+                nargv[j++] = "\"\"";
+*/
+            if ( (! strcasecmp(argv[i], "--chrm")) ||
+                 (! strcasecmp(argv[i], "-c"))) {
+                k = j+1;
+            } 
+
+            if ( (strcasecmp(argv[i], "--queue")) &&
+                 (strcasecmp(argv[i], "-q"))) {
+                if (! *argv[i])
+                    nargv[j++] = "\"\"";
+                else
+                    nargv[j++] = argv[i];
+            }
+        }
+        if (queue) argc--;
+
+        for (int l = 0; l < fields.size(); l++) {
+            if (k >= 0) {
+                dash.clear();
+                split(dash, fields[l], (const char *)"-");
+                if (dash.size() == 1) {
+                    nargv[j] = dash[0];
+                    mega2_once(nargv, argc);
+                } else {
+                    char num[3], st[3], nd[3];
+                    strcpy(st, (*dash[0] ? dash[0] : "1"));
+                    strcpy(nd, (*dash[1] ? dash[1] : "22"));
+                    strncpy(num, st, 3);
+                    int dash_cnt = atoi(nd) - atoi(st) + 1;
+                    for (int l2 = 0; l2 < dash_cnt; l2++) {
+                        nargv[k] = num;
+                        mega2_once(nargv, argc);
+
+                        if (num[1] == 0) {
+                            num[0]++;
+                            if (num[0] > '9') {
+                                num[0] = '1';
+                                num[1] = '0';
+                                num[2] =  0;
+                            }
+                        } else {
+                            num[1]++;
+                            if (num[1] > '9') {
+                                num[1] = '0';
+                                num[0]++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return 1;
+    }
+    return 0;
+}
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+#define QSIZE 4096
+char q_param[QSIZE];
+
+char *qsub()
+{
+    snprintf(q_param, QSIZE, "qsub –l -N h_vmem=%d %s ",
+             _job_manager_mem, C(_job_manager_args));
+    return q_param;
+}
+
+char *sbatch()
+{
+    snprintf(q_param, QSIZE, "sbatch –n1 –mem=%d %s ",
+             _job_manager_mem, C(_job_manager_args));
+    return q_param;
+}

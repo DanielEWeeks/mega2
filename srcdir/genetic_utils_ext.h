@@ -80,7 +80,7 @@ extern void           log_marker_selections(linkage_ped_top *Top,
 					    void (*log_func)(const char *messg),
 					    int disp_err);
 
-extern void         makedir(char *dirname);
+extern int          makedir(char *dirname);
 
 extern void         mega2_version_check(void) ;
 
