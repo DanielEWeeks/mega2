@@ -107,7 +107,7 @@ public:
 
     virtual void do_phe_names(char *phe_file, char **phe_names, int *phe_types, int phe_cols) { };
     virtual void do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
-                              std::vector<Vecc> &VecAlleles)   { };
+                              std::vector<Vecc> &VecAlleles, int num_ped_recs)   { };
 };
 
 class Input_Base {

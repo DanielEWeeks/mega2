@@ -455,7 +455,7 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
             sh->pr_printf("  echo set %s_program=\"$%s_def\"\n", "KININBCOEFX", "KININBCOEFX");
             sh->pr_printf("  set %s_program=\"`$%s_def`\"\n", "KININBCOEFX", "KININBCOEFX");
             sh->pr_printf("else\n");
-            sh->pr_printf("  echo The %s executable was not found - \n", "$KININBCOEFX/KinInbcoefX");
+            sh->pr_printf("  echo The %s executable was not found - \n", "KININBCOEFX/KinInbcoefX");
             sh->pr_printf("  echo please set your %s environment variable properly so %s can be found.\n", "KININBCOEFX", "KinInbcoefX");
             sh->pr_printf("  echo\n");
             sh->pr_printf("    if (\"$%s_def\" == \"0\") then\n", "KININBCOEFX");
@@ -567,24 +567,29 @@ void CLASS_MQLS::write_MQLS_shell_script(linkage_ped_top *Top, const char *prefi
             pr_printf("echo MQLS-XM Done.\n");
             pr_printf("echo \n");
             pr_printf("echo Renaming MQLS-XM results.\n");
+
+            //pr_printf("echo pushd %s\n", *_opath);
+            //pr_printf("pushd %s\n", *_opath);
             if(_numchr == 23) {
-                pr_printf("mv %s/XMtest.out %s/MQLS.X.out \n", *_opath,*_opath);
-                pr_printf("mv %s/XMtest.top %s/MQLS.X.top\n",*_opath,*_opath);
-                pr_printf("mv %s/XMtest.testvalues %s/MQLS.X.testvalues\n", *_opath,*_opath);
-                pr_printf("mv %s/XMtest.pvalues %s/MQLS.X.pvalues\n", *_opath,*_opath);
+                pr_printf("mv XMtest.out MQLS.X.out \n");
+                pr_printf("mv XMtest.top MQLS.X.top\n");
+                pr_printf("mv XMtest.testvalues MQLS.X.testvalues\n");
+                pr_printf("mv XMtest.pvalues MQLS.X.pvalues\n");
             }
             else if(_numchr<10) {
-                pr_printf("mv %s/MQLStest.out %s/MQLS.0%d.out \n",*_opath,*_opath,_numchr);
-                pr_printf("mv %s/MQLStest.top %s/MQLS.0%d.top\n",*_opath,*_opath,_numchr);
-                pr_printf("mv %s/MQLStest.testvalues %s/MQLS.0%d.testvalues\n", *_opath,*_opath,_numchr);
-                pr_printf("mv %s/MQLStest.pvalues %s/MQLS.0%d.pvalues\n", *_opath,*_opath,_numchr);
+                pr_printf("mv MQLStest.out MQLS.0%d.out \n",_numchr);
+                pr_printf("mv MQLStest.top MQLS.0%d.top\n",_numchr);
+                pr_printf("mv MQLStest.testvalues MQLS.0%d.testvalues\n",_numchr);
+                pr_printf("mv MQLStest.pvalues MQLS.0%d.pvalues\n",_numchr);
             }
             else {
-                pr_printf("mv %s/MQLStest.out %s/MQLS.%d.out \n", *_opath,*_opath,_numchr);
-                pr_printf("mv %s/MQLStest.top %s/MQLS.%d.top\n",*_opath,*_opath,_numchr);
-                pr_printf("mv %s/MQLStest.testvalues %s/MQLS.%d.testvalues\n",*_opath,*_opath,_numchr);
-                pr_printf("mv %s/MQLStest.pvalues %s/MQLS.%d.pvalues\n",*_opath,*_opath,_numchr);
+                pr_printf("mv MQLStest.out MQLS.%d.out \n",_numchr);
+                pr_printf("mv MQLStest.top MQLS.%d.top\n",_numchr);
+                pr_printf("mv MQLStest.testvalues MQLS.%d.testvalues\n",_numchr);
+                pr_printf("mv MQLStest.pvalues MQLS.%d.pvalues\n",_numchr);
             }
+
+            //pr_printf("popd\n");
             pr_printf("exit 0\n");
 
             pr_nl();

@@ -3994,7 +3994,7 @@ void job_manager_menus() {
     if (InputMode == INTERACTIVE_INPUTMODE || InputMode == BATCH_FILE_INPUTMODE) {
         while (select1 != 0) {
             newline;
-            printf("        NODE CHOICE MENU\n");
+            printf("       JOB MANAGEMENT MENU\n");
             draw_line();
             printf("0) Done with this menu - please proceed\n");
             int idx = 1;

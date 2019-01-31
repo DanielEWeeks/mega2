@@ -42,6 +42,7 @@
 #include "input_ops.hh"
 #include "str_utils.hh"
 #include "annotated_ped_file.h"
+#include "phe_lookup_ext.h"
 
 using namespace std;
 class BCFMarker {
@@ -94,7 +95,7 @@ public:
     void build_bcf_map(m2_map& bcf_map);
 
     void do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
-                      std::vector<Vecc> &VecAlleles);
+                      std::vector<Vecc> &VecAlleles, int num_ped_recs);
 
 public:
     Str     BCF_args;
@@ -124,7 +125,9 @@ protected:
     char **phenames;
     int   *phetypes;
 
-    Hmapsi sampleMap;
+    Hmapsi hdrMap;
+    int * hdrInd;
+    sample_map_type sampleIDs;
 };
 
 

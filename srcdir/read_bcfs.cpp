@@ -50,6 +50,7 @@
 #include "common.h"
 #include "tod.hh"
 #include "error_messages_ext.h"
+#include "phe_lookup_ext.h"
 
 extern "C" {
     #include "bcftools.h"
@@ -415,12 +416,12 @@ void ReadBCFs::build_markers_and_samples() {
             //first file just add
             if (i == 0) {
                 this->samples.push_back(name);
-                Pairsi pair(name,1);
-                sampleMap.insert(pair);
+                Pairsi pair(name, j);
+                hdrMap.insert(pair);
             }
-            //other files use sampleMap to check the names are the same
+            //other files use hdrMap to check the names are the same
             else {
-                if (sampleMap.find(name) == sampleMap.end())
+                if (hdrMap.find(name) == hdrMap.end())
                     errorvf("Sample in file %s not found in first file from manifest\n", files[i].c_str());
             }
         }
@@ -597,13 +598,13 @@ void ReadBCFs::build_bcf_map(m2_map &bcf_map) {
  * We want to build "names" and genotypes in one pass to only load these BCF files once
  */
 
-static void phenotype_file_SAMPLEID_entry_checks();
-
 linkage_locus_top *ReadBCFs::do_names(const char *&names_fn)
 {
+    //we need to call this as a getopt function
     linkage_locus_top *LTop = build_BCFs_names();
 
-    phenotype_file_SAMPLEID_entry_checks();
+    //deprecated
+    //phenotype_file_SAMPLEID_entry_checks();
 
     return LTop;
 }
@@ -649,70 +650,15 @@ linkage_locus_top *ReadBCFs::build_BCFs_names()
             /*annotated*/ 1, /*penetrances_read*/ 0, 0, NULL);
 }
 
-/**
- This routine processes the SAMPLEID information in the phenotype file, and the sample information
- in the VCF file and will give the user a message if any of the following occurs:
- 1) a SAMPLEID in the Phenotype File is not found (or found multiple times) as a VCF file
-    sample label (found in the VCF file header line)
- 2) a SAMPLEID entry has been excluded through the vcftools filtering mechanism
- 3) a sample label in the VCF file is not found in the SAMPLEID column of the phenotype file.
- */
-extern sample_map_type *SAMPLEIDS;
-static void phenotype_file_SAMPLEID_entry_checks()
-{
-    if (SAMPLEIDS == NULL) {
-        mssgf("The SAMPLEID column was not included in the phenotype file.");
-        return;
-    }
-    mssgf("The SAMPLEID column was included in the phenotype file.");
-    
-#if 0
-    // Iterate over the SAMPLEID information from the phenotype file...
-    for (sample_map_type::iterator it = SAMPLEIDS->begin(); it != SAMPLEIDS->end(); it++) {
-        string map_sample = it->first;
-        int found = 0;
-        
-        // Look for the SAMPLEID (map_sample) in the VCF file...
-        for (int ui=0; ui < vf->N_total_indv(); ui++) {
-            string vcf_file_sample = vf->indv[(size_t)ui];
-            if (vcf_file_sample == map_sample) {
-                // It was found...
-                if (vf->include_indv[(size_t)ui] == false && found == 0) {
-                    mssgvf("SAMPLEID '%s' has been excluded by the vcftools filters.\n", map_sample.c_str());
-                }
-                found++; // SAMPLEID found in the VCF file...
-            }
-        }
-        if (found == 0) {
-            mssgvf("SAMPLEID '%s' was not found in the VCF file.\n", map_sample.c_str());
-        } else if (found > 1) {
-            mssgvf("SAMPLEID '%s' was found multiple times in the VCF file.\n", map_sample.c_str());
-        } // else if (fount == 1) all is well!
-    } // for (sample_map_type::iterator it ...
-    
-    // Look through all of the samples in the VCF file....
-    for (int ui=0; ui < vf->N_total_indv(); ui++) {
-        if (vf->include_indv[(size_t)ui] == false) continue;
-        string vcf_file_sample = vf->indv[(size_t)ui];
-        int found = 0;
-        // Determine if it matches any sample in the SAMPLEID column of the phenotype file...
-        for (sample_map_type::iterator it = SAMPLEIDS->begin(); it != SAMPLEIDS->end(); it++) {
-            string map_sample = it->first;
-            if (vcf_file_sample == map_sample) {
-                found++;
-                break;
-            }
-        }
-        if (found == 0) {
-            mssgvf("The VCF file sample '%s' was not found in the SAMPLEID column\n", vcf_file_sample.c_str());
-            mssgf("included in the phenotype file.");
-        }
-    }
-#endif
-}
+//static void phenotype_file_SAMPLEID_entry_checks()
+//{
+    //this was removed as it didn't work the way I anticipated
+    //sampleID checking against the .phe file
+    // and PED_PER /PER now happens in do_genotypes.
+//}
 
 void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
-                            std::vector<Vecc> &VecAlleles) {
+                            std::vector<Vecc> &VecAlleles, int num_ped_recs) {
     vector <string> files = this->filelist;
     MEGA2_BCFTOOLS_INTERFACE *mbi = new MEGA2_BCFTOOLS_INTERFACE();
 
@@ -734,6 +680,56 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     int mrkindex = LTop->PhenoCnt;
     int zeroed_genotypes_nonx = 0;
     int zeroed_genotypes_x = 0;
+
+    hdrInd = new int[num_ped_recs];
+
+    mssgvf("\nChecking SAMPLEID consistency within files.\n");
+    draw_line();
+
+    for(int per = 0; per < num_ped_recs; per++) {
+        bool done = false;
+        char ped_per[FILENAME_LENGTH];
+        sprintf(ped_per,"%s_%s",persons[per].PedID,persons[per].PerID);
+        //is SAMPLEIDS map null? no phe file column
+        if(SAMPLEIDS != NULL) {
+        //first check SAMPLEIDS map from phenotype file
+            for(sample_map_type::iterator sampleit = SAMPLEIDS->begin(); sampleit != SAMPLEIDS->end(); sampleit++) {
+                for(HMapsip hdrit = hdrMap.begin(); hdrit != hdrMap.end(); hdrit++){
+                    //check if the sample is in both the SAMPLEIDS and the headers from the BCF FILE
+                    if(sampleit->first == hdrit->first) {
+                        //check to see that the values we got from the SAMPLIDS map match the persons table
+                        if(sampleit->second.first == persons[per].PedID && sampleit->second.second ==persons[per].PerID) {
+                            //printf("%s %s %d \n", sampleit->first.c_str(), hdrit->first.c_str(), hdrMap.find(sampleit->first)->second);
+                            hdrInd[per] = hdrMap.find(sampleit->first)->second;
+                            done = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        //next check BCF FILE header name against PED_PER
+        if(!(hdrMap.find(ped_per) == hdrMap.end()) && !done){
+            hdrInd[per] = hdrMap.find(ped_per)->second;
+            done = true;
+        }
+        //next check against PER
+        else if(!(hdrMap.find(persons[per].PerID)== hdrMap.end()) && !done){
+            hdrInd[per] = hdrMap.find(persons[per].PerID)->second;
+            done = true;
+        }
+        else if(done){
+            //need a catch for the sample map if it's found so we don't put an warning
+            //but we don't need to do anything
+        }
+        //finally warning and zero out the value, we either got this value in the BCF FILE with  no match
+        //or we got it in the pedigree and couldn't find the match in the BCF FILE
+        else {
+            mssgvf("Cannot find match in VCF file within provided pedigree for pedigree: %s person: %s\n",persons[per].PedID, persons[per].PerID);
+            hdrInd[per] = -1;
+        }
+    }
+
 
     for (int i = 0; i < this->filecount; i++) {
         args.push_back(files[i]);
@@ -764,7 +760,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
         while (bcf_sr_next_line(bcfargs->files)) {
             bcf1_t *line = bcfargs->files->readers[0].buffer[0];
                 if ( subset_vcf(bcfargs, line) && mrkindex < LTop->LocusCnt) {
-                int m, n, i;
+                int m, n, p;
 
                 //uses convert object so we need our own void * instead
                 void *dat = NULL;
@@ -789,8 +785,14 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
                 //should give number of allele options per marker
                 n /= num_samples;
-                for (i = 0; i < num_samples; i++) {
-                    int32_t *ptr = (int32_t *) dat + i * n;
+                //this used to be p, but now we want p to traverse all ped records from external ped files
+                //int vcf_col = 0;
+                for (p = 0; p < num_ped_recs; p++) {
+                    if(hdrInd[p] == -1) {
+                        set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                        continue;
+                    }
+                    int32_t *ptr = (int32_t *) dat + hdrInd[p] * n;
                     int j;
                     for (j = 0; j < n; j++)
                         if (ptr[j] == bcf_int32_vector_end) break;
@@ -799,21 +801,20 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                     int is_x_chr = 0;
                     if(((strcasecmp(chromosome,"X") == 0) ||
                         (strcasecmp(chromosome,"CHRX") == 0) ||
-                        (strcmp(chromosome,"23") == 0)) && (persons[i].Sex == 1))
+                        (strcmp(chromosome,"23") == 0)) && (persons[p].Sex == 1))
                         is_x_chr = 1;
-
 
                     // diploid
                     if (j == 2) {
                         // ./.
                         if (bcf_gt_is_missing(ptr[0]) && bcf_gt_is_missing(ptr[1]))
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                         // ./ALT
                         else if (bcf_gt_is_missing(ptr[0]) && bcf_gt_allele(ptr[1]) == 1) {
                             if (MARKER_SCHEME > 1)
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[1]);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[1]);
                             else {
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                                 if(is_x_chr)
                                     zeroed_genotypes_x++;
                                 else
@@ -823,9 +824,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                         // ./REF
                         else if (bcf_gt_is_missing(ptr[0])) {
                             if (MARKER_SCHEME > 1)
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[0]);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, canons[0]);
                             else {
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                                 if(is_x_chr)
                                     zeroed_genotypes_x++;
                                 else
@@ -835,9 +836,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                         // ALT/.
                         else if (bcf_gt_is_missing(ptr[1]) && bcf_gt_allele(ptr[0]) == 1) {
                             if(MARKER_SCHEME > 1)
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], zero);
                             else {
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                                 if(is_x_chr)
                                     zeroed_genotypes_x++;
                                 else
@@ -847,9 +848,9 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                         // REF/.
                         else if (bcf_gt_is_missing(ptr[1])) {
                             if(MARKER_SCHEME > 1)
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], zero);
                             else {
-                                set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                                set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                                 if(is_x_chr)
                                     zeroed_genotypes_x++;
                                 else
@@ -858,24 +859,24 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                         }
                         // ALT/REF
                         else if (bcf_gt_allele(ptr[0]) != bcf_gt_allele(ptr[1]))
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[1]);
                         // ALT/ALT
                         else if (bcf_gt_allele(ptr[0]) == 1)
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
                         // REF/REF
                         else
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
                         // haploid
                     } else if (j == 1) {
                         // single missing genotypes
                         if (bcf_gt_is_missing(ptr[0]))
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], zero, zero);
                         // single ALT
                         else if (bcf_gt_allele(ptr[0]) == 1)
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[1], canons[1]);
                         // single REF
                         else
-                            set_2Ralleles(persons[i].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
+                            set_2Ralleles(persons[p].marker, mrkindex, &LTop->Locus[mrkindex], canons[0], canons[0]);
                     } else error("FIXME: not ready for ploidy %d\n", j);
 
                 }
@@ -920,7 +921,7 @@ linkage_ped_top* ReadBCFs::do_ped(linkage_locus_top *LTop)   {
     //       "All sex values have been set to male as a default.\n");
     annotated_ped_rec *persons = build_bcf_ped(LTop);
 
-    do_genotypes(LTop, persons, VecAlleles);
+    do_genotypes(LTop, persons, VecAlleles, num_samples);
     linkage_ped_top *Top;
 
     Top = mk_ped_top(persons, this->num_samples, LTop, this->num_samples,
@@ -977,8 +978,8 @@ annotated_ped_rec * ReadBCFs::build_bcf_ped(linkage_locus_top *LTop) {
 
 void ReadBCFs::do_gc() {
 
-    sampleMap.clear();
-    Hmapsi().swap(sampleMap);
+    hdrMap.clear();
+    Hmapsi().swap(hdrMap);
 
     samples.clear();
     vector<string>().swap(samples);
