@@ -1607,23 +1607,15 @@ void mega2_once(const char *nargv[], int argc)
     std::vector<const char *> argv;
 
     if (queue) {
-        argv.push_back("echo");
-
         if (_job_manager_index == 2)
             argv.push_back(qsub());
 
         else if (_job_manager_index == 3)
             argv.push_back(sbatch());
-
-    } else {
-        argv.push_back("echo");
-
     }
 
     for (i = 0; i < argc; i++) argv.push_back(nargv[i]);
-
     join(argv, str, " ");
-
     system(C(str));
     return;
 }
@@ -1649,16 +1641,6 @@ int mega2_iterate(int argc, char **argv)
         int j = 0, k = -1;
         const char *nargv[argc];
         for (i = 0; i < argc; i++) {
-/*
-            if ( (strcasecmp(argv[i], "--queue")) &&
-                 (strcasecmp(argv[i], "-q")))
-                nargv[j++] = argv[i];
-            if ( (! strcasecmp(argv[i], "--chrm")) ||
-                 (! strcasecmp(argv[i], "-c"))) {
-                k = j++;
-            } else if (! *argv[i])
-                nargv[j++] = "\"\"";
-*/
             if ( (! strcasecmp(argv[i], "--chrm")) ||
                  (! strcasecmp(argv[i], "-c"))) {
                 k = j+1;
@@ -1668,13 +1650,23 @@ int mega2_iterate(int argc, char **argv)
                  (strcasecmp(argv[i], "-q"))) {
                 if (! *argv[i])
                     nargv[j++] = "\"\"";
-                else
+                else if (! index(argv[i], ' '))
                     nargv[j++] = argv[i];
+                else {
+                    size_t ll = strlen(argv[i]);
+                    char *xargv = CALLOC(ll+3, char);
+                    strcpy(xargv+1, argv[i]);
+                    *xargv          = '"';
+                    *(xargv+1+ll)   = '"';
+                    *(xargv+1+ll+1) = 0;
+                    nargv[j++] = xargv;
+                }
+
             }
         }
         if (queue) argc--;
 
-        for (int l = 0; l < fields.size(); l++) {
+        for (size_t l = 0; l < fields.size(); l++) {
             if (k >= 0) {
                 dash.clear();
                 split(dash, fields[l], (const char *)"-");

@@ -1200,7 +1200,7 @@ static int parse_batch_file(char *batch_file_name, int rc)
 #endif
 
     int line_n = 1;
-    int lz;
+    size_t lz;
     Token token;
     Str lhs, rhs;
     batch_item_type *bi = (batch_item_type *) NULL;
@@ -1220,7 +1220,9 @@ static int parse_batch_file(char *batch_file_name, int rc)
             token.set(nlp);
         } else {
             string nls(nlp);
-            token.set(param_replace(nls), 0);
+            string &param(param_replace(nls));
+            msgvf("batch line: %s\n", C(param));
+            token.set(param, 0);
         }
         if (token.assign(lhs, rhs)) {
 //
