@@ -1536,8 +1536,8 @@ void menu1(file_format *infl_type,
                         exit_loop = 0;
                     }
 
-                    if(sampleID_match == 0){
-                        printf("ERROR: You did not specify a SampleID Matche.\n");
+                    if(sampleID_match == 0 && access(*pedfl_name, F_OK) == 0){
+                        printf("ERROR: You did not specify a SampleID Match.\n");
                         exit_loop = 0;
                     }
                 }

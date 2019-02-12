@@ -693,7 +693,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
 
     SECTION_LOG_INIT(sampleid_mismatch);
-    
+
     if(sample_ind != 0) {
         mssgvf("\nChecking SAMPLEID consistency within files.\n");
         if(sample_ind == 1)
