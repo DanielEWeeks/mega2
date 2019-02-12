@@ -243,6 +243,7 @@ void ReadBCFs::do_menu2batch() {
     Cstr Values[] = {
             "BCF_Args",
             "BCFs_File",
+            "BCF_Sample_Style",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -271,6 +272,7 @@ void ReadBCFs::show_settings() {
     msgvf("\n");
     msgvf("Input File:                                 %s\n", ((this->inpfile) ? C(this->inpfile) : C(this->BCF_file)));
     msgvf("BCF Arguments:                              %s\n", C(this->BCF_args));
+    msgvf("Sample Index:                               %d\n", this->sample_ind);
 }
 
 
@@ -684,13 +686,14 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
     hdrInd = new int[num_ped_recs];
 
-    if(INTERACTIVE_INPUTMODE) {
+    if(InputMode == INTERACTIVE_INPUTMODE) {
         extern int _bcf_sample_index;
         sample_ind = _bcf_sample_index;
     }
 
 
-
+    SECTION_LOG_INIT(sampleid_mismatch);
+    
     if(sample_ind != 0) {
         mssgvf("\nChecking SAMPLEID consistency within files.\n");
         if(sample_ind == 1)
@@ -746,11 +749,14 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
             //finally warning and zero out the value, we either got this value in the BCF FILE with  no match
             //or we got it in the pedigree and couldn't find the match in the BCF FILE
             else {
+                 SECTION_LOG(sampleid_mismatch);
                 mssgvf("Cannot find match in VCF file within provided pedigree for pedigree: %s person: %s\n",persons[per].PedID, persons[per].PerID);
                 hdrInd[per] = -1;
             }
         }
     }
+
+    SECTION_LOG_FINI(sampleid_mismatch);
 
 
     for (int i = 0; i < this->filecount; i++) {
@@ -941,7 +947,11 @@ linkage_ped_top* ReadBCFs::do_ped(linkage_locus_top *LTop)   {
     //mssgvf("\nAs a pedigree (.fam) file was not provided, we have assumed everyone is unrelated.\n"
     //       "If you have pedigree information that you did not include please rerun providing a pedigree file.\n"
     //       "All sex values have been set to male as a default.\n");
-    annotated_ped_rec *persons = build_bcf_ped(LTop);
+
+    int xcf_ped_file_present = (strcmp(pedfile,"-.fam")==0) || (strcmp(pedfile,"-")==0);
+    printf("here %s %d\n",pedfile,xcf_ped_file_present);
+    //if(xcf_ped_file_present)
+        annotated_ped_rec *persons = build_bcf_ped(LTop);
 
     do_genotypes(LTop, persons, VecAlleles, num_samples);
     linkage_ped_top *Top;
