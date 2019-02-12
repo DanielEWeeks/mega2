@@ -147,6 +147,7 @@ char _hgbuild[FILENAME_LENGTH];
 int _job_manager_index = 1;
 int _job_manager_mem   = 4;
 Str _job_manager_args;
+int _bcf_sample_index = 0;
 
 /*===========================================================================*/
 /*
@@ -1014,9 +1015,9 @@ void menu1(file_format *infl_type,
     int            compress_i = 18, file_format_i = 19, vcf_args_i = 20;
     int            vcf_mak_i = 21, site_vcf_i = 22, site_bcf_i = 23, site_vcf_gz_i = 24, _aux_i = 0;
     int            db_file_i = 25, in_dir_i = 26, pmap_i = 27;
-    int	           imputed_i = 28, inf_i = 29, showtyp_i = 31;
+    int	           imputed_i = 28, inf_i = 29, showtyp_i = 31, bcf_match_i = 32;
     /* site_bcfs_dir_i=30, site_bcfs_template_i = 31*//*, flip_i = 30*/;
-    int            idx, choiceA[32]; /* idx should be 1+ largest <>_i value (above)*/
+    int            idx, choiceA[33]; /* idx should be 1+ largest <>_i value (above)*/
 
     int            plinkf = 0, xcf = 0;
 
@@ -1027,6 +1028,7 @@ void menu1(file_format *infl_type,
 
     char           *infofl_array = NULL;
     char          **infofl_name = &infofl_array;
+    int             sampleID_match = 0;
 
     /* specifying chromosome or extension overrides previous specifications
        unless user specified each file separately */
@@ -1323,11 +1325,12 @@ void menu1(file_format *infl_type,
                     printf("%2d) %-*s%s\n", idx, line_len, "Read marker names from the:", tmp);
                     choiceA[idx++] = vcf_mak_i;
                 }
-                
+
                 printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK phenotype parameters:", PLINKArgs);
                 choiceA[idx++] = plink_args_i;
             }
         }
+
 
         if (Input->req_stem_flag) {
             printf("%2d) %-*s%s\n", idx, line_len, "Input file stem:", extension_name);
@@ -1341,15 +1344,46 @@ void menu1(file_format *infl_type,
 
         Input->GetOps()->do_menu_display(idx, line_len, choiceA);
 
+        if(Input_Format == in_format_bcfs || Input_Format == in_format_gzcfs ||
+           Input_Format == in_format_vcfs){
+            if(strcmp(*pedfl_name, "-.fam") == 0 || strcmp(*pedfl_name, "-") == 0) {
+                //do nothing
+            }
+            else {
+                //printf("%s\n", *pedfl_name);
+                if (sampleID_match == 0)
+                    printf("%2d) %-*s%s\n", idx, line_len, "Choose SampleID match:         [required]",
+                           "[ UNASSIGNED ]");
+
+                else if (sampleID_match == 1)
+                    printf("%2d) %-*s%s\n", idx, line_len, "Choose SampleID match:         [required]",
+                           "[ PHE file ]");
+
+                else if (sampleID_match == 2)
+                    printf("%2d) %-*s%s\n", idx, line_len, "Choose SampleID match:         [required]",
+                           "[ PED_PER ]");
+
+                else if (sampleID_match == 3)
+                    printf("%2d) %-*s%s\n", idx, line_len, "Choose SampleID match:         [required]",
+                           "[ PER ]");
+
+                choiceA[idx++] = bcf_match_i;
+            }
+        }
+
+
         choiceA[idx] = fln_print(auxo, idx, _aux_i);
         if (choiceA[idx]) idx++;
 
         if (Input_Format == in_format_imputed) {
             choiceA[idx] = fln_print(info, idx, inf_i);
             if (choiceA[idx]) idx++;
-	}
+	    }
 
-	// BUG? _aux_i is only initialized in certain cases...
+
+
+
+        // BUG? _aux_i is only initialized in certain cases...
         // No. auxo is off iff _aux_i is not initialized and fln_print just returns 0 
         //  w/o doing anything
 
@@ -1419,6 +1453,7 @@ void menu1(file_format *infl_type,
         idx = menu1_show_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
                               showtyp_i, err_i, untyp_i, _thresh_i, compress_i,
                               choiceA, idx, line_len);
+
 
         printf("Select from options 0-%d > ", idx-1);
 
@@ -1498,6 +1533,11 @@ void menu1(file_format *infl_type,
                     BatchValueGet(bcfsfile, "BCFs_File");
                     if (access(bcfsfile, F_OK) != 0) {
                         printf("ERROR: You did not specify a Variant file.\n");
+                        exit_loop = 0;
+                    }
+
+                    if(sampleID_match == 0){
+                        printf("ERROR: You did not specify a SampleID Matche.\n");
                         exit_loop = 0;
                     }
                 }
@@ -1795,9 +1835,50 @@ void menu1(file_format *infl_type,
             }
         } else if (menu1_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh,
                                   showtyp_i, err_i, untyp_i, thresh_i, compress_i, choice_)) {
-                       // above function looks for match and does action
+            // above function looks for match and does action
+        } else if( choice_ == bcf_match_i){
+            char select[100];
+            int ans;
+            while (1) {
+                fflush(stdout);
+                draw_line();
+                printf("In order to match BCF/VCF data to pedigree data a mapping must exist between\n"
+                       "BCF/VCF column and the pedigree structure.\n");
+                printf("Match SampleIDs in BCF header to:\n");
+                printf("0) Done with this menu - please proceed\n");
+                printf(" 1) SampleID field in the .phe file\n");
+                printf(" 2) A string of <famID>_<perID>\n");
+                printf(" 3) A string of <perID>\n");
+                printf("Select from options 0-3 > ");
+                fcmap(stdin, "%s", select);
+                sscanf(select, "%d", &ans);
+                if(ans < 1){
+                    sampleID_match = 0;
+                    printf("Returning to previous menu\n");
+                    break;
+                }
+                else if ( ans > 3) {
+                    printf("Please enter a 1, 2, 3, or 0 to return to the main menu.\n");
+                    continue;
+                }
+                else if (ans ==2 || ans  == 3) {
+                    sampleID_match = ans;
+                    break;
+                }
+                else if (ans == 1){
+                    if(strcmp(*phefl_name, "-.phe") == 0 || strcmp(*phefl_name, "-") == 0){
+                        printf("To use the SAMPLEID column in a .phe file one must be provided.\n");
+                        printf("Use option 0 to return ad assign a .phe file to compare against.\n");
+                    }
+                    else {
+                        sampleID_match = ans;
+                        break;
+                    }
+                }
+
+            }
         } else {
-            printf("Invalid option %s, select from options 0-%d.\n", cchoice, idx-1);
+                printf("Invalid option %s, select from options 0-%d.\n", cchoice, idx-1);
         }
 
         if (choice_) draw_line();
@@ -1854,6 +1935,10 @@ void menu1(file_format *infl_type,
         batchf(BatchItemGet("human_genome_build"));
 
         strcpy(_hgbuild,hgbuild.c_str());
+
+        BatchValueSet(sampleID_match,"BCF_Sample_Style");
+        batchf(BatchItemGet("BCF_Sample_Style"));
+        _bcf_sample_index = sampleID_match;
     }
 
     if (! Input->req_locus_file) fln_free(loco);

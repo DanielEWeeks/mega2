@@ -1714,14 +1714,14 @@ char q_param[QSIZE];
 
 char *qsub()
 {
-    snprintf(q_param, QSIZE, "qsub –l -N h_vmem=%d %s ",
-             _job_manager_mem, C(_job_manager_args));
+    snprintf(q_param, QSIZE, "qsub -N mega2 -l h_vmem=%dG %s ",
+            _job_manager_mem, C(_job_manager_args));
     return q_param;
 }
 
 char *sbatch()
 {
-    snprintf(q_param, QSIZE, "sbatch –n1 –mem=%d %s ",
+    snprintf(q_param, QSIZE, "sbatch –n1 mega2 –mem=%dG %s ",
              _job_manager_mem, C(_job_manager_args));
     return q_param;
 }
