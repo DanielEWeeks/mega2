@@ -947,11 +947,7 @@ linkage_ped_top* ReadBCFs::do_ped(linkage_locus_top *LTop)   {
     //mssgvf("\nAs a pedigree (.fam) file was not provided, we have assumed everyone is unrelated.\n"
     //       "If you have pedigree information that you did not include please rerun providing a pedigree file.\n"
     //       "All sex values have been set to male as a default.\n");
-
-    int xcf_ped_file_present = (strcmp(pedfile,"-.fam")==0) || (strcmp(pedfile,"-")==0);
-    printf("here %s %d\n",pedfile,xcf_ped_file_present);
-    //if(xcf_ped_file_present)
-        annotated_ped_rec *persons = build_bcf_ped(LTop);
+    annotated_ped_rec *persons = build_bcf_ped(LTop);
 
     do_genotypes(LTop, persons, VecAlleles, num_samples);
     linkage_ped_top *Top;
