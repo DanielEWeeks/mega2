@@ -1292,10 +1292,6 @@ int             main(int argc, char **argv, char **env)
         }
 #endif
 
-#ifndef HIDESTATUS
-    int guess;
-#endif
-
         extern void dbmega2_import(linkage_ped_top *Top);
         extern void check_both_pos_index();
 
@@ -1726,8 +1722,6 @@ char q_param[QSIZE];
 
 char *qsub()
 {
- "qsub -b y -N %s -l h_mem=%dG %s ",
-
     snprintf(q_param, QSIZE, "qsub -b y -N %s -l h_vmem=%dG %s ",
              Dname, _job_manager_mem, C(_job_manager_args));
 
