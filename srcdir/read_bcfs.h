@@ -103,6 +103,7 @@ public:
     Input_Base   *input;
     MarkerVector markers;
     int marker_count;
+    int sample_ind;
 
 
 protected:

@@ -154,25 +154,30 @@ namespace dataloop {
         void sh_sh(sh_util *sub_shell) {
             pr_nl();
 
-            //THIS IS THE FUNCTION THAT WILL NEED JOB MANAGER WRAPPING
-            if(_job_manager_index == 2)
-                pr_printf(qsub());
-
-            if(_job_manager_index == 3)
-                pr_printf(sbatch());
-
             if (strcmp(sub_shell->dir_, ".") && strcmp(sub_shell->dir_, sub_shell->file_path())) {
                 pr_printf("echo pushd %s\n", sub_shell->dir_);
                 pr_printf("pushd %s\n", sub_shell->dir_);
             }
 
-            pr_printf("echo csh %s $ARGS\n", sub_shell->file_);
-            if(_job_manager_index == 2)
-                pr_printf("qsub -N h_vmem=%d %s ",_job_manager_mem, sub_shell->file_);
-            if(_job_manager_index == 3)
-                pr_printf("sbatch –n1 –mem=%d %s ",_job_manager_mem, sub_shell->file_);
-            else
+
+            if(_job_manager_index == 2) {
+                pr_printf("echo ");
+                pr_printf(qsub());
+                pr_printf("%s \n", sub_shell->file_);
+                pr_printf(qsub());
+                pr_printf("%s \n", sub_shell->file_);
+            }
+            else if(_job_manager_index == 3) {
+                pr_printf("echo ");
+                pr_printf(sbatch());
+                pr_printf("%s \n", sub_shell->file_);
+                pr_printf(sbatch());
+                pr_printf("%s \n", sub_shell->file_);
+            }
+            else {
+                pr_printf("echo csh %s $ARGS\n", sub_shell->file_);
                 pr_printf("csh %s $ARGS\n", sub_shell->file_);
+            }
 
             if (strcmp(sub_shell->dir_, "."))
                 pr_printf("popd\n");

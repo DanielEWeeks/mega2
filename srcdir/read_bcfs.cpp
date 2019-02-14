@@ -242,7 +242,8 @@ int ReadBCFs::do_menu_parse(int choice_) {
 void ReadBCFs::do_menu2batch() {
     Cstr Values[] = {
             "BCF_Args",
-            "BCFs_File"
+            "BCFs_File",
+            "BCF_Sample_Style",
     };
 
     for(size_t i = 0; i < ((sizeof Values) / sizeof (Cstr)); i++) {
@@ -257,6 +258,7 @@ void ReadBCFs::do_menu2batch() {
 void ReadBCFs::do_batch2local(){
     BatchValueGet(this->BCF_args, "BCF_Args");
     BatchValueGet(this->BCF_file, "BCFs_File");
+    BatchValueGet(this->sample_ind, "BCF_Sample_Style");
 
     this->inpfile = *Input->input_files.bedfl;
 
@@ -270,6 +272,7 @@ void ReadBCFs::show_settings() {
     msgvf("\n");
     msgvf("Input File:                                 %s\n", ((this->inpfile) ? C(this->inpfile) : C(this->BCF_file)));
     msgvf("BCF Arguments:                              %s\n", C(this->BCF_args));
+    msgvf("Sample Index:                               %d\n", this->sample_ind);
 }
 
 
@@ -683,52 +686,77 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 
     hdrInd = new int[num_ped_recs];
 
-    mssgvf("\nChecking SAMPLEID consistency within files.\n");
-    draw_line();
+    if(InputMode == INTERACTIVE_INPUTMODE) {
+        extern int _bcf_sample_index;
+        sample_ind = _bcf_sample_index;
+    }
 
-    for(int per = 0; per < num_ped_recs; per++) {
-        bool done = false;
-        char ped_per[FILENAME_LENGTH];
-        sprintf(ped_per,"%s_%s",persons[per].PedID,persons[per].PerID);
-        //is SAMPLEIDS map null? no phe file column
-        if(SAMPLEIDS != NULL) {
-        //first check SAMPLEIDS map from phenotype file
-            for(sample_map_type::iterator sampleit = SAMPLEIDS->begin(); sampleit != SAMPLEIDS->end(); sampleit++) {
-                for(HMapsip hdrit = hdrMap.begin(); hdrit != hdrMap.end(); hdrit++){
-                    //check if the sample is in both the SAMPLEIDS and the headers from the BCF FILE
-                    if(sampleit->first == hdrit->first) {
-                        //check to see that the values we got from the SAMPLIDS map match the persons table
-                        if(sampleit->second.first == persons[per].PedID && sampleit->second.second ==persons[per].PerID) {
-                            //printf("%s %s %d \n", sampleit->first.c_str(), hdrit->first.c_str(), hdrMap.find(sampleit->first)->second);
-                            hdrInd[per] = hdrMap.find(sampleit->first)->second;
-                            done = true;
-                            break;
+
+    SECTION_LOG_INIT(sampleid_mismatch);
+
+    if(sample_ind != 0) {
+        mssgvf("\nChecking SAMPLEID consistency within files.\n");
+        if(sample_ind == 1)
+            mssgvf("Since 'VCF_Sample_Style' is 1, the VCF header is checked against the .phe file SampleID Column.\n");
+        else if(sample_ind == 2)
+            mssgvf("Since 'VCF_Sample_Style' is 2, the VCF header is checked against '<pedID>_<perID>'.\n");
+        else if(sample_ind == 3)
+            mssgvf("Since 'VCF_Sample_Style' is 3, the VCF header is checked against '<perID>'.\n");
+        draw_line();
+
+        for(int per = 0; per < num_ped_recs; per++) {
+            bool done = false;
+            char ped_per[FILENAME_LENGTH];
+            sprintf(ped_per,"%s_%s",persons[per].PedID,persons[per].PerID);
+            //is SAMPLEIDS map null? no phe file column
+            if(sample_ind == 1){
+                if(SAMPLEIDS != NULL) {
+                //check SAMPLEIDS map from phenotype file
+                    for(sample_map_type::iterator sampleit = SAMPLEIDS->begin(); sampleit != SAMPLEIDS->end(); sampleit++) {
+                        for(HMapsip hdrit = hdrMap.begin(); hdrit != hdrMap.end(); hdrit++){
+                            //check if the sample is in both the SAMPLEIDS and the headers from the BCF FILE
+                            if(sampleit->first == hdrit->first) {
+                                //check to see that the values we got from the SAMPLIDS map match the persons table
+                                if(sampleit->second.first == persons[per].PedID && sampleit->second.second ==persons[per].PerID) {
+                                    //printf("%s %s %d \n", sampleit->first.c_str(), hdrit->first.c_str(), hdrMap.find(sampleit->first)->second);
+                                    hdrInd[per] = hdrMap.find(sampleit->first)->second;
+                                    done = true;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-        //next check BCF FILE header name against PED_PER
-        if(!(hdrMap.find(ped_per) == hdrMap.end()) && !done){
-            hdrInd[per] = hdrMap.find(ped_per)->second;
-            done = true;
-        }
-        //next check against PER
-        else if(!(hdrMap.find(persons[per].PerID)== hdrMap.end()) && !done){
-            hdrInd[per] = hdrMap.find(persons[per].PerID)->second;
-            done = true;
-        }
-        else if(done){
-            //need a catch for the sample map if it's found so we don't put an warning
-            //but we don't need to do anything
-        }
-        //finally warning and zero out the value, we either got this value in the BCF FILE with  no match
-        //or we got it in the pedigree and couldn't find the match in the BCF FILE
-        else {
-            mssgvf("Cannot find match in VCF file within provided pedigree for pedigree: %s person: %s\n",persons[per].PedID, persons[per].PerID);
-            hdrInd[per] = -1;
+            if(sample_ind == 2) {
+                //check BCF FILE header name against PED_PER
+                if(!(hdrMap.find(ped_per) == hdrMap.end()) && !done){
+                    hdrInd[per] = hdrMap.find(ped_per)->second;
+                    done = true;
+                }
+            }
+            if(sample_ind == 3) {
+                //check against PER
+                if(!(hdrMap.find(persons[per].PerID)== hdrMap.end()) && !done){
+                    hdrInd[per] = hdrMap.find(persons[per].PerID)->second;
+                    done = true;
+                }
+            }
+             if(done){
+                //need a catch for the sample map if it's found so we don't put an warning
+                //but we don't need to do anything
+            }
+            //finally warning and zero out the value, we either got this value in the BCF FILE with  no match
+            //or we got it in the pedigree and couldn't find the match in the BCF FILE
+            else {
+                 SECTION_LOG(sampleid_mismatch);
+                mssgvf("Cannot find match in VCF file within provided pedigree for pedigree: %s person: %s\n",persons[per].PedID, persons[per].PerID);
+                hdrInd[per] = -1;
+            }
         }
     }
+
+    SECTION_LOG_FINI(sampleid_mismatch);
 
 
     for (int i = 0; i < this->filecount; i++) {
