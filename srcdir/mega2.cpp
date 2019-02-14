@@ -365,9 +365,11 @@ int             SetMarkerPosToSpecial;
 int             force_numeric_alleles = 0;
 
 int             _strand_flips;
-char            *CHRM_list;
-const char      *CHRM_;
-int              queue;
+char            *CHR_list;
+const char      *CHR_;
+const char      *Dname;
+char            *Mega2;
+int             queue;
 
 int lastautosome    = 0;
 int pseudoautosome  = 0;
@@ -530,9 +532,11 @@ static void    init_globals(char *argv0)
     ChrLoci = NULL;
     dump_dbCompress = 0;
     dbCompress = 0;
-    CHRM_list = NULL;
-    CHRM_ = "";
     queue = 0;
+    Dname = NULL;
+    Mega2 = NULL;
+    CHR_list = NULL;
+    CHR_ = "";
 }
 
 static void free_globals(void)
@@ -625,8 +629,8 @@ extern void db_init_all();
 extern void db_fini_all();
 extern char DBfile[255];
 
-extern int     CHRM_argc;
-extern char  **CHRM_argv;
+extern int     CHR_argc;
+extern char  **CHR_argv;
 
 int             main(int argc, char **argv, char **env)
 {
@@ -672,8 +676,11 @@ int             main(int argc, char **argv, char **env)
 
 //      void join(Vecc &vec, Str& ans, Cstr& sep);
 
-    if (queue)
+    if (queue) {
         job_manager_menus();
+        if (Mega2)
+            argv[0] = Mega2;
+    }
 
     if ( mega2_iterate(argc, argv) )
         exit(0);
@@ -692,6 +699,7 @@ int             main(int argc, char **argv, char **env)
 #ifdef EXPIRE
     check_expiration();
 #endif
+
     (void) mklogdir();
     LogFileNames();
     open_logs();
@@ -738,6 +746,7 @@ int             main(int argc, char **argv, char **env)
         mssgf(err_msg);
 
         batchfile_process(Mega2Batch, &analysis);
+
         if (queue) {
             extern void set_job_manager_values();
             set_job_manager_values();
@@ -1597,13 +1606,9 @@ char *sbatch();
 static
 void mega2_once(const char *nargv[], int argc)
 {
-    int i, k = 1;
+    int i;
     string str;
 
-    if (_job_manager_mem != 4) {
-        k += 1 + 2;
-    }
-//    Vecc argv(argc);
     std::vector<const char *> argv;
 
     if (queue) {
@@ -1616,62 +1621,69 @@ void mega2_once(const char *nargv[], int argc)
 
     for (i = 0; i < argc; i++) argv.push_back(nargv[i]);
     join(argv, str, " ");
+    printf("%s\n", C(str));
     system(C(str));
     return;
 }
 
 int mega2_iterate(int argc, char **argv)
 {
-    if (CHRM_list) {
-        int i;
-        printf("args after: %s\n", Mega2Batch);
-        for (i=1; i < CHRM_argc; i++)
-            printf("%d: %s\n", i, CHRM_argv[i]);
-        printf("CHRMs: %s\n", CHRM_list);
-
+    if (CHR_list) {
+        int i, j = 0, k = 0;
         Vecc1 fields, dash;
         int dash_size = 0;
-        if (index(CHRM_list, '-')) dash_size += 2;
-        split(fields, CHRM_list, ",");
+
+        if (index(CHR_list, '-')) dash_size += 2;
+        split(fields, CHR_list, ",");
         if (fields.size() <= 1 && dash_size <= 1) {
-            CHRM_ = CHRM_list;
+            CHR_ = CHR_list;
+#ifndef HIDESTATUS
+            if (CHR_ && *CHR_ != 0) {
+                printf("args after: %s\n", Mega2Batch);
+                for (i=1; i < CHR_argc; i++)
+                    printf("arg %d: %s\n", i, CHR_argv[i]);
+                printf("arg 0: %s\n", CHR_list);
+            }
+#endif
             return 0;
         }
 
-        int j = 0, k = -1;
         const char *nargv[argc];
         for (i = 0; i < argc; i++) {
-            if ( (! strcasecmp(argv[i], "--chrm")) ||
-                 (! strcasecmp(argv[i], "-c"))) {
+            if ( (!k) &&
+                 ( (! strcasecmp(argv[i], "--chr")) ||
+                   (! strcasecmp(argv[i], "-c")) ) ) {
                 k = j+1;
             } 
 
-            if ( (strcasecmp(argv[i], "--queue")) &&
-                 (strcasecmp(argv[i], "-q"))) {
-                if (! *argv[i])
-                    nargv[j++] = "\"\"";
-                else if (! index(argv[i], ' '))
-                    nargv[j++] = argv[i];
-                else {
-                    size_t ll = strlen(argv[i]);
-                    char *xargv = CALLOC(ll+3, char);
-                    strcpy(xargv+1, argv[i]);
-                    *xargv          = '"';
-                    *(xargv+1+ll)   = '"';
-                    *(xargv+1+ll+1) = 0;
-                    nargv[j++] = xargv;
-                }
-
+            if ( (!strcasecmp(argv[i], "--queue")) ||
+                 (!strcasecmp(argv[i], "-q"))) {
+                nargv[j++] = "--Dname"; // queue name becomes D(ir)name
+            } else if ( (!strcasecmp(argv[i], "--mega2")) ||
+                        (!strcasecmp(argv[i], "-m"))) {
+                i++;
+            } else if (! *argv[i])
+                nargv[j++] = "\"\"";
+            else if (! index(argv[i], ' '))
+                nargv[j++] = argv[i];
+            else {
+                size_t ll = strlen(argv[i]);
+                char *xargv = CALLOC(ll+3, char);
+                strcpy(xargv+1, argv[i]);
+                *xargv          = '"';
+                *(xargv+1+ll)   = '"';
+                *(xargv+1+ll+1) = 0;
+                nargv[j++] = xargv;
             }
         }
-        if (queue) argc--;
+        if (Mega2) argc -= 2;
 
         for (size_t l = 0; l < fields.size(); l++) {
             if (k >= 0) {
                 dash.clear();
                 split(dash, fields[l], (const char *)"-");
                 if (dash.size() == 1) {
-                    nargv[j] = dash[0];
+                    nargv[k] = dash[0];
                     mega2_once(nargv, argc);
                 } else {
                     char num[3], st[3], nd[3];
@@ -1714,8 +1726,12 @@ char q_param[QSIZE];
 
 char *qsub()
 {
-    snprintf(q_param, QSIZE, "qsub –l -N h_vmem=%d %s ",
-             _job_manager_mem, C(_job_manager_args));
+// "qsub -l -N h_vmem=%d %s "
+// "qsub -b y -l mem=%d %s ",
+// "qsub -b y -N %s -l h_mem=%dG %s ",
+
+    snprintf(q_param, QSIZE, "qsub -b y -N %s -l h_vmem=%dG %s ",
+             Dname, _job_manager_mem, C(_job_manager_args));
     return q_param;
 }
 

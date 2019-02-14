@@ -1220,7 +1220,7 @@ static int parse_batch_file(char *batch_file_name, int rc)
             token.set(nlp);
         } else {
             string nls(nlp);
-            string &param(param_replace(nls));
+            string param(param_replace(nls));
             msgvf("batch line: %s\n", C(param));
             token.set(param, 0);
         }
@@ -1269,6 +1269,7 @@ static int parse_batch_file(char *batch_file_name, int rc)
             errline++;
         }
     }
+    msgvf("\n");
     fclose(fp);
 
     if (errtok + errline) {

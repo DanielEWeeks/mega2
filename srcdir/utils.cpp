@@ -395,6 +395,8 @@ void chomp(char *str)
   | Just print out some program identification too.               |
   +---------------------------------------------------------------*/
 char sumdir[FILENAME_LENGTH+30];
+char chrdir[FILENAME_LENGTH];
+char orgdir[FILENAME_LENGTH+30] = "";
 
 void            hello(FILE *fp)
 {
@@ -434,17 +436,37 @@ const char *mklogdir(void)
 {
   // CreateRunFolder is the switch for creating a time-stamped folder for each run.
   // This is the default. Turned off with the -nosave option
-    if (CreateRunFolder == 1) {
-        strcpy(sumdir, RunDate);
-        if (is_dir(sumdir) && (! access(sumdir, W_OK)))
-            ;
-        else if (! makedirpath(sumdir)) {
-            errorvf("Can not create log directory: %s\n", sumdir);
-            EXIT(FILE_NOT_FOUND);
-        }
+
+    if (CHR_ && *CHR_ != 0) {
+        if (Dname)
+            sprintf(chrdir, "%s/chr%s", Dname, CHR_);
+        else
+            sprintf(chrdir, "chr%s", CHR_);
+
+        if (CreateRunFolder == 1)
+            sprintf(sumdir, "%s/%s", chrdir, RunDate);
+        else
+            strcpy(sumdir, chrdir);
     } else {
-        strcpy(sumdir, ".");
+        if (CreateRunFolder == 1)
+            if (Dname)
+                sprintf(sumdir, "%s/%s", Dname, RunDate);
+            else
+                strcpy(sumdir, RunDate);
+        else
+            if (Dname)
+                strcpy(sumdir, Dname);
+            else
+                strcpy(sumdir, ".");
     }
+
+    if (is_dir(sumdir) && (! access(sumdir, W_OK)))
+        ;
+    else if (! makedirpath(sumdir)) {
+        errorvf("Can not create log directory: %s\n", sumdir);
+        EXIT(FILE_NOT_FOUND);
+    }
+
     return (const char *)sumdir;
 }
 
@@ -475,6 +497,37 @@ void goodbye(int exit)
 #ifndef HIDESTATUS
     int exit_status;
 #endif
+
+    strcpy(orgdir, sumdir);
+    if (CHR_ && *CHR_ != 0) {
+        if (CreateRunFolder == 1)
+            sprintf(sumdir, "%s/%s",
+                    strcmp(Mega2OutputPath, ".") == 0 ? "" : Mega2OutputPath,
+                    RunDate);
+        else
+            sprintf(sumdir, "%s",
+                    strcmp(Mega2OutputPath, ".") == 0 ? "" : Mega2OutputPath);
+    } else {
+        if (CreateRunFolder == 1) {
+            if ((strcmp(Mega2OutputPath, ".") == 0) || *Mega2OutputPath == 0)
+                strcpy(sumdir, RunDate);
+            else
+                sprintf(sumdir, "%s/%s", Mega2OutputPath, RunDate);
+        } else {
+            if (*Mega2OutputPath == 0)
+                strcpy(sumdir, ".");
+            else
+                strcpy(sumdir, Mega2OutputPath);
+        }
+    }
+    if (is_dir(sumdir) && (! access(sumdir, W_OK)))
+        ;
+    else if (! makedirpath(sumdir)) {
+        errorvf("Can not create log directory: %s\n", sumdir);
+        EXIT(FILE_NOT_FOUND);
+    }
+
+
 /*
     char Mega2BatchRun[FILENAME_LENGTH+30];
 
@@ -495,24 +548,14 @@ void goodbye(int exit)
             mssgf(err_msg);
         }
 
-        sprintf(err_msg, "See run summaries in directory %s ",
-#ifdef HIDEPATH
-                ""
-#else
-                sumdir
-#endif
-            );
-        mssgf(err_msg);
-
     } else {
-        strcpy(sumdir, ".");
         if (BatchFileCreated == 1) {
             mssgf("Run parameters stored in batch file MEGA2.BATCH");
         }
-
-        sprintf(err_msg, "See run summaries in current directory .");
-        mssgf(err_msg);
     }
+
+    sprintf(err_msg, "See run summaries in directory");
+    mssgf(err_msg);
 
     sprintf(err_msg, "   %s", Mega2Log);
     if (access(Mega2RecodeRun, F_OK) == 0) {
@@ -534,6 +577,9 @@ void goodbye(int exit)
     /*  printf("\n"); */
     mssgf(err_msg);
 
+    if (strcasecmp(orgdir, sumdir))
+        move_logs(sumdir);
+
     fl_name=CALLOC(50+strlen(sumdir), char);
 
     sprintf(fl_name, "%s/MEGA2.BATCH.html", sumdir);
@@ -552,18 +598,21 @@ void goodbye(int exit)
     delete_file(fl_name);
     sprintf(fl_name, "%s/MEGA2run.html", sumdir);
     delete_file(fl_name);
-
     delete_file("__tmp__");
-    sprintf(syscmd, "%s %s %s %s > __tmp__\n",
+    if (*orgdir) rmdir(orgdir);
+
+//    sprintf(fl_name, "%s/MEGA2.LOG", sumdir);
+
+    sprintf(syscmd, "%s %s/%s %s %s > __tmp__\n",
             perl_pgm(LOG2HTML),
-            Mega2LogRun,
+            sumdir, Mega2Log,
             (output_paths == NULL || output_paths[0] == NULL || output_paths[0] == 0) ? "." : output_paths[0],
             sumdir);
-//    printf("syscmd: %s\n", syscmd);
+    fflush(stdout);
+
 //    exit(0);
     // returns the exit status of the shell as returned by waitpid(2), or
     // -1 if an error occurred when invoking fork(2) or waitpid(2)
-    move_logs(sumdir);
     // BIG NOTE: this script assumes that MEGA2.BATCH is found in 'sumdir'.
 #ifndef HIDESTATUS
     exit_status = System((const char *)syscmd);
@@ -1239,6 +1288,7 @@ void init_file(char *file_name)
 void move_file(char *flname1, char *flname2)
 {
     int err;
+
     if (access(flname1, F_OK)==0) {
         if (access(flname2, F_OK) == 0) {
             err = unlink(flname2);
@@ -1317,6 +1367,7 @@ int makedir(char *dirname)
         if (err < 0) {
             switch(errno) {
             case EEXIST:
+                return 1;
             case ENOENT:
             default:
                 warnvf("makedir: mkdir(%s) failed with errno %d (\"%s\")\n",
@@ -1334,7 +1385,8 @@ int is_dir(char *dirname)
 {
     struct stat stbuf;
     int err = stat(dirname, &stbuf);
-    if (err < 0) {
+    if (! err) return S_ISDIR(stbuf.st_mode);
+    else {
         switch(errno) {
         case ENOENT:
             break;
@@ -1345,13 +1397,6 @@ int is_dir(char *dirname)
         }
         return 0;
     }
-    if (! (S_IFDIR & stbuf.st_mode)) {
-        /*
-           warnvf("access_dir: stat(%s, +x) path is NOT a directory.\n", dirname);
-        */
-        return 0;
-    } else 
-        return 1;
 }
 
 void getRunDate(void)
@@ -1405,26 +1450,27 @@ void LogFileNames(void)
     sprintf(Mega2Log, "%s.LOG", mega2);
     sprintf(Mega2LogRun, "%s/%s", sumdir, Mega2Log);
 
-    sprintf(Mega2Err, "%s.ERR", mega2);
-    sprintf(Mega2ErrRun, "%s/%s", sumdir, Mega2Err);
+    sprintf(Mega2Recode, "%s.RECODE", "MEGA2");
+    sprintf(Mega2RecodeRun, "%s/%s", sumdir, Mega2Recode);
 
     sprintf(Mega2Reset, "%s.RESET", "MEGA2");
     sprintf(Mega2ResetRun, "%s/%s", sumdir, Mega2Reset);
 
-    sprintf(Mega2Recode, "%s.RECODE", "MEGA2");
-    sprintf(Mega2RecodeRun, "%s/%s", sumdir, Mega2Recode);
+    sprintf(Mega2Err, "%s.ERR", mega2);
+    sprintf(Mega2ErrRun, "%s/%s", sumdir, Mega2Err);
+
+    strcpy (Mega2Keys, "MEGA2.KEYS");
+    sprintf(Mega2KeysRun, "%s/%s", sumdir, Mega2Keys);
 
     strcpy (Mega2Sim, "MEGA2.SIM");
     sprintf(Mega2SimRun, "%s/%s", sumdir, Mega2Sim);
 
-    strcpy (Mega2Keys, "MEGA2.KEYS");
-    sprintf(Mega2KeysRun, "%s/%s", sumdir, Mega2Keys);
 }
 
 void move_logs(char *new_location)
 {
     char new_file[FILENAME_LENGTH+45];
-/*      
+
     if (access(Mega2LogRun, F_OK) == 0){
         sprintf(new_file, "%s/%s", new_location, Mega2Log);
         move_file(Mega2LogRun,  new_file);
@@ -1454,17 +1500,19 @@ void move_logs(char *new_location)
         sprintf(new_file, "%s/%s", new_location, Mega2Sim);
         move_file(Mega2SimRun, new_file);
     }
-*/
+
     if (strcmp(Mega2Batch, "none")) {
         char *p = strrchr(Mega2Batch, '/');
         if (p != NULL) {
             p++;
             sprintf(new_file, "%s/%s", new_location, p);
-            copy_file(Mega2Batch, new_file);
+            if (strcmp(Mega2Batch, new_file))
+                copy_file(Mega2Batch, new_file);
         } else {
             if (strcmp(new_location, ".")) {
                 sprintf(new_file, "%s/%s", new_location, Mega2Batch);
-                copy_file(Mega2Batch, new_file);
+                if (strcmp(Mega2Batch, new_file))
+                    copy_file(Mega2Batch, new_file);
             }
             /* else do not copy */
         }
@@ -1925,9 +1973,10 @@ extern InputModeType InputMode;
 extern int dump_dbCompress, dbCompress;
 
 // export arguments for batch file
-int CHRM_argc; char **CHRM_argv;
-extern int queue;
-extern char *CHRM_list;
+int CHR_argc; char **CHR_argv;
+extern const char *Dname;
+extern char *CHR_list;
+extern int   queue;
 
 void mega2_opts(int argc, char **argv)
 {
@@ -1944,11 +1993,19 @@ void mega2_opts(int argc, char **argv)
                 EXIT(INPUT_DATA_ERROR);
             } else if (*(as+1) == '-') {
                 as += 2;
-                if (strcasecmp(as, "chrm") == 0) {
+                if (strcasecmp(as, "chr") == 0) {
 		    argv++; --argc;
-                    CHRM_list = *argv;
+                    CHR_list = *argv;
                 } else if (strcasecmp(as, "queue") == 0) {
-		    queue++;
+                    argv++; --argc;
+                    queue++;
+                    Dname = *argv;
+                } else if (strcasecmp(as, "dname") == 0) {
+                    argv++; --argc;
+                    Dname = *argv;
+                } else if (strcasecmp(as, "mega2") == 0) {
+                    argv++; --argc;
+                    Mega2 = *argv;
                 } else if (strcasecmp(as, "dbdump") == 0) {
                     database_dump++;
                 } else if (strcasecmp(as, "dbread") == 0) {
@@ -2068,10 +2125,20 @@ void mega2_opts(int argc, char **argv)
                     switch (c) {
                     case 'c': case 'C':
                         argv++; --argc;
-                        CHRM_list = *argv;
+                        CHR_list = *argv;
                         break;
                     case 'q': case 'Q':
+                        argv++; --argc;
                         queue++;
+                        Dname = *argv;
+                        break;
+                    case 'n': case 'N':
+                        argv++; --argc;
+                        Dname = *argv;
+                        break;
+                    case 'm': case 'M':
+                        argv++; --argc;
+                        Mega2 = *argv;
                         break;
                     case 'w': case 'W':
                         check_web_ver = 0;
@@ -2133,12 +2200,12 @@ void mega2_opts(int argc, char **argv)
     }
 
     /* There should be exactly one command line argument that is not an option. */
-    CHRM_argc = argc;
-    CHRM_argv = argv;
+    CHR_argc = argc;
+    CHR_argv = argv;
     if (argc == 0) ;
     else if (argc == 1)  {
         strcpy(Mega2Batch, *argv);
-    } else if (!CHRM_list) {
+    } else if (!CHR_list) {
         printf("First invalid argument to Mega2: %s\n", argv[1]);
         print_mega2_help();
         EXIT(INPUT_DATA_ERROR);
@@ -2158,14 +2225,14 @@ string& param_replace(string& param, size_t start) {
 
     char& offset = param[fnd1+1];
     int idx = offset - '1' + 1;
-    if (offset < '0' || offset > '9' || idx >= CHRM_argc) {
+    if (offset < '0' || offset > '9' || idx >= CHR_argc) {
         errorvf("batch_input %c%c: Not enough parameters; index must be >= 0 and < %d\n",
-                param[fnd1], offset, CHRM_argc);
+                param[fnd1], offset, CHR_argc);
         exit(0);
     }
     string& ret = param.replace(fnd1, 2, 
-                                idx ? CHRM_argv[idx] : CHRM_ );
-    return param_replace(ret, fnd1 + strlen(CHRM_argv[idx]));
+                                idx ? CHR_argv[idx] : CHR_ );
+  return param_replace(ret, fnd1 + strlen(idx ? CHR_argv[idx] : CHR_));
 }
 
 void print_mega2_help(void)
@@ -2204,6 +2271,7 @@ void print_mega2_help(void)
     printf("                set pseudo autosome xy chromosome to <value>.\n");
     printf("             --mito <value>\n");
     printf("                set mitocondria chromosome to <value>.\n");
+
     printf("             --bed\n");
     printf("                input files are in PLINK binary Ped format (bed).\n");
     printf("             --ped\n");
@@ -2229,8 +2297,12 @@ void print_mega2_help(void)
     printf("                recode alleles as numbers even though analysis can accept letter alleles.\n");
 
 
-    printf("             -c, --chrm\n");
-    printf("                    iterate (batch file) over specified chromosomes mode.\n");
+    printf("             -q, --queue (--dname) <name>\n");
+    printf("                    request queue'd execution; name the jobs and path prefix <name>.\n");
+    printf("             -c, --chr <chromosome list>\n");
+    printf("                    iterate (batch file) over specified chromosomes.\n");
+    printf("             -m, --mega2 <path to mega2 on queue machine>>\n");
+    printf("                    path to Mega2 on queue machine if it is different.\n");
     printf("             -x, --nosave\n");
     printf("                    Do not create a new run-folder.\n");
     printf("             -w, --noweb\n");

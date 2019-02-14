@@ -50,6 +50,8 @@
 #include "output_routines_ext.h"
 #include "user_input_ext.h"
 #include "utils_ext.h"
+#include "batch_input_ext.h"
+
 #include "vcftools/mega2_vcftools_interface.h"
 
 #include "write_plink_ext.h"
@@ -698,6 +700,12 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
 void CLASS_PLINK::plink_ped_ind_menu(linkage_ped_top *Top) {
     int i, iindid, ipedid, choice;
     choice = -1;
+    if (batchANALYSIS) {
+        BatchValueGet(OrigIds[1], "ID_pedigree");
+        BatchValueGet(OrigIds[0], "ID_person");
+        return;
+    }
+
     OrigIds[0] = 6;
     OrigIds[1] = 6;
     while(choice){
@@ -715,13 +723,21 @@ void CLASS_PLINK::plink_ped_ind_menu(linkage_ped_top *Top) {
         fcmap(stdin,"%d", &choice); newline;
         if(choice == iindid){
             OrigIds[0] = individual_id_item(0, TO_PLINK, OrigIds[0], 35, 1,Top->OrigIds , Top->UniqueIds);
-        }
-        else if(choice == ipedid) {
+            BatchValueSet(OrigIds[0], "ID_person");
+
+        } else if(choice == ipedid) {
             OrigIds[1] = pedigree_id_item(0, TO_PLINK, OrigIds[1], 35, 1, Top->OrigIds);
-        }
-        else if(choice > ipedid || choice < 0) {
+            BatchValueSet(OrigIds[1], "ID_pedigree");
+
+        } else if(choice > ipedid || choice < 0) {
             printf("Unknown option %d\n", choice);
         }
-
     }
+
+    if (BatchValueRead("ID_pedigree"))
+        batchf("ID_pedigree");
+
+    if (BatchValueRead("ID_person"))
+        batchf("ID_person");
+
 }

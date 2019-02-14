@@ -817,6 +817,14 @@ static void menu1_batch_set_files(file_format *infl_type,
 
 static void menu1_batch_set_outfiles(char **output_path, char **db_name)
 {
+    if (CHR_ && *CHR_ != 0) {
+        extern char chrdir[];
+        char *opp = Mega2BatchItems[/* 33 */ Output_Path].value.name;
+        int l = strlen(chrdir);
+        memmove(opp+l+1, opp, strlen(opp)+1);
+        strcpy(opp, chrdir);
+        opp[l] = '/';
+    }
     if (Mega2BatchItems[/* 33 */ Output_Path].items_read) {
         if (is_dir(Mega2BatchItems[/* 33 */ Output_Path].value.name)) {
             if (! access(Mega2BatchItems[/* 33 */ Output_Path].value.name, W_OK))
