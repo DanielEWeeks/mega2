@@ -701,8 +701,16 @@ void CLASS_PLINK::plink_ped_ind_menu(linkage_ped_top *Top) {
     int i, iindid, ipedid, choice;
     choice = -1;
     if (batchANALYSIS) {
-        BatchValueGet(OrigIds[1], "ID_pedigree");
-        BatchValueGet(OrigIds[0], "ID_person");
+        int ped = 6, per = 6;
+        if (BatchValueRead("ID_person"))
+            BatchValueGet(OrigIds[0], "ID_person");
+        else
+            OrigIds[0] = per;
+
+        if (BatchValueRead("ID_pedigree"))
+            BatchValueGet(OrigIds[1], "ID_pedigree");
+        else
+            OrigIds[1] = ped;
         return;
     }
 

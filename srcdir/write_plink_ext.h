@@ -87,7 +87,7 @@ public:
     void file_names_w_stem(char **file_names, char *num, const char *stem,
                            const int suboption);
 
-	void plink_ped_ind_menu(linkage_ped_top *Top);
+    void plink_ped_ind_menu(linkage_ped_top *Top);
 };
 
 extern CLASS_PLINK              *TO_PLINK;
