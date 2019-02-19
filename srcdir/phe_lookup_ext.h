@@ -38,7 +38,9 @@
 //
 // For mapping the VCF Tools sample into the pedigree,person found in this file.
 typedef std::map<std::string, std::pair<std::string,std::string> > sample_map_type;
+typedef std::map<std::pair<std::string,std::string>,std::string>  pedper_map_type;
 extern sample_map_type *SAMPLEIDS;
+extern pedper_map_type *PEDPERIDS;
 
 extern void phefree();
 

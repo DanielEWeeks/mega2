@@ -711,21 +711,43 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
             //is SAMPLEIDS map null? no phe file column
             if(sample_ind == 1){
                 if(SAMPLEIDS != NULL) {
-                //check SAMPLEIDS map from phenotype file
-                    for(sample_map_type::iterator sampleit = SAMPLEIDS->begin(); sampleit != SAMPLEIDS->end(); sampleit++) {
-                        for(HMapsip hdrit = hdrMap.begin(); hdrit != hdrMap.end(); hdrit++){
-                            //check if the sample is in both the SAMPLEIDS and the headers from the BCF FILE
-                            if(sampleit->first == hdrit->first) {
-                                //check to see that the values we got from the SAMPLIDS map match the persons table
-                                if(sampleit->second.first == persons[per].PedID && sampleit->second.second ==persons[per].PerID) {
-                                    //printf("%s %s %d \n", sampleit->first.c_str(), hdrit->first.c_str(), hdrMap.find(sampleit->first)->second);
-                                    hdrInd[per] = hdrMap.find(sampleit->first)->second;
-                                    done = true;
-                                    break;
-                                }
-                            }
+                    Pairss pp(string(persons[per].PedID),string(persons[per].PerID));
+                    Str sample;
+                    int idx;
+#if 1
+                    if (map_get(*PEDPERIDS, pp, sample)) {
+                        if (map_get(hdrMap, sample, idx)) {
+                            hdrInd[per] = idx;
+                            done = true;
+                        } else {
+                            SECTION_LOG(sampleid_mismatch);
+                            warnvf("sample %s [%s (#%d)] Not found in BCF file\n",
+                                   C(sample), ped_per, per);
                         }
+                    } else {
+                        SECTION_LOG(sampleid_mismatch);
+                        warnvf("%s (#%d) Not found in SAMPLEID map\n",
+                               ped_per, per);
                     }
+#else
+            /*Initial way I wrote this code which was a tremendously inefficient use of the map structures */
+
+                //check SAMPLEIDS map from phenotype file
+//                    for(sample_map_type::iterator sampleit = SAMPLEIDS->begin(); sampleit != SAMPLEIDS->end(); sampleit++) {
+//                        for(HMapsip hdrit = hdrMap.begin(); hdrit != hdrMap.end(); hdrit++){
+//                            //check if the sample is in both the SAMPLEIDS and the headers from the BCF FILE
+//                            if(sampleit->first == hdrit->first) {
+//                                //check to see that the values we got from the SAMPLIDS map match the persons table
+//                               if(sampleit->second.first == persons[per].PedID && sampleit->second.second ==persons[per].PerID) {
+//                                    //printf("%s %s %d \n", sampleit->first.c_str(), hdrit->first.c_str(), hdrMap.find(sampleit->first)->second);
+//                                   hdrInd[per] = hdrMap.find(sampleit->first)->second;
+//                                    done = true;
+//                                    break;
+//                                }
+//                           }
+//                        }
+//                    }
+#endif
                 }
             }
             if(sample_ind == 2) {
@@ -749,13 +771,12 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
             //finally warning and zero out the value, we either got this value in the BCF FILE with  no match
             //or we got it in the pedigree and couldn't find the match in the BCF FILE
             else {
-                 SECTION_LOG(sampleid_mismatch);
+                SECTION_LOG(sampleid_mismatch);
                 mssgvf("Cannot find match in VCF file within provided pedigree for pedigree: %s person: %s\n",persons[per].PedID, persons[per].PerID);
                 hdrInd[per] = -1;
             }
         }
     }
-
     SECTION_LOG_FINI(sampleid_mismatch);
 
 
