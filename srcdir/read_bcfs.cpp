@@ -730,21 +730,23 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                                ped_per, per);
                     }
 #else
+            /*Initial way I wrote this code which was a tremendously inefficient use of the map structures */
+
                 //check SAMPLEIDS map from phenotype file
-                    for(sample_map_type::iterator sampleit = SAMPLEIDS->begin(); sampleit != SAMPLEIDS->end(); sampleit++) {
-                        for(HMapsip hdrit = hdrMap.begin(); hdrit != hdrMap.end(); hdrit++){
-                            //check if the sample is in both the SAMPLEIDS and the headers from the BCF FILE
-                            if(sampleit->first == hdrit->first) {
-                                //check to see that the values we got from the SAMPLIDS map match the persons table
-                                if(sampleit->second.first == persons[per].PedID && sampleit->second.second ==persons[per].PerID) {
-                                    //printf("%s %s %d \n", sampleit->first.c_str(), hdrit->first.c_str(), hdrMap.find(sampleit->first)->second);
-                                    hdrInd[per] = hdrMap.find(sampleit->first)->second;
-                                    done = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+//                    for(sample_map_type::iterator sampleit = SAMPLEIDS->begin(); sampleit != SAMPLEIDS->end(); sampleit++) {
+//                        for(HMapsip hdrit = hdrMap.begin(); hdrit != hdrMap.end(); hdrit++){
+//                            //check if the sample is in both the SAMPLEIDS and the headers from the BCF FILE
+//                            if(sampleit->first == hdrit->first) {
+//                                //check to see that the values we got from the SAMPLIDS map match the persons table
+//                               if(sampleit->second.first == persons[per].PedID && sampleit->second.second ==persons[per].PerID) {
+//                                    //printf("%s %s %d \n", sampleit->first.c_str(), hdrit->first.c_str(), hdrMap.find(sampleit->first)->second);
+//                                   hdrInd[per] = hdrMap.find(sampleit->first)->second;
+//                                    done = true;
+//                                    break;
+//                                }
+//                           }
+//                        }
+//                    }
 #endif
                 }
             }

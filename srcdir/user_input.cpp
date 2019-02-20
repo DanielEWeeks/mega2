@@ -1360,19 +1360,19 @@ void menu1(file_format *infl_type,
             else {
                 //printf("%s\n", *pedfl_name);
                 if (sampleID_match == 0)
-                    printf("%2d) %-*s%s\n", idx, line_len, "Choose SampleID match:         [required]",
+                    printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:       [required]",
                            "[ UNASSIGNED ]");
 
                 else if (sampleID_match == 1)
-                    printf("%2d) %-*s%s\n", idx, line_len, "Choose SampleID match:         [required]",
+                    printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:       [required]",
                            "[ PHE file ]");
 
                 else if (sampleID_match == 2)
-                    printf("%2d) %-*s%s\n", idx, line_len, "Choose SampleID match:         [required]",
+                    printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:        [required]",
                            "[ PED_PER ]");
 
                 else if (sampleID_match == 3)
-                    printf("%2d) %-*s%s\n", idx, line_len, "Choose SampleID match:         [required]",
+                    printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:        [required]",
                            "[ PER ]");
 
                 choiceA[idx++] = bcf_match_i;
@@ -1851,12 +1851,11 @@ void menu1(file_format *infl_type,
                 fflush(stdout);
                 draw_line();
                 printf("In order to match BCF/VCF data to pedigree data a mapping must exist between\n"
-                       "BCF/VCF column and the pedigree structure.\n");
-                printf("Match SampleIDs in BCF header to:\n");
+                       "SampleID and the BCF/VCF header:\n");
                 printf("0) Done with this menu - please proceed\n");
-                printf(" 1) SampleID field in the .phe file\n");
-                printf(" 2) A string of <famID>_<perID>\n");
-                printf(" 3) A string of <perID>\n");
+                printf(" 1) SAMPLEID from phe file\n");
+                printf(" 2) ped_per (FID_IID)\n");
+                printf(" 3) per (IID)\n");
                 printf("Select from options 0-3 > ");
                 fcmap(stdin, "%s", select);
                 sscanf(select, "%d", &ans);
