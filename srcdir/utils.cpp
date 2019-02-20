@@ -1977,6 +1977,7 @@ int CHR_argc; char **CHR_argv;
 extern const char *Dname;
 extern char *CHR_list;
 extern int   queue;
+extern int   exec_sh;
 
 void mega2_opts(int argc, char **argv)
 {
@@ -2139,6 +2140,9 @@ void mega2_opts(int argc, char **argv)
                     case 'm': case 'M':
                         argv++; --argc;
                         Mega2 = *argv;
+                        break;
+                    case 'e': case 'E':
+                        exec_sh = 1;
                         break;
                     case 'w': case 'W':
                         check_web_ver = 0;

@@ -370,6 +370,7 @@ const char      *CHR_;
 const char      *Dname;
 char            *Mega2;
 int             queue;
+int             exec_sh;
 
 int lastautosome    = 0;
 int pseudoautosome  = 0;
@@ -533,6 +534,7 @@ static void    init_globals(char *argv0)
     dump_dbCompress = 0;
     dbCompress = 0;
     queue = 0;
+    exec_sh = 0;
     Dname = NULL;
     Mega2 = NULL;
     CHR_list = NULL;
@@ -1596,29 +1598,44 @@ int             main(int argc, char **argv, char **env)
 
 extern int _job_manager_index, _job_manager_mem;
 extern Str _job_manager_args;
+#define QSIZE 4096
+char q_param[QSIZE];
 char *qsub();
 char *sbatch();
 
 static
-void mega2_once(const char *nargv[], int argc)
+void mega2_once(const char *nargv[], int argc, const char *num)
 {
     int i;
     string str;
-
+    char *quep = q_param;
     std::vector<const char *> argv;
 
+    *quep = 0;
     if (queue) {
         if (_job_manager_index == 2)
-            argv.push_back(qsub());
+            quep = qsub();
 
         else if (_job_manager_index == 3)
-            argv.push_back(sbatch());
+            quep = sbatch();
     }
 
-    for (i = 0; i < argc; i++) argv.push_back(nargv[i]);
-    join(argv, str, " ");
-    printf("%s\n", C(str));
-    system(C(str));
+    if (exec_sh) {
+        int ll = strlen(quep);
+
+        sprintf(quep + ll, "%s %s/chr%s/%s/%s.%s", 
+                "csh", Dname, num, CHR_argv[0], CHR_argv[1], "top.sh");
+        printf("%s\n", quep);
+
+        system(quep);
+
+    } else  {
+        argv.push_back(quep);
+        for (i = 0; i < argc; i++) argv.push_back(nargv[i]);
+        join(argv, str, " ");
+        printf("%s\n", C(str));
+        system(C(str));
+    }
     return;
 }
 
@@ -1631,7 +1648,7 @@ int mega2_iterate(int argc, char **argv)
 
         if (index(CHR_list, '-')) dash_size += 2;
         split(fields, CHR_list, ",");
-        if (fields.size() <= 1 && dash_size <= 1) {
+        if (fields.size() <= 1 && dash_size <= 1 && exec_sh == 0) {
             CHR_ = CHR_list;
 #ifndef HIDESTATUS
             if (CHR_ && *CHR_ != 0) {
@@ -1672,7 +1689,10 @@ int mega2_iterate(int argc, char **argv)
                 nargv[j++] = xargv;
             }
         }
-        if (Mega2) argc -= 2;
+        if (Mega2) {
+            argc -= 2;
+            nargv[0] = Mega2;
+        }
 
         for (size_t l = 0; l < fields.size(); l++) {
             if (k >= 0) {
@@ -1680,7 +1700,7 @@ int mega2_iterate(int argc, char **argv)
                 split(dash, fields[l], (const char *)"-");
                 if (dash.size() == 1) {
                     nargv[k] = dash[0];
-                    mega2_once(nargv, argc);
+                    mega2_once(nargv, argc, dash[0]);
                 } else {
                     char num[3], st[3], nd[3];
                     strcpy(st, (*dash[0] ? dash[0] : "1"));
@@ -1689,7 +1709,7 @@ int mega2_iterate(int argc, char **argv)
                     int dash_cnt = atoi(nd) - atoi(st) + 1;
                     for (int l2 = 0; l2 < dash_cnt; l2++) {
                         nargv[k] = num;
-                        mega2_once(nargv, argc);
+                        mega2_once(nargv, argc, num);
 
                         if (num[1] == 0) {
                             num[0]++;
@@ -1716,9 +1736,6 @@ int mega2_iterate(int argc, char **argv)
 
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
-
-#define QSIZE 4096
-char q_param[QSIZE];
 
 char *qsub()
 {
