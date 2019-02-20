@@ -170,6 +170,7 @@ phe::~phe() {
 //
 // For mapping the VCF Tools sample into the pedigree,person found in this file.
 sample_map_type *SAMPLEIDS = (sample_map_type *)NULL;
+pedper_map_type *PEDPERIDS = (pedper_map_type *)NULL;
 
 int phe::make()
 {
@@ -182,6 +183,7 @@ int phe::make()
     map<string,int> samples;
 
     SAMPLEIDS = (sample_map_type *)NULL;
+    PEDPERIDS = (pedper_map_type *)NULL;
 
 //    printf("phe::make\n"); fflush(stdout);
     ifstream ifs(path.c_str(), ifstream::in);
@@ -206,6 +208,7 @@ int phe::make()
 	    // The comlumn name "SAMPLEID" is used to map the sample id into the <FID, IID>
 	    if (val == "SAMPLEID") {
 	      SAMPLEIDS = new sample_map_type();
+	      PEDPERIDS = new pedper_map_type();
 	      sampleid_column_number = i;
 	    } else {
 	      traits.push_back(trait(val));
@@ -236,14 +239,16 @@ int phe::make()
 	    // Note that the user can choose not to fill in this column or fill it with the string "NA".
             // In this case there is no mapping between the sample ID and the person.
 	    if (SAMPLEIDS != NULL && sampleid_column_number == i) {
-              if (val != "NA") {
-	        SAMPLEIDS->insert(pair<string,pair<string,string> >(val, pair<string,string>(ped, per)));
-                samples[val]++; // count the number of uses of this string
-	        i++;
-              }
-	      continue;
+                if (val != "NA") {
+                    Pairss pedper(ped, per);
+                    SAMPLEIDS->insert(pair<string,Pairss> (val, pedper));
+                    PEDPERIDS->insert(pair<Pairss,string> (pedper, val));
+                    samples[val]++; // count the number of uses of this string
+                    i++;
+                }
+                continue;
 	    } else {
-	      v.push_back(val);
+                v.push_back(val);
 	    }
 
 	    if (val == "NA" || val == "0")

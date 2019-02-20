@@ -711,6 +711,25 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
             //is SAMPLEIDS map null? no phe file column
             if(sample_ind == 1){
                 if(SAMPLEIDS != NULL) {
+                    Pairss pp(string(persons[per].PedID),string(persons[per].PerID));
+                    Str sample;
+                    int idx;
+#if 1
+                    if (map_get(*PEDPERIDS, pp, sample)) {
+                        if (map_get(hdrMap, sample, idx)) {
+                            hdrInd[per] = idx;
+                            done = true;
+                        } else {
+                            SECTION_LOG(sampleid_mismatch);
+                            warnvf("sample %s [%s (#%d)] Not found in BCF file\n",
+                                   C(sample), ped_per, per);
+                        }
+                    } else {
+                        SECTION_LOG(sampleid_mismatch);
+                        warnvf("%s (#%d) Not found in SAMPLEID map\n",
+                               ped_per, per);
+                    }
+#else
                 //check SAMPLEIDS map from phenotype file
                     for(sample_map_type::iterator sampleit = SAMPLEIDS->begin(); sampleit != SAMPLEIDS->end(); sampleit++) {
                         for(HMapsip hdrit = hdrMap.begin(); hdrit != hdrMap.end(); hdrit++){
@@ -726,6 +745,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                             }
                         }
                     }
+#endif
                 }
             }
             if(sample_ind == 2) {
@@ -749,13 +769,12 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
             //finally warning and zero out the value, we either got this value in the BCF FILE with  no match
             //or we got it in the pedigree and couldn't find the match in the BCF FILE
             else {
-                 SECTION_LOG(sampleid_mismatch);
+                SECTION_LOG(sampleid_mismatch);
                 mssgvf("Cannot find match in VCF file within provided pedigree for pedigree: %s person: %s\n",persons[per].PedID, persons[per].PerID);
                 hdrInd[per] = -1;
             }
         }
     }
-
     SECTION_LOG_FINI(sampleid_mismatch);
 
 
