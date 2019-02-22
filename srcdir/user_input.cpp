@@ -818,8 +818,8 @@ static void menu1_batch_set_files(file_format *infl_type,
 
 static void menu1_batch_set_outfiles(char **output_path, char **db_name)
 {
-#if 1
-#if 1
+    // prefer queue/analysis/chr for working dir.
+
     char *opp = NULL;
     int ir = Mega2BatchItems[/* 33 */ Output_Path].items_read;
     if (ir)
@@ -851,37 +851,6 @@ static void menu1_batch_set_outfiles(char **output_path, char **db_name)
         }
     }
 
-#else
-    char *opp = Mega2BatchItems[/* 33 */ Output_Path].value.name;
-    int ol = strlen(opp);
-
-    if (CHR_ && *CHR_ != 0) {
-        if (Dname) {
-            int l = strlen(Dname);
-            memmove(opp+l+1, opp, ol + 1);
-            strcpy(opp, Dname);
-            opp[l] = '/';
-            ol += l + 1;
-        }
-        sprintf(opp + ol, "/chr%s", CHR_);
-    } else if (Dname) {
-        int l = strlen(Dname);
-        memmove(opp+l+1, opp, ol + 1);
-        strcpy(opp, Dname);
-        opp[l] = '/';
-        ol += l;
-    }
-#endif
-#else
-    if (CHR_ && *CHR_ != 0) {
-    char *opp = Mega2BatchItems[/* 33 */ Output_Path].value.name;
-    int ol = strlen(opp);
-    int l = strlen(chrdir);
-    memmove(opp+l+1, opp, ol + 1);
-    strcpy(opp, chrdir);
-    opp[l] = '/';
-
-#endif
     if (ir) {
         if (is_dir(*output_path)) {
             if (access(*output_path, W_OK)) {
