@@ -845,7 +845,7 @@ static void menu1_batch_set_outfiles(char **output_path, char **db_name)
                 sprintf(*output_path, "%s", Dname);
         } else {
             if (ir)
-                sprintf(*output_path, "%s/", opp);
+                sprintf(*output_path, "%s", opp);
             else
                 strcpy(*output_path, "");
         }
