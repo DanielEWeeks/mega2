@@ -437,6 +437,33 @@ const char *mklogdir(void)
   // CreateRunFolder is the switch for creating a time-stamped folder for each run.
   // This is the default. Turned off with the -nosave option
 
+#if 1
+    if (CHR_ && *CHR_ != 0) {
+
+        if (CreateRunFolder == 1)
+            if (Dname)
+                sprintf(sumdir, "%s/chr%s/%s", Dname, CHR_, RunDate);
+            else
+                sprintf(sumdir, "chr%s/%s", CHR_, RunDate);
+        else
+            if (Dname)
+                    sprintf(sumdir, "%s/chr%s", Dname, CHR_);
+                else
+                    sprintf(sumdir, "chr%s", CHR_);
+
+    } else {
+        if (CreateRunFolder == 1)
+            if (Dname)
+                sprintf(sumdir, "%s/%s", Dname, RunDate);
+            else
+                strcpy(sumdir, RunDate);
+        else
+            if (Dname)
+                strcpy(sumdir, Dname);
+            else
+                strcpy(sumdir, ".");
+    }
+#else
     if (CHR_ && *CHR_ != 0) {
         if (Dname)
             sprintf(chrdir, "%s/chr%s", Dname, CHR_);
@@ -459,6 +486,7 @@ const char *mklogdir(void)
             else
                 strcpy(sumdir, ".");
     }
+#endif
 
     if (is_dir(sumdir) && (! access(sumdir, W_OK)))
         ;

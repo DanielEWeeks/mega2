@@ -1623,8 +1623,8 @@ void mega2_once(const char *nargv[], int argc, const char *num)
     if (exec_sh) {
         int ll = strlen(quep);
 
-        sprintf(quep + ll, "%s %s/chr%s/%s/%s.%s", 
-                "csh", Dname, num, CHR_argv[0], CHR_argv[1], "top.sh");
+        sprintf(quep + ll, "%s %s/%s/chr%s/%s.%s", 
+                "csh", Dname, CHR_argv[0], num, CHR_argv[1], "top.sh");
         printf("%s\n", quep);
 
         system(quep);

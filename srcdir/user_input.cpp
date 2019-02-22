@@ -818,31 +818,83 @@ static void menu1_batch_set_files(file_format *infl_type,
 
 static void menu1_batch_set_outfiles(char **output_path, char **db_name)
 {
+#if 1
+#if 1
+    char *opp = NULL;
+    int ir = Mega2BatchItems[/* 33 */ Output_Path].items_read;
+    if (ir)
+        opp = Mega2BatchItems[/* 33 */ Output_Path].value.name;
+
     if (CHR_ && *CHR_ != 0) {
-        extern char chrdir[];
-        char *opp = Mega2BatchItems[/* 33 */ Output_Path].value.name;
-        int l = strlen(chrdir);
-        memmove(opp+l+1, opp, strlen(opp)+1);
-        strcpy(opp, chrdir);
-        opp[l] = '/';
+        if (Dname) {
+            if (ir)
+                sprintf(*output_path, "%s/%s/chr%s", Dname, opp, CHR_);
+            else
+                sprintf(*output_path, "%s/chr%s", Dname, CHR_);
+        } else {
+            if (ir)
+                sprintf(*output_path, "%s/chr%s", opp, CHR_);
+            else
+                sprintf(*output_path, "chr%s", CHR_);
+        }
+    } else {
+        if (Dname) {
+            if (ir)
+                sprintf(*output_path, "%s/%s", Dname, opp);
+            else
+                sprintf(*output_path, "%s", Dname);
+        } else {
+            if (ir)
+                sprintf(*output_path, "%s/", opp);
+            else
+                strcpy(*output_path, "");
+        }
     }
-    if (Mega2BatchItems[/* 33 */ Output_Path].items_read) {
-        if (is_dir(Mega2BatchItems[/* 33 */ Output_Path].value.name)) {
-            if (! access(Mega2BatchItems[/* 33 */ Output_Path].value.name, W_OK))
-                strcpy(*output_path, Mega2BatchItems[/* 33 */ Output_Path].value.name);
-            else {
+
+#else
+    char *opp = Mega2BatchItems[/* 33 */ Output_Path].value.name;
+    int ol = strlen(opp);
+
+    if (CHR_ && *CHR_ != 0) {
+        if (Dname) {
+            int l = strlen(Dname);
+            memmove(opp+l+1, opp, ol + 1);
+            strcpy(opp, Dname);
+            opp[l] = '/';
+            ol += l + 1;
+        }
+        sprintf(opp + ol, "/chr%s", CHR_);
+    } else if (Dname) {
+        int l = strlen(Dname);
+        memmove(opp+l+1, opp, ol + 1);
+        strcpy(opp, Dname);
+        opp[l] = '/';
+        ol += l;
+    }
+#endif
+#else
+    if (CHR_ && *CHR_ != 0) {
+    char *opp = Mega2BatchItems[/* 33 */ Output_Path].value.name;
+    int ol = strlen(opp);
+    int l = strlen(chrdir);
+    memmove(opp+l+1, opp, ol + 1);
+    strcpy(opp, chrdir);
+    opp[l] = '/';
+
+#endif
+    if (ir) {
+        if (is_dir(*output_path)) {
+            if (access(*output_path, W_OK)) {
                 errorvf("file path %s named by keyword %s is not a writable directory.\n",
                         Mega2BatchItems[/* 33 */ Output_Path].value.name,
                         C(Mega2BatchItems[/* 33 */ Output_Path].keyword));
                 EXIT(FILE_NOT_FOUND);
             }
         } else {
-            if (makedirpath(Mega2BatchItems[/* 33 */ Output_Path].value.name)) {
-                strcpy(*output_path, Mega2BatchItems[/* 33 */ Output_Path].value.name);
+            if (makedirpath(*output_path)) {
                 msgvf("Creating/Using Output_path: %s\n", *output_path);
             } else {
-                errorvf("Could not create Output_path: %s\n",
-                        Mega2BatchItems[/* 33 */ Output_Path].value.name);
+                errorvf("Could not create Output_path: %s\n", *output_path);
                 EXIT(FILE_NOT_FOUND);
             }
         }
