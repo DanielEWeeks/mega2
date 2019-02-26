@@ -4121,7 +4121,7 @@ void job_manager_menus() {
             idx++;
 
             printf("%c%d", idx == set ? '*' : ' ', idx);
-            printf(") %-*s\n", line_len, "Use Slurm (sbatch)");
+            printf(") %-*s\n", line_len, "Use Slurm (srun)");
             idx++;
 
             printf("Select from options 0-%d> ", idx - 1);

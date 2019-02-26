@@ -1747,7 +1747,7 @@ char *qsub()
 
 char *sbatch()
 {
-    snprintf(q_param, QSIZE, "sbatch –n1 mega2 –mem=%dG %s ",
+    snprintf(q_param, QSIZE, "srun –N1 --job-name=mega2 –mem=%dG %s ",
              _job_manager_mem, C(_job_manager_args));
     return q_param;
 }
