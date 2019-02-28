@@ -12020,11 +12020,13 @@ When using VCF-format or BCF-format input files, one needs to provide several
  marker genotypes.
  It is highly recommended to also provide the PLINK-format family file containin
 g the family structure and gender information (if one is not provided, a
- dummy pedigree file will be constructed where everyone is coded to be male)..
+ dummy pedigree file will be constructed where everyone is coded to be male).
+ If the PLINK-format family file exists Mega2 will require you to specify
+ a mapping for SAMPLEIDs within the VCF or BCF and within the family file,
+ this mapping can be a column in the phenotype file (in this case obviously
+ a phenotype file is required as well), a ID of FAMid_PERid, or just PERid.
  Other optional files include a phenotype file, a map file, an omit file,
  an allele frequency file, and a penetrance file.
- The phenotype file may include a SAMPLEID column specifying the key mapping
- individuals in the family file to the samples in the VCF file.
 \end_layout
 
 \begin_layout Subsubsection

@@ -3567,5 +3567,44 @@ For instance definitions like that are in bcftools1.6/hstlib1.6/htslib/regidx.h,
  since bcftools has it's own regidx
 \end_layout
 
+\begin_layout Section
+Some useful files to take note of in the Mega2 srcdir
+\end_layout
+
+\begin_layout Standard
+Utils.cpp/utils_ext.h: a lot of internally built utility functions to avoid
+ rebuilding the wheel, things like file management (is something a directory,
+ copy a file etc.), random number generators, and reused boilerplate text
+ (like drawline).
+\end_layout
+
+\begin_layout Standard
+Sh_util.h this contains helper functions specific to writing out all the
+ shell files mega2 outputs for it's analysis modes, again to avoid rebuilding
+ the wheel.
+\end_layout
+
+\begin_layout Standard
+loop.cpp/h this is an important file, it details how the mega2 loop structures
+ are created and what functions you can call once their made to do operations
+ at certain points.
+ For instance chromosome loops have chr_star() and chr_end() where a developer
+ can do operations, there are a great many points where new data is loaded
+ as well and obviously it's important to browse through those loops to see
+ when _numchr is defined etc.
+ By understanding the classes in this file it gives a greater deal of flexibilit
+y in understanding how one can output a file from mega2.
+\end_layout
+
+\begin_layout Standard
+Batch_input.cpp: DEFINE YOUR BATCH VALUES HERE, also some other functions
+ for handling batch values
+\end_layout
+
+\begin_layout Standard
+batch_input.h: the functions you will use to read and write batch values
+ to the batchfile live here.
+\end_layout
+
 \end_body
 \end_document
