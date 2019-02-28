@@ -1676,16 +1676,25 @@ int mega2_iterate(int argc, char **argv)
                         (!strcasecmp(argv[i], "-m"))) {
                 i++;
             } else if (! *argv[i])
-                nargv[j++] = "\"\"";
+                if (queue)
+                    nargv[j++] = "\\\"\\\"";
+                else
+                    nargv[j++] = "\"\"";
             else if (! index(argv[i], ' '))
                 nargv[j++] = argv[i];
             else {
-                size_t ll = strlen(argv[i]);
-                char *xargv = CALLOC(ll+3, char);
-                strcpy(xargv+1, argv[i]);
-                *xargv          = '"';
-                *(xargv+1+ll)   = '"';
-                *(xargv+1+ll+1) = 0;
+                size_t agv = strlen(argv[i]);
+                size_t ll = agv + 3;
+                if (queue) ll += 2;
+                char *xargv = CALLOC(ll, char);
+                char *xp = xargv;
+                if (queue) {*xp++ = '\\';}
+                *xp++ = '"';
+                strcpy(xp, argv[i]);
+                xp += agv;
+                if (queue) {*xp++ = '\\';}
+                *xp++ = '"';
+                *xp++ = 0;
                 nargv[j++] = xargv;
             }
         }

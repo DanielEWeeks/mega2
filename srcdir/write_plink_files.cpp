@@ -655,6 +655,8 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
               Sadd(cmd, file_option);
               Sadd(cmd, file_names[7]);
               Sadd(cmd, reference_allele_option);
+              if (BatchItemGet("additional_program_args")->items_read) Sadd(cmd, " ");
+              Sadd(cmd, BatchItemGet("additional_program_args")->value.name);
               Sadd(cmd, " --missing-phenotype ");
               Sadd(cmd, Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
               Sadd(cmd, " --assoc --out ");
@@ -665,6 +667,8 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
               Sadd(cmd, file_option);
               Sadd(cmd, file_names[7]);
               Sadd(cmd, reference_allele_option);
+              if (BatchItemGet("additional_program_args")->items_read) Sadd(cmd, " ");
+              Sadd(cmd, BatchItemGet("additional_program_args")->value.name);
               Sadd(cmd, " --missing-phenotype ");
               Sadd(cmd, Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
               Sadd(cmd, " --assoc --out ");
