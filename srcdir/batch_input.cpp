@@ -278,7 +278,7 @@ static keyw_t keywords[] = {
     {"Reference_Allele_File",                 STRING,     ""},
     {"Align_Strand_Input",                    YORN,       "n"},
     {"VCF_Allele_Order",                      STRING,     "Original_Order"},
-    {"BCF_Sample_Style",                      INT,        "1"},
+    {"BCF_Sample_Style",                      INT,        "-1"},
 
     {"BCFs_File",                             STRING,     ""},
     {"BCF_Args",                              LINE,       "-m2 -M2 -v snps -c 1"},

@@ -697,11 +697,20 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
     if(sample_ind != 0) {
         mssgvf("\nChecking SAMPLEID consistency within files.\n");
         if(sample_ind == 1)
-            mssgvf("Since 'VCF_Sample_Style' is 1, the VCF header is checked against the .phe file SampleID Column.\n");
+            mssgvf("Since 'BCF_Sample_Style' is 1, the VCF header is checked against the .phe file SampleID Column.\n");
         else if(sample_ind == 2)
-            mssgvf("Since 'VCF_Sample_Style' is 2, the VCF header is checked against '<pedID>_<perID>'.\n");
+            mssgvf("Since 'BCF_Sample_Style' is 2, the VCF header is checked against '<pedID>_<perID>'.\n");
         else if(sample_ind == 3)
-            mssgvf("Since 'VCF_Sample_Style' is 3, the VCF header is checked against '<perID>'.\n");
+            mssgvf("Since 'BCF_Sample_Style' is 3, the VCF header is checked against '<perID>'.\n");
+        else {
+            errorvf(" Since 'BCF_Sample_Style' is not defined properly as 1, 2 or 3, we cannot proceed.\n"
+                    " Please rerun in interactive mode to create a new batch file with this value set,\n"
+                    " or add the value to the mega2 batch file:\n"
+                    " BCF_Sample_Style=1 the VCF header is checked against the .phe file SampleID Column\n"
+                    " BCF_Sample_Style=2 the VCF header is checked against '<pedID>_<perID>\n"
+                    " BCF_Sample_Style=3 the VCF header is checked against '<<perID>\n");
+            EXIT(DATA_INCONSISTENCY);
+        }
         draw_line();
 
         for(int per = 0; per < num_ped_recs; per++) {
