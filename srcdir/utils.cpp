@@ -497,7 +497,7 @@ void goodbye(int exit)
     FILE *pfd;
 #endif
 #endif
-    char syscmd[200];
+    char syscmd[3*MAX_NAMELEN];
     char *fl_name;
 #ifndef HIDESTATUS
     int exit_status;
