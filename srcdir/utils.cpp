@@ -497,12 +497,16 @@ void goodbye(int exit)
     FILE *pfd;
 #endif
 #endif
-    char syscmd[3*MAX_NAMELEN];
+    char syscmd[3 * MAX_NAMELEN];
     char *fl_name;
 #ifndef HIDESTATUS
     int exit_status;
 #endif
 
+    if (*sumdir == 0) {
+//        close_logs();
+        return;
+    }
     strcpy(orgdir, sumdir);
     if (CHR_ && *CHR_ != 0) {
         if (CreateRunFolder == 1)
@@ -2009,9 +2013,9 @@ void mega2_opts(int argc, char **argv)
                 } else if (strcasecmp(as, "dname") == 0) {
                     argv++; --argc;
                     Dname = *argv;
-                } else if (strcasecmp(as, "mega2") == 0) {
+                } else if (strcasecmp(as, "cmd") == 0) {
                     argv++; --argc;
-                    Mega2 = *argv;
+                    Cmd = *argv;
                 } else if (strcasecmp(as, "dbdump") == 0) {
                     database_dump++;
                 } else if (strcasecmp(as, "dbread") == 0) {
@@ -2144,7 +2148,7 @@ void mega2_opts(int argc, char **argv)
                         break;
                     case 'm': case 'M':
                         argv++; --argc;
-                        Mega2 = *argv;
+                        Cmd = *argv;
                         break;
                     case 'e': case 'E':
                         exec_sh = 1;
@@ -2235,13 +2239,16 @@ string& param_replace(string& param, size_t start) {
     char& offset = param[fnd1+1];
     int idx = offset - '1' + 1;
     if (offset < '0' || offset > '9' || idx >= CHR_argc) {
-        errorvf("batch_input %c%c: Not enough parameters; index must be >= 0 and < %d\n",
-                param[fnd1], offset, CHR_argc);
-        exit(0);
+        if (offset != '+') { 
+            errorvf("batch_input %c%c: Not enough parameters; index must be >= 0 and < %d\n",
+                    param[fnd1], offset, CHR_argc);
+            EXIT(OUTOF_BOUNDS_ERROR);
+        }
     }
-    string& ret = param.replace(fnd1, 2, 
-                                idx ? CHR_argv[idx] : CHR_ );
-  return param_replace(ret, fnd1 + strlen(idx ? CHR_argv[idx] : CHR_));
+    const char *repl = (offset != '+') ? (idx ? CHR_argv[idx] : CHR_) : CHR_;
+    if (offset == '+' && *CHR_ == '0') repl++;
+    string& ret = param.replace(fnd1, 2, repl);
+    return param_replace(ret, fnd1 + strlen(repl));
 }
 
 void print_mega2_help(void)

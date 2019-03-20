@@ -464,7 +464,7 @@ extern int             _strand_flips;
 extern char            *CHR_list;
 extern const char      *CHR_;
 extern const char      *Dname;
-extern char            *Mega2;
+extern char            *Cmd;
 extern int              queue;
 
 extern int lastautosome;

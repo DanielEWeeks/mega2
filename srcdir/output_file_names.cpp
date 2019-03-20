@@ -564,35 +564,35 @@ void          print_outfile_mssg(void)
 void CHR_STR(int numchr, char chr_str[])
 {
     if (numchr == UNKNOWN_CHROMO) {
-        if (human_unknown) {
+        if (human_unknown || Dname) {
             strcpy(chr_str, "U");
         } else {
             sprintf(chr_str, "%d", numchr);
         }
 
     } else if (numchr ==  SEX_CHROMOSOME) {
-        if (human_x) {
+        if (human_x || Dname) {
             strcpy(chr_str, "X");
         } else {
             sprintf(chr_str, "%d", numchr);
         }
 
     } else if (numchr ==  PSEUDO_X) {
-        if (human_xy) {
+        if (human_xy || Dname) {
             strcpy(chr_str, "XY");
         } else {
             sprintf(chr_str, "%d", numchr);
         }
 
     } else if (numchr ==  MALE_CHROMOSOME) {
-        if (human_y) {
+        if (human_y || Dname) {
             strcpy(chr_str, "Y");
         } else {
             sprintf(chr_str, "%d", numchr);
         }
 
     } else if (numchr ==  MITO_CHROMOSOME) {
-        if (human_mt) {
+        if (human_mt || Dname) {
             strcpy(chr_str, "MT");
         } else {
             sprintf(chr_str, "%d", numchr);
@@ -600,10 +600,11 @@ void CHR_STR(int numchr, char chr_str[])
     } else {
 
         // the autosomes 'human_auto' have no symbolic value in humans...
-        if (numchr <= 9 ) {
-           sprintf(chr_str, "0%1d", numchr);
-        } else if (numchr <= 99 ) {
-	   sprintf(chr_str, "%2d", numchr);
+//        if (numchr <= 9 ) {
+//           sprintf(chr_str, "0%1d", numchr);
+//        } else
+        if (numchr <= 99 ) {
+	   sprintf(chr_str, "%02d", numchr);
         } else if (numchr == MISSING_CHROMO ) {
            errorvf("INTERNAL: Processing missing chromosome.\n");
            EXIT(OUTOF_BOUNDS_ERROR);

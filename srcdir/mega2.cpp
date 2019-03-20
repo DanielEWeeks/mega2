@@ -368,7 +368,7 @@ int             _strand_flips;
 char            *CHR_list;
 const char      *CHR_;
 const char      *Dname;
-char            *Mega2;
+char            *Cmd;
 int             queue;
 int             exec_sh;
 
@@ -536,7 +536,7 @@ static void    init_globals(char *argv0)
     queue = 0;
     exec_sh = 0;
     Dname = NULL;
-    Mega2 = NULL;
+    Cmd = NULL;
     CHR_list = NULL;
     CHR_ = "";
 }
@@ -680,8 +680,8 @@ int             main(int argc, char **argv, char **env)
 
     if (queue) {
         job_manager_menus();
-        if (Mega2)
-            argv[0] = Mega2;
+        if (Cmd)
+            argv[0] = Cmd;
     }
 
     if ( mega2_iterate(argc, argv) )
@@ -1623,10 +1623,22 @@ void mega2_once(const char *nargv[], int argc, const char *num)
     if (exec_sh) {
         int ll = strlen(quep);
 
-        sprintf(quep + ll, "%s %s/%s/chr%s/%s.%s", 
-                "csh", Dname, CHR_argv[0], num, CHR_argv[1], "top.sh");
-        printf("%s\n", quep);
+        if (Cmd) {
+            sprintf(quep + ll, "%s %s %s %s", 
+                    Cmd, Dname, CHR_argv[0], num);
+            ll = strlen(quep);
 
+            for (i = 1; i < CHR_argc; i++) {
+                sprintf(quep + ll, " %s", CHR_argv[i]);
+                ll += 1 + strlen(CHR_argv[i]);
+            }
+
+        } else {
+            sprintf(quep + ll, "%s %s/%s/chr%s/%s.%s", 
+                    "csh", Dname, CHR_argv[0], num, CHR_argv[1], "top.sh");
+        }
+
+        printf("%s\n    ", quep);
         system(quep);
 
     } else  {
@@ -1639,17 +1651,25 @@ void mega2_once(const char *nargv[], int argc, const char *num)
     return;
 }
 
+char mi_chr_num[4];
 int mega2_iterate(int argc, char **argv)
 {
     if (CHR_list) {
         int i, j = 0, k = 0;
         Vecc1 fields, dash;
         int dash_size = 0;
+        int chr1;
 
         if (index(CHR_list, '-')) dash_size += 2;
         split(fields, CHR_list, ",");
         if (fields.size() <= 1 && dash_size <= 1 && exec_sh == 0) {
-            CHR_ = CHR_list;
+            chr1 = STR_CHR(CHR_list);
+            if (chr1 == -1) {
+                errorvf("The string %s is not a valid chromosome.\n", CHR_list);
+                EXIT(DATA_INCONSISTENCY);
+            }
+            CHR_STR(chr1, mi_chr_num);
+            CHR_ = mi_chr_num;
 #ifndef HIDESTATUS
             if (CHR_ && *CHR_ != 0) {
                 printf("args after: %s\n", Mega2Batch);
@@ -1698,9 +1718,9 @@ int mega2_iterate(int argc, char **argv)
                 nargv[j++] = xargv;
             }
         }
-        if (Mega2) {
+        if (Cmd) {
             argc -= 2;
-            nargv[0] = Mega2;
+            nargv[0] = Cmd;
         }
 
         for (size_t l = 0; l < fields.size(); l++) {
@@ -1708,32 +1728,30 @@ int mega2_iterate(int argc, char **argv)
                 dash.clear();
                 split(dash, fields[l], (const char *)"-");
                 if (dash.size() == 1) {
-                    nargv[k] = dash[0];
-                    mega2_once(nargv, argc, dash[0]);
-                } else {
-                    char num[3], st[3], nd[3];
-                    strcpy(st, (*dash[0] ? dash[0] : "1"));
-                    strcpy(nd, (*dash[1] ? dash[1] : "22"));
-                    strncpy(num, st, 3);
-                    int dash_cnt = atoi(nd) - atoi(st) + 1;
-                    for (int l2 = 0; l2 < dash_cnt; l2++) {
-                        nargv[k] = num;
-                        mega2_once(nargv, argc, num);
+                    chr1 = STR_CHR(dash[0]);
+                      if (chr1 == -1) {
+                        errorvf("The string %s is not a valid chromosome.\n", dash[0]);
+                        EXIT(DATA_INCONSISTENCY);
+                    }
+                    CHR_STR(chr1, mi_chr_num);
+                    nargv[k] = mi_chr_num;
+                    mega2_once(nargv, argc, mi_chr_num);
 
-                        if (num[1] == 0) {
-                            num[0]++;
-                            if (num[0] > '9') {
-                                num[0] = '1';
-                                num[1] = '0';
-                                num[2] =  0;
-                            }
-                        } else {
-                            num[1]++;
-                            if (num[1] > '9') {
-                                num[1] = '0';
-                                num[0]++;
-                            }
-                        }
+                } else {
+                    int st = *dash[0] ? STR_CHR(dash[0]) : 1;
+                    if (st == -1) {
+                        errorvf("The string %s is not a valid chromosome.\n", dash[0]);
+                        EXIT(DATA_INCONSISTENCY);
+                    }
+                    int nd = *dash[1] ? STR_CHR(dash[1]) : SEX_CHROMOSOME;
+                    if (nd == -1) {
+                        errorvf("The string %s is not a valid chromosome.\n", dash[1]);
+                        EXIT(DATA_INCONSISTENCY);
+                    }
+                    for (int l2 = st; l2 <= nd; l2++) {
+                        CHR_STR(l2, mi_chr_num);
+                        nargv[k] = mi_chr_num;
+                        mega2_once(nargv, argc, mi_chr_num);
                     }
                 }
             }
