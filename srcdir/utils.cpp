@@ -508,6 +508,7 @@ void goodbye(int exit)
         return;
     }
     strcpy(orgdir, sumdir);
+
     if (CHR_ && *CHR_ != 0) {
         if (CreateRunFolder == 1)
             sprintf(sumdir, "%s/%s",
@@ -529,6 +530,7 @@ void goodbye(int exit)
                 strcpy(sumdir, Mega2OutputPath);
         }
     }
+
     if (is_dir(sumdir) && (! access(sumdir, W_OK)))
         ;
     else if (! makedirpath(sumdir)) {
@@ -607,16 +609,17 @@ void goodbye(int exit)
     delete_file(fl_name);
     sprintf(fl_name, "%s/MEGA2run.html", sumdir);
     delete_file(fl_name);
-    delete_file("__tmp__");
+    sprintf(fl_name, "%s/__tmp__", sumdir);
+    delete_file(fl_name);
     if (*orgdir) rmdir(orgdir);
 
 //    sprintf(fl_name, "%s/MEGA2.LOG", sumdir);
 
-    sprintf(syscmd, "%s %s/%s %s %s > __tmp__\n",
+    sprintf(syscmd, "%s %s/%s %s %s > %s/__tmp__\n",
             perl_pgm(LOG2HTML),
             sumdir, Mega2Log,
             (output_paths == NULL || output_paths[0] == NULL || output_paths[0] == 0) ? "." : output_paths[0],
-            sumdir);
+            sumdir, sumdir);
     fflush(stdout);
 
 //    exit(0);
@@ -649,12 +652,12 @@ void goodbye(int exit)
 #endif
     err_or_warn(&XX, &err);
     sprintf(syscmd, "Can not find '%s' run log.", LOG2HTML);
-    append_to_fd("__tmp__", syscmd, err);
+    append_to_fd(fl_name, syscmd, err);
 /*
     sprintf(syscmd, "cat __tmp__ >> %s", Mega2ErrRun);
     System(syscmd);
 */
-    delete_file("__tmp__");
+    delete_file(fl_name);
     if (access(fl_name, F_OK) == 0) {
 #ifndef HIDESTATUS
       msgvf("To view the HTML-formatted run summaries, open\n%s/%s\nin a web browser.\n", InputPath, fl_name);
@@ -1983,10 +1986,6 @@ extern int dump_dbCompress, dbCompress;
 
 // export arguments for batch file
 int CHR_argc; char **CHR_argv;
-extern const char *Dname;
-extern char *CHR_list;
-extern int   queue;
-extern int   exec_sh;
 
 void mega2_opts(int argc, char **argv)
 {
@@ -2003,6 +2002,7 @@ void mega2_opts(int argc, char **argv)
                 EXIT(INPUT_DATA_ERROR);
             } else if (*(as+1) == '-') {
                 as += 2;
+
                 if (strcasecmp(as, "chr") == 0) {
 		    argv++; --argc;
                     CHR_list = *argv;
@@ -2013,9 +2013,13 @@ void mega2_opts(int argc, char **argv)
                 } else if (strcasecmp(as, "dname") == 0) {
                     argv++; --argc;
                     Dname = *argv;
+                } else if (strcasecmp(as, "out_path") == 0) {
+                    argv++; --argc;
+                    out_path = *argv;
                 } else if (strcasecmp(as, "cmd") == 0) {
                     argv++; --argc;
                     Cmd = *argv;
+
                 } else if (strcasecmp(as, "dbdump") == 0) {
                     database_dump++;
                 } else if (strcasecmp(as, "dbread") == 0) {
@@ -2146,6 +2150,10 @@ void mega2_opts(int argc, char **argv)
                         argv++; --argc;
                         Dname = *argv;
                         break;
+                    case 'o': case 'O':
+                        argv++; --argc;
+                        out_path = *argv;
+                        break;
                     case 'm': case 'M':
                         argv++; --argc;
                         Cmd = *argv;
@@ -2232,11 +2240,12 @@ using namespace std;
 
 string& param_replace(string& param, size_t start) {
 
-    string::size_type fnd1 = param.find_first_of("$%", start);
+    string::size_type fnd1 = param.find_first_of("$%*", start);
     if (fnd1 == string::npos)
         return param;
 
     char& offset = param[fnd1+1];
+    int repeat = param[fnd1] == '*';
     int idx = offset - '1' + 1;
     if (offset < '0' || offset > '9' || idx >= CHR_argc) {
         if (offset != '+') { 
@@ -2248,7 +2257,7 @@ string& param_replace(string& param, size_t start) {
     const char *repl = (offset != '+') ? (idx ? CHR_argv[idx] : CHR_) : CHR_;
     if (offset == '+' && *CHR_ == '0') repl++;
     string& ret = param.replace(fnd1, 2, repl);
-    return param_replace(ret, fnd1 + strlen(repl));
+    return param_replace(ret, (repeat ? fnd1 : fnd1 + strlen(repl)));
 }
 
 void print_mega2_help(void)

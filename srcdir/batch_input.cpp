@@ -252,7 +252,11 @@ static keyw_t keywords[] = {
     {"Shapeit_recomb_template",               STRING,     "?"},
 
     {"file_name_stem",                        STRING,     ""},
+    {"program_name",                          LINE,       ""},
     {"additional_program_args",               LINE,       ""},
+    {"raw_command_line",                      LINE,       ""},
+
+
     {"RoadTrips_male_prevalence",             FLOAT,      "0.123"},
     {"RoadTrips_female_prevalence",           FLOAT,      "0.123"},
 
@@ -1217,7 +1221,7 @@ static int parse_batch_file(char *batch_file_name, int rc)
         // if the line is not the empty string, though this would match a line with one space on it...
         // better would be to search for the leack of a comment character in the first column and
         // an equal sign somewhere in the line....
-        if (strcspn(nlp, "$%") == lz) { //missing
+        if (strcspn(nlp, "$%*") == lz) { //missing
             token.set(nlp);
         } else {
             string nls(nlp);

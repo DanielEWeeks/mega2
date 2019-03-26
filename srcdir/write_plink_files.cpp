@@ -593,7 +593,9 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
 #ifdef RUNSHELL_SETUP
             // This handles the environment variable setup to allow the checking
             // functions in 'batch_run' to work correctly...
-            fprintf_env_checkset_csh(_filep, "_PLINK", "plink");
+            char* &pname = BatchItemGet("program_name")->value.name;
+            fprintf_env_checkset_csh(_filep, "_PLINK", ( BatchValueRead("program_name") ?
+                                                         pname : "plink") );
 #endif /* RUNSHELL_SETUP */
         }
         void inner () {
@@ -622,8 +624,7 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
                     }
                 }
             }
-            
-            if (strcmp(file_names[0], file_names[6]))        //fam
+            if (strcmp(file_names[0], file_names[6]))
                 sh_ln(file_names[0], file_names[6]);
 
             // From the PLINK code (input.cpp) it appears that the '--missing-phenotype' flag can
@@ -635,7 +636,19 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
             // So, it is "not wrong" to output the '--missing-phenotype' flag for a affection status written
             // by Mega2, because we only use (0, 1, 2). The missing phenotype flag value will simply not appear
             // in the input that PLINK reads.
-            
+
+
+            if (BatchValueRead("raw_command_line")) {
+                char *cp = cmd;
+                BatchValueGet(cp, "raw_command_line");
+                int ll = strlen(cmd);
+                cmd[ll++] = '\n';
+                cmd[ll]   = 0;
+                sh_run("PLINK", cmd);
+                fprintf_status_check_csh(_filep, "PLINK", 1);
+                return;
+            }
+
             if (suboption == PLINK_SUB_OPTION_LGEN_INT) file_option = "--lfile ";
             else if (suboption == PLINK_SUB_OPTION_PED_INT) file_option = "--file ";
             else if (suboption == PLINK_SUB_OPTION_SNP_MAJOR_INT ||
@@ -651,27 +664,38 @@ void CLASS_PLINK::create_sh_file(linkage_ped_top *Top,
 //                  file_option, file_names[7], reference_allele_option,
 //                  Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name,
 //                  file_names[7]);
-              Sadd(cmd, "$_PLINK --noweb ");
+              Sadd(cmd, "$_PLINK ");
               Sadd(cmd, file_option);
               Sadd(cmd, file_names[7]);
               Sadd(cmd, reference_allele_option);
-              if (BatchItemGet("additional_program_args")->items_read) Sadd(cmd, " ");
-              Sadd(cmd, BatchItemGet("additional_program_args")->value.name);
-              Sadd(cmd, " --missing-phenotype ");
-              Sadd(cmd, Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
-              Sadd(cmd, " --assoc --out ");
+              if (BatchValueRead("additional_program_args")) {
+                  Sadd(cmd, " ");
+                  Sadd(cmd, BatchItemGet("additional_program_args")->value.name);
+              } else {
+                  Sadd(cmd, " --noweb");
+                  Sadd(cmd, " --missing-phenotype ");
+                  Sadd(cmd, Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
+                  Sadd(cmd, " --assoc");
+              }
+              Sadd(cmd, " --out ");
               Sadd(cmd, file_names[7]);
               Sadd(cmd, "\n");
 #else /* RUNSHELL_SETUP */
-              Sadd(cmd, "plink ");
+              char* &pname = BatchItemGet("program_name")->value.name;
+              Sadd(cmd, (BatchValueRead("program_name") ? pname : "plink"));
+              Sadd(cmd, " ");
               Sadd(cmd, file_option);
               Sadd(cmd, file_names[7]);
               Sadd(cmd, reference_allele_option);
-              if (BatchItemGet("additional_program_args")->items_read) Sadd(cmd, " ");
-              Sadd(cmd, BatchItemGet("additional_program_args")->value.name);
-              Sadd(cmd, " --missing-phenotype ");
-              Sadd(cmd, Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
-              Sadd(cmd, " --assoc --out ");
+              if (BatchValueGet("additional_program_args")) {
+                  Sadd(cmd, " ");
+                  Sadd(cmd, BatchItemGet("additional_program_args")->value.name);
+              } else {
+                  Sadd(cmd, " --noweb");
+                  Sadd(cmd, " --missing-phenotype ");
+                  Sadd(cmd, Mega2BatchItems[/* 49 */ Value_Missing_Quant_On_Output].value.name);
+                  Sadd(cmd, " --assoc");
+              Sadd(cmd, " --out ");
               Sadd(cmd, file_names[7]);
               Sadd(cmd, "\n");
 #endif /* RUNSHELL_SETUP */

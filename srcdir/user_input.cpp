@@ -851,25 +851,20 @@ static void menu1_batch_set_outfiles(char **output_path, char **db_name)
         }
     }
 
-    if (ir) {
-        if (is_dir(*output_path)) {
-            if (access(*output_path, W_OK)) {
-                errorvf("file path %s named by keyword %s is not a writable directory.\n",
-                        Mega2BatchItems[/* 33 */ Output_Path].value.name,
-                        C(Mega2BatchItems[/* 33 */ Output_Path].keyword));
-                EXIT(FILE_NOT_FOUND);
-            }
-        } else {
-            if (makedirpath(*output_path)) {
-                msgvf("Creating/Using Output_path: %s\n", *output_path);
-            } else {
-                errorvf("Could not create Output_path: %s\n", *output_path);
-                EXIT(FILE_NOT_FOUND);
-            }
+    if (is_dir(*output_path)) {
+        if (access(*output_path, W_OK)) {
+            errorvf("file path %s named by keyword %s is not a writable directory.\n",
+                    Mega2BatchItems[/* 33 */ Output_Path].value.name,
+                    C(Mega2BatchItems[/* 33 */ Output_Path].keyword));
+            EXIT(FILE_NOT_FOUND);
         }
     } else {
-        missing_optional_keyword(Output_Path,  "using default '.' (current directory)");
-        strcpy(*output_path, ".");
+        if (makedirpath(*output_path)) {
+            msgvf("Creating/Using Output_path: %s\n", *output_path);
+        } else {
+            errorvf("Could not create Output_path: %s\n", *output_path);
+            EXIT(FILE_NOT_FOUND);
+        }
     }
 
     char *cp = *db_name;

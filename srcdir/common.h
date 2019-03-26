@@ -461,11 +461,13 @@ extern int             force_numeric_alleles;
 
 /*global to keep track of strand flipping*/
 extern int             _strand_flips;
-extern char            *CHR_list;
-extern const char      *CHR_;
 extern const char      *Dname;
+extern const char      *out_path;
+extern char            *CHR_list;
 extern char            *Cmd;
+extern const char      *CHR_;
 extern int              queue;
+extern int              exec_sh;
 
 extern int lastautosome;
 
