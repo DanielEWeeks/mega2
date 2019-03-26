@@ -524,7 +524,7 @@ void goodbye(int exit)
             else
                 sprintf(sumdir, "%s/%s", Mega2OutputPath, RunDate);
         } else {
-            if (*Mega2OutputPath == 0)
+            if (Mega2OutputPath == 0 || *Mega2OutputPath == 0)
                 strcpy(sumdir, ".");
             else
                 strcpy(sumdir, Mega2OutputPath);
@@ -658,6 +658,7 @@ void goodbye(int exit)
     System(syscmd);
 */
     delete_file(fl_name);
+    sprintf(fl_name, "%s/MEGA2run.html", sumdir);
     if (access(fl_name, F_OK) == 0) {
 #ifndef HIDESTATUS
       msgvf("To view the HTML-formatted run summaries, open\n%s/%s\nin a web browser.\n", InputPath, fl_name);
