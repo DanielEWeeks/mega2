@@ -499,6 +499,7 @@ void goodbye(int exit)
 #endif
     char syscmd[3 * MAX_NAMELEN];
     char *fl_name;
+    char *idxp;
 #ifndef HIDESTATUS
     int exit_status;
 #endif
@@ -611,7 +612,16 @@ void goodbye(int exit)
     delete_file(fl_name);
     sprintf(fl_name, "%s/__tmp__", sumdir);
     delete_file(fl_name);
-    if (*orgdir) rmdir(orgdir);
+    if (*orgdir) {
+        rmdir(orgdir);
+        if (CreateRunFolder == 1) {
+            idxp = rindex(orgdir, '/');
+            if (idxp) {
+                *idxp = 0;
+                rmdir(orgdir);
+            }
+        }
+    }
 
 //    sprintf(fl_name, "%s/MEGA2.LOG", sumdir);
 

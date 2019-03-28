@@ -685,14 +685,14 @@ void mega2_once(const char *nargv[], int argc, const char *num)
             ll += 1 + strlen(CHR_argv[i]);
         }
 
-        printf("%s\n    ", quep);
+        fprintf(stderr, "%s\n    ", quep);
         system(quep);
 
     } else  {
         argv.push_back(quep);
         for (i = 0; i < argc; i++) argv.push_back(nargv[i]);
         join(argv, str, " ");
-        printf("%s\n", C(str));
+        fprintf(stderr, "%s\n", C(str));
         system(C(str));
     }
     return;
