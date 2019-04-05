@@ -159,7 +159,8 @@ mega2_bcftools_interface.o read_bcfs.o write_vcf.o: iFLAGS += -Ilib/bcftools-$(B
 # The not yet ready for prime time object oriented batch file interface....
 #DFLAGS += -DNEW_BATCH
 
-mega2.o utils.o: DFLAGS += -DEXPIRE 
+# retire this check
+# mega2.o utils.o: DFLAGS += -DEXPIRE 
 
 ifdef TEST
     DtFLAGS += -DTEST

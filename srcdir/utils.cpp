@@ -82,7 +82,6 @@
 
 
 #ifdef TEST
-#undef EXPIRE
 #define SETSEED
 #endif
 

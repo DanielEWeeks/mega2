@@ -42,7 +42,7 @@
 
 #define MEGA2VER 5
 #define MEGA2REV 0
-#define MEGA2PATCH 1
+#define MEGA2PATCH 2
 
 #define EXPIRE_YEAR 2019
 /* June */

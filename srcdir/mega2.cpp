@@ -865,10 +865,6 @@ int mega2(int argc, char **argv, char **env)
     base_pair_position_index = -1;
     genetic_distance_sex_type_map = UNKNOWN_GDMT;
 
-#ifdef TEST
-#undef EXPIRE
-#endif
-
 #ifdef EXPIRE
     check_expiration();
 #endif
