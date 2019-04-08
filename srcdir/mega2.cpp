@@ -368,8 +368,10 @@ int             _strand_flips;
 const char      *Dname;
 const char      *out_path;
 char            *CHR_list;
-char            *Cmd;
 const char      *CHR_;
+
+char            *Cmd;
+char            *Script;
 int             queue;
 int             exec_sh;
 
@@ -539,6 +541,7 @@ static void    init_globals(char *argv0)
     out_path = NULL;
     CHR_list = NULL;
     Cmd = NULL;
+    Script = NULL;
     CHR_ = "";
     queue = 0;
     exec_sh = 0;
@@ -640,13 +643,14 @@ extern int _job_manager_index, _job_manager_mem;
 extern Str _job_manager_args;
 #define QSIZE 4096
 char q_param[QSIZE];
-char *qsub();
-char *sbatch();
+char *qsub(const char *num);
+char *sbatch(const char *num);
 
 static
-void mega2_once(const char *nargv[], int argc, const char *num)
+void mega2_once(const char *nargv[], int argc, const char *num, FILE *S)
 {
     int i = 0;
+    int ll = 0;
     string str;
     char *quep = q_param;
     std::vector<const char *> argv;
@@ -654,14 +658,14 @@ void mega2_once(const char *nargv[], int argc, const char *num)
     *quep = 0;
     if (queue) {
         if (_job_manager_index == 2)
-            quep = qsub();
+            quep = qsub(num);
 
         else if (_job_manager_index == 3)
-            quep = sbatch();
+            quep = sbatch(num);
     }
 
     if (exec_sh) {
-        int ll = strlen(quep);
+        ll = strlen(quep);
 
         if (Cmd) {
             if (out_path) 
@@ -685,15 +689,23 @@ void mega2_once(const char *nargv[], int argc, const char *num)
             ll += 1 + strlen(CHR_argv[i]);
         }
 
-        fprintf(stderr, "%s\n    ", quep);
-        system(quep);
+        if (_job_manager_index == 3)
+            sprintf(quep + ll, " %s", " & ");
 
-    } else  {
+        fprintf(S ? S : stderr, "%s\n", quep);
+        if (S == NULL)
+            system(quep);
+
+     } else  {
         argv.push_back(quep);
         for (i = 0; i < argc; i++) argv.push_back(nargv[i]);
         join(argv, str, " ");
-        fprintf(stderr, "%s\n", C(str));
-        system(C(str));
+        if (S != NULL || _job_manager_index == 3)
+            str += " & ";
+
+        fprintf(S ? S : stderr, "%s\n", C(str));
+        if (S == NULL)
+            system(C(str));
     }
     return;
 }
@@ -703,13 +715,33 @@ int mega2(int argc, char **argv, char **env);
 
 int main(int argc, char **argv, char **env)
 {
-
+    FILE *S = NULL;
     init_globals(argv[0]);
     mega2_opts(argc, argv);
+    
 
     if (queue) {
+        if (Script) {
+            S = fopen(Script, "a");
+            if (S == NULL) {
+                printf("File for output script(\"%s\") could not be created.  Exitting.\n",  Script);
+                EXIT(FILE_NOT_FOUND);
+            }
+        }
         job_manager_menus();
-        if (Cmd)
+        if (S) {
+            fprintf(S, "#!/bin/bash %s\n\n", _job_manager_index == 3 ? "-l" : "");
+            fprintf(S, "#You may add Slurm or SGE batch parameters to suit your needs.  ");
+            fprintf(S, "Consult the respective manual.\n\n");
+            fprintf(S, "#Note: You must have a \"wait\" command at the end of this file.\n\n");
+            if (_job_manager_index == 3) {
+                fprintf(S, "#Note: You may replace any of the options below between \"srun\" and \"mega2\"\n");
+                fprintf(S, "#including removing everything to the left of \"mega2\".  You shouldn't\n");
+                fprintf(S, "#remove the -o and -e option or all diagnostic output will be confusingly ");
+                fprintf(S, "intertwined.\n\n");
+            }
+        }
+       if (Cmd)
             argv[0] = Cmd;
     }
 
@@ -757,6 +789,9 @@ int main(int argc, char **argv, char **env)
             } else if ( (!strcasecmp(argv[i], "--cmd")) ||
                         (!strcasecmp(argv[i], "-m"))) {
                 i++;
+            } else if ( (!strcasecmp(argv[i], "--script")) ||
+                        (!strcasecmp(argv[i], "-s"))) {
+                i++;
             } else if (! *argv[i])
                 if (queue)
                     nargv[j++] = "\\\"\\\"";
@@ -784,7 +819,9 @@ int main(int argc, char **argv, char **env)
             argc -= 2;
             nargv[0] = Cmd;
         }
-
+        if (Script) {
+            argc -= 2;
+        }
         for (size_t l = 0; l < fields.size(); l++) {
             if (k >= 0) {
                 dash.clear();
@@ -797,7 +834,7 @@ int main(int argc, char **argv, char **env)
                     }
                     CHR_STR(chr1, mi_chr_num);
                     nargv[k] = mi_chr_num;
-                    mega2_once(nargv, argc, mi_chr_num);
+                    mega2_once(nargv, argc, mi_chr_num, S);
 
                 } else {
                     int st = *dash[0] ? STR_CHR(dash[0]) : 1;
@@ -813,7 +850,7 @@ int main(int argc, char **argv, char **env)
                     for (int l2 = st; l2 <= nd; l2++) {
                         CHR_STR(l2, mi_chr_num);
                         nargv[k] = mi_chr_num;
-                        mega2_once(nargv, argc, mi_chr_num);
+                        mega2_once(nargv, argc, mi_chr_num, S);
                     }
                 }
             }
@@ -821,6 +858,12 @@ int main(int argc, char **argv, char **env)
     } else {
         return mega2(argc, argv, env);
     }
+
+    if (S) {
+        fprintf(S, "\nwait\n");
+        fclose(S);
+    }
+
     return 0;
 }
 
@@ -1767,17 +1810,38 @@ int mega2(int argc, char **argv, char **env)
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 
-char *qsub()
+char *qsub(const char *num)
 {
-    snprintf(q_param, QSIZE, "qsub -b y -N %s -l h_vmem=%dG %s ",
-             Dname, _job_manager_mem, C(_job_manager_args));
+    char *quep = q_param;
+
+    snprintf(quep, QSIZE, "qsub -b y -N %s ", Dname);
+    int ll = strlen(quep);
+    if (_job_manager_args.size())
+        strcpy(quep + ll, C(_job_manager_args));
+    else
+        sprintf(quep + ll, "-l h_vmem=%dG -cwd ", _job_manager_mem);
+
+//  snprintf(q_param, QSIZE, "qsub -b y -N %s -l h_vmem=%dG %s ",
+//           Dname, _job_manager_mem,
+//           _job_manager_args.size() ? C(_job_manager_args) : "-cwd");
 
     return q_param;
 }
 
-char *sbatch()
+char *sbatch(const char *num)
 {
-    snprintf(q_param, QSIZE, "srun –N1 --job-name=mega2 –mem=%dG %s ",
-             _job_manager_mem, C(_job_manager_args));
+    int gp = getpid();
+    char *quep = q_param;
+    
+    snprintf(quep, QSIZE, "srun -n1 -N1 ");
+    int ll = strlen(quep);
+    if (_job_manager_args.size())
+        strcpy(quep + ll, C(_job_manager_args));
+    else
+        sprintf(quep + ll, "-o %s.o%d%s -e %s.e%d%s ", Dname, gp, num, Dname, gp, num);
+
+//  snprintf(q_param, QSIZE, "srun –N1 --job-name=mega2 –mem=%dG %s ",
+//    _job_manager_mem, C(_job_manager_args));
+
     return q_param;
 }

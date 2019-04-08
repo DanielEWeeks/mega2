@@ -464,10 +464,7 @@ extern int             _strand_flips;
 extern const char      *Dname;
 extern const char      *out_path;
 extern char            *CHR_list;
-extern char            *Cmd;
 extern const char      *CHR_;
-extern int              queue;
-extern int              exec_sh;
 
 extern int lastautosome;
 

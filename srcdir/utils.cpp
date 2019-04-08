@@ -508,7 +508,9 @@ void goodbye(int exit)
         return;
     }
     strcpy(orgdir, sumdir);
-
+    if (Mega2OutputPath == 0) 
+        ;
+    else
     if (CHR_ && *CHR_ != 0) {
         if (CreateRunFolder == 1)
             sprintf(sumdir, "%s/%s",
@@ -1996,6 +1998,10 @@ extern int dump_dbCompress, dbCompress;
 
 // export arguments for batch file
 int CHR_argc; char **CHR_argv;
+extern char            *Cmd;
+extern char            *Script;
+extern int              queue;
+extern int              exec_sh;
 
 void mega2_opts(int argc, char **argv)
 {
@@ -2029,6 +2035,11 @@ void mega2_opts(int argc, char **argv)
                 } else if (strcasecmp(as, "cmd") == 0) {
                     argv++; --argc;
                     Cmd = *argv;
+                } else if (strcasecmp(as, "exec") == 0) {
+                    exec_sh = 1;
+                } else if (strcasecmp(as, "script") == 0) {
+                    argv++; --argc;
+                    Script = *argv;
 
                 } else if (strcasecmp(as, "dbdump") == 0) {
                     database_dump++;
@@ -2171,6 +2182,10 @@ void mega2_opts(int argc, char **argv)
                     case 'e': case 'E':
                         exec_sh = 1;
                         break;
+                    case 's': case 'S':
+                        argv++; --argc;
+                        Script = *argv;
+                        break;
                     case 'w': case 'W':
                         check_web_ver = 0;
                         break;
@@ -2194,9 +2209,11 @@ void mega2_opts(int argc, char **argv)
                     case 'f': case 'F':
                         test_socket_fd();
                         break;
+/*
                     case 's': case 'S':
                         test_socket_s();
                         break;
+ */
 #endif
                     case '1':
                         marker_scheme_mega2_opts = MARKER_SCHEME_BITS;

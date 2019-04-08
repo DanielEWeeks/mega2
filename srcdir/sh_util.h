@@ -159,7 +159,7 @@ namespace dataloop {
                 pr_printf("pushd %s\n", sub_shell->dir_);
             }
 
-
+/*
             if(_job_manager_index == 2) {
                 pr_printf("echo ");
                 pr_printf(qsub());
@@ -174,7 +174,9 @@ namespace dataloop {
                 pr_printf(sbatch());
                 pr_printf("%s \n", sub_shell->file_);
             }
-            else {
+            else
+*/
+            {
                 pr_printf("echo csh %s $ARGS\n", sub_shell->file_);
                 pr_printf("csh %s $ARGS\n", sub_shell->file_);
             }
