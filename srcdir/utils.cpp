@@ -125,6 +125,7 @@ void           move_file(char *flname1, char *flname2);
 int            makedir(char *dirname);
 int            makedirpath(char *dirname);
 void           move_logs(char *sumdir) ;
+void           move_batch(char *sumdir) ;
 void           goodbye(int exit);
 char *         strtail(const char *name, const int n);
 const char    *perl_pgm(const char *pl);
@@ -592,6 +593,7 @@ void goodbye(int exit)
 
     if (strcasecmp(orgdir, sumdir))
         move_logs(sumdir);
+    move_batch(sumdir);
 
     fl_name=CALLOC(50+strlen(sumdir), char);
 
@@ -1524,6 +1526,11 @@ void move_logs(char *new_location)
         sprintf(new_file, "%s/%s", new_location, Mega2Sim);
         move_file(Mega2SimRun, new_file);
     }
+}
+
+void move_batch(char *new_location)
+{
+    char new_file[FILENAME_LENGTH+45];
 
     if (strcmp(Mega2Batch, "none")) {
         char *p = strrchr(Mega2Batch, '/');
