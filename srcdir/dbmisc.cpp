@@ -213,8 +213,7 @@ void dbmisc_export(linkage_ped_top *Top) {
     else
         stuff_table.insert("FemaleRecomb", 0, 0);
 
-    extern char _hgbuild[FILENAME_LENGTH];
-    charstar_table.insert("human_genome_build", _hgbuild);
+    charstar_table.insert("human_genome_build", BatchItemGet("human_genome_build")->value.name);
 
     MasterDB.commit();
 

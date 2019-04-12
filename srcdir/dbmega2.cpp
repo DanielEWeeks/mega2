@@ -301,7 +301,7 @@ void dbmega2_stat(linkage_ped_top *Top)
 
     if(mega2_input_files[REFfl]!= NULL){
         string hgbuild;
-        BatchValueGet(hgbuild,"human_genome_build");
+        BatchValueGet(hgbuild, "human_genome_build");
         msgvf("\treference allele panel: %s\n", mega2_input_files[REFfl]);
         msgvf("\treference allele build: %s\n", hgbuild.c_str());
     }

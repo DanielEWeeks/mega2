@@ -1079,7 +1079,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
         char * _buildname;
         const char * _keyname = strdup("human_genome_build");
         if (!map_get(Charstar_hash, _keyname, _buildname)) {
-            strcpy(buildname,"B37");
+            strcpy(buildname, "B37");
             //printf("Char* read failed for %s\n", _keyname);
         }
         else
@@ -1136,6 +1136,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             refchoice = "Original_Order";
         else {
             refchoice = "Use Mega2 Allele DB Table";
+/*
             std::string rfile = mega2_input_files[REFfl];
             if (rfile.find("B37") != std::string::npos || rfile.find("b37") != std::string::npos)
                 strcpy(buildname, "B37");
@@ -1149,6 +1150,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 strcpy(buildname, "B19");
             if (rfile.find("HG19") != std::string::npos || rfile.find("hg19") != std::string::npos)
                 strcpy(buildname, "HG19");
+*/
             change_build_allowed = 0;
         }
         if(!_strand_flips)
@@ -1172,11 +1174,11 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
 
         menu_count++;
         if(outfiletype == 1)
-            printf(" %d) Choose Format:                                   BCF\n", menu_count);
+            printf(" %d) Choose Format:                                  BCF\n", menu_count);
         else if(outfiletype == 2)
-            printf(" %d) Choose Format:                                   VCF.gz\n", menu_count);
+            printf(" %d) Choose Format:                                  VCF.gz\n", menu_count);
         else if(outfiletype == 3)
-            printf(" %d) Choose Format:                                   VCF\n", menu_count);
+            printf(" %d) Choose Format:                                  VCF\n", menu_count);
         fileout = menu_count;
 
         printf(" %d) File name stem:                                  %-15s\n", ++menu_count, prefix);
@@ -1222,7 +1224,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             strcpy(file_name_stem,prefix);
             hg_build = buildname;
             ref_choice = refchoice;
-            BatchValueSet(hg_build,"human_genome_build");
+//q            BatchValueSet(hg_build,"human_genome_build");
             BatchValueSet(outfiletype,"VCF_output_file_type");
             BatchValueSet(file_name_stem,"file_name_stem");
             BatchValueSet(ref_choice,"VCF_Allele_Order");
@@ -1356,7 +1358,6 @@ void CLASS_VCF::batch_in(){
     char c;
     char *fn = this->file_name_stem;
     BatchValueIfSet(fn,   "file_name_stem");
-    BatchValueGet(hg_build, "human_genome_build");
     BatchValueGet(c,   "Loop_Over_Chromosomes");
     LoopOverChrm = c == 'y' || c == 'Y';
     BatchValueGet(outfiletype,"VCF_output_file_type");
@@ -1367,7 +1368,6 @@ void CLASS_VCF::batch_out(){
     extern void batchf(batch_item_type *bi);
 
     Cstr Values[] =  { "file_name_stem",
-                       "human_genome_build",
                        "Loop_Over_Chromosomes",
                        "VCF_output_file_type",
                        "VCF_Allele_Order"

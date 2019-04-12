@@ -143,7 +143,6 @@ int genetic_distance_index;
 int genetic_distance_sex_type_map; // see common.h
 int base_pair_position_index;
 
-char _hgbuild[FILENAME_LENGTH];
 int _job_manager_index = 1;
 int _job_manager_mem   = 4;
 Str _job_manager_args;
@@ -1062,8 +1061,6 @@ void menu1(file_format *infl_type,
     *Error_sim_opt = 0;
     *freq_mismatch_thresh = LARGE;
 
-    Str hgbuild;
-
     fln_alloc(output_path);
     fln_alloc(input_path);
 
@@ -1123,9 +1120,6 @@ void menu1(file_format *infl_type,
 
         if(BatchItemGet("Reference_Allele_File")->items_read)
             BatchValueGet(*reffl_name,"Reference_Allele_File");
-
-        BatchValueGet(hgbuild,"human_genome_build");
-        strcpy(_hgbuild,hgbuild.c_str());
 
         return;
     }
@@ -1350,7 +1344,7 @@ void menu1(file_format *infl_type,
                     choiceA[idx++] = vcf_mak_i;
                 }
 
-                printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK phenotype parameters:", PLINKArgs);
+                printf("%2d) %-*s%s\n", idx, line_len, "PLINK phenotype parameters:", PLINKArgs);
                 choiceA[idx++] = plink_args_i;
             }
         }
@@ -1370,29 +1364,29 @@ void menu1(file_format *infl_type,
 
         if(Input_Format == in_format_bcfs || Input_Format == in_format_gzcfs ||
            Input_Format == in_format_vcfs){
+/*
             if(strcmp(*pedfl_name, "-.fam") == 0 || strcmp(*pedfl_name, "-") == 0) {
                 //do nothing
-            }
-            else {
-                //printf("%s\n", *pedfl_name);
-                if (sampleID_match == 0)
-                    printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:       [required]",
-                           "[ UNASSIGNED ]");
+            }  else
+*/
+            //printf("%s\n", *pedfl_name);
+            if (sampleID_match == 0)
+                printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:       [required]",
+                       "[ UNASSIGNED ]");
 
-                else if (sampleID_match == 1)
-                    printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:       [required]",
-                           "[ PHE file ]");
+            else if (sampleID_match == 1)
+                printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:       [required]",
+                       "[ PHE file ]");
 
-                else if (sampleID_match == 2)
-                    printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:        [required]",
-                           "[ PED_PER ]");
+            else if (sampleID_match == 2)
+                printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:       [required]",
+                       "[ PED_PER ]");
 
-                else if (sampleID_match == 3)
-                    printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:        [required]",
-                           "[ PER ]");
+            else if (sampleID_match == 3)
+                printf("%2d) %-*s%s\n", idx, line_len, "Person ID to VCF ID key:       [required]",
+                       "[ PER ]");
 
-                choiceA[idx++] = bcf_match_i;
-            }
+            choiceA[idx++] = bcf_match_i;
         }
 
 
@@ -1513,6 +1507,8 @@ void menu1(file_format *infl_type,
                     exit_loop = 0;
                 }
                 else {
+                    sampleID_match = 0;
+                    strcpy(*pedfl_name, "-.fam");
                     mssgvf("\nAs a pedigree (.fam) file was not provided, we have assumed everyone is unrelated.\n"
                            "If you have pedigree information that you did not include please rerun providing a pedigree file.\n"
                            "All sex values have been set to male as a default.\n\n");
@@ -1556,7 +1552,7 @@ void menu1(file_format *infl_type,
                     char bcfsfile_name[FILENAME_LENGTH], *bcfsfile = bcfsfile_name;
                     BatchValueGet(bcfsfile, "BCFs_File");
                     if (access(bcfsfile, F_OK) != 0) {
-                        printf("ERROR: You did not specify a Variant file.\n");
+                                  printf("ERROR: You did not specify a Data file or Manifest file.\n");
                         exit_loop = 0;
                     }
 
@@ -1737,7 +1733,8 @@ void menu1(file_format *infl_type,
                         newline;
                     }
                     printf("Genome build has been set to %s\n", buildname);
-                    hgbuild = buildname;
+                    char *bnp = buildname;
+                    BatchValueSet(bnp, "human_genome_build");
                     break;
                 }
             }
@@ -1891,9 +1888,8 @@ void menu1(file_format *infl_type,
                 else if (ans == 1){
                     if(strcmp(*phefl_name, "-.phe") == 0 || strcmp(*phefl_name, "-") == 0){
                         printf("To use the SAMPLEID column in a .phe file one must be provided.\n");
-                        printf("Use option 0 to return ad assign a .phe file to compare against.\n");
-                    }
-                    else {
+                        printf("Use option 0 to return and assign a .phe file to compare against.\n");
+                    } else {
                         sampleID_match = ans;
                         break;
                     }
@@ -1954,10 +1950,8 @@ void menu1(file_format *infl_type,
 
         BatchValueSet(*reffl_name,"Reference_Allele_File");
         batchf(BatchItemGet("Reference_Allele_File"));
-        BatchValueSet(hgbuild,"human_genome_build");
-        batchf(BatchItemGet("human_genome_build"));
-
-        strcpy(_hgbuild,hgbuild.c_str());
+        if (BatchValueRead("human_genome_build"))
+            batchf(BatchItemGet("human_genome_build"));
 
         BatchValueSet(sampleID_match,"BCF_Sample_Style");
         batchf(BatchItemGet("BCF_Sample_Style"));

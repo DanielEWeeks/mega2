@@ -100,7 +100,7 @@ void ReadBCFs::do_menu_display(int &idx, int line_len, int choiceA[]) {
     choiceA[idx] = site_bcfs_args_i;
     idx++;
 
-    printf("%2d) %-*s%s%s\n", idx, line_len-11, "Template File:","[required] ", BatchItemGet("BCFs_File")->value.name);
+    printf("%2d) %-*s%s%s\n", idx, line_len-11, "Data file or Manifest file:","[required] ", BatchItemGet("BCFs_File")->value.name);
     choiceA[idx] = site_bcfs_file_i;
     idx++;
 }
@@ -718,7 +718,7 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
             char ped_per[FILENAME_LENGTH];
             sprintf(ped_per,"%s_%s",persons[per].PedID,persons[per].PerID);
             //is SAMPLEIDS map null? no phe file column
-            if(sample_ind == 1){
+            if (sample_ind == 1) {
                 if(SAMPLEIDS != NULL) {
                     Pairss pp(string(persons[per].PedID),string(persons[per].PerID));
                     Str sample;
@@ -758,15 +758,13 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
 //                    }
 #endif
                 }
-            }
-            if(sample_ind == 2) {
+            } else if(sample_ind == 2) {
                 //check BCF FILE header name against PED_PER
                 if(!(hdrMap.find(ped_per) == hdrMap.end()) && !done){
                     hdrInd[per] = hdrMap.find(ped_per)->second;
                     done = true;
                 }
-            }
-            if(sample_ind == 3) {
+            } else if(sample_ind == 3) {
                 //check against PER
                 if(!(hdrMap.find(persons[per].PerID)== hdrMap.end()) && !done){
                     hdrInd[per] = hdrMap.find(persons[per].PerID)->second;
@@ -785,7 +783,13 @@ void ReadBCFs::do_genotypes(linkage_locus_top *LTop, annotated_ped_rec *persons,
                 hdrInd[per] = -1;
             }
         }
+    } else {
+        // map 1:1 (for no map ped)
+        for(int per = 0; per < num_ped_recs; per++) {
+            hdrInd[per] = per;
+        }
     }
+
     SECTION_LOG_FINI(sampleid_mismatch);
 
 
