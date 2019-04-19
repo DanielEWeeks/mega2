@@ -768,6 +768,7 @@ int main(int argc, char **argv, char **env)
                 for (i=1; i < CHR_argc; i++)
                     printf("arg %d: %s\n", i, CHR_argv[i]);
                 printf("arg 0: %s\n", CHR_list);
+                printf("arg +: %s\n", (CHR_list && *CHR_list == '0') ? CHR_list+1 : CHR_list);
             }
 #endif
 

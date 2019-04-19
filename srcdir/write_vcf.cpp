@@ -65,6 +65,7 @@ extern "C" {
     //#include "lib/bcftools-1.6/htslib-1.6/htslib/synced_bcf_reader.h"
 }
 
+using namespace std;
 extern DBlite MasterDB;
 
 extern int  db_exists_db();
@@ -104,6 +105,17 @@ void CLASS_VCF::create_output_file(linkage_ped_top *LPedTreeTop, analysis_type *
     outfiletype = 1;
 
     db_open_db();
+
+    //get human genome build from the charstar_table
+    //in this case we actually just call the charstar_hash so we don't print out an error
+    //if it's missing. but it cann't be missing.
+    extern std::map<const char *, char *, charsless> Charstar_hash;
+    char * _buildname;
+    const char * _keyname = "human_genome_build";
+    if (!map_get(Charstar_hash, _keyname, _buildname)) {
+        hg_build = "B37";
+    } else
+        hg_build = string(_buildname);
 
     if ( InputMode == INTERACTIVE_INPUTMODE ) {
         option_menu(file_names,file_name_stem, &combine_chromo, Top);
@@ -1062,29 +1074,16 @@ void CLASS_VCF::convert_vcf_vcfgz(char *filename) {
 }
 
 void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo, linkage_ped_top *Top) {
-    int choice, choice2, choice3, done, stem, build, chromo, fileout, ref,reftableexists,change_build_allowed, indmenu, pedmenu;
+    int choice, choice2, choice3, done, stem, chromo, fileout, ref,reftableexists,change_build_allowed, indmenu, pedmenu;
     reftableexists = 0;
     change_build_allowed = 1;
 
     std::string refchoice = "Major_Allele";
     strcpy(prefix, file_name_stem);
-    char buildname[FILENAME_LENGTH];
     choice = -1;
 
     //don't want any database activities unless we're in db mode
     if(database_read) {
-        //get human genome build from the charstar_table
-        //in this case we actually just call the charstar_hash so we don't print out an error if it's missing.
-        extern std::map<const char *, char *, charsless> Charstar_hash;
-        char * _buildname;
-        const char * _keyname = strdup("human_genome_build");
-        if (!map_get(Charstar_hash, _keyname, _buildname)) {
-            strcpy(buildname, "B37");
-            //printf("Char* read failed for %s\n", _keyname);
-        }
-        else
-            strcpy(buildname,_buildname);
-
         //check for reference table:
         //db_open_db();
         MasterDB.begin();
@@ -1183,14 +1182,14 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
 
         printf(" %d) File name stem:                                  %-15s\n", ++menu_count, prefix);
         stem = menu_count;
-
+/*
         printf(" %d) Human Genome Build                               %s\n", ++menu_count, buildname);
         build = menu_count;
+*/
 
         if(!_strand_flips)
             printf(" %d) Reference Allele                                 %s\n", ++menu_count, refchoice.c_str());
         ref = menu_count;
-
         if(main_chromocnt > 1) {
             if (*combine_chromo)
                 printf(" %d) Combine Chromosomes                              Yes\n", ++menu_count);
@@ -1222,9 +1221,8 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
 
         else if ( choice == done ) {
             strcpy(file_name_stem,prefix);
-            hg_build = buildname;
             ref_choice = refchoice;
-//q            BatchValueSet(hg_build,"human_genome_build");
+//          BatchValueSet(hg_build,"human_genome_build");
             BatchValueSet(outfiletype,"VCF_output_file_type");
             BatchValueSet(file_name_stem,"file_name_stem");
             BatchValueSet(ref_choice,"VCF_Allele_Order");
@@ -1236,6 +1234,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             newline;
         }
 
+/*
         else if ( choice == build ) {
             if(change_build_allowed) {
                 printf("Enter human genome build > ");
@@ -1245,7 +1244,7 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
             else
                 printf("Cannot change build when it's been read in from reference panel.\n");
         }
-
+*/
         else if(choice == chromo){
             if(*combine_chromo)
                 *combine_chromo = 0;

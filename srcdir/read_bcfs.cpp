@@ -414,13 +414,19 @@ void ReadBCFs::build_markers_and_samples() {
         else if( this->num_samples != hdr->n[2])
             errorvf("Different number of sample columns between first file in manifest and file %s\n",files[i].c_str());
 
+        int err = 0;
         for (int j = 0; j < this->num_samples; j++) {
             Str name = hdr->samples[j];
             //first file just add
             if (i == 0) {
                 this->samples.push_back(name);
                 Pairsi pair(name, j);
-                hdrMap.insert(pair);
+                std::pair<HMapsip, bool> ans = hdrMap.insert(pair);
+                if (ans.second == false) {
+                    errorvf("name %s is repeated.  It was sample %d and now reappears as sample %d\n",
+                            C(name), ans.first->second, j);
+                    err++;
+                }
             }
             //other files use hdrMap to check the names are the same
             else {
@@ -428,6 +434,9 @@ void ReadBCFs::build_markers_and_samples() {
                     errorvf("Sample in file %s not found in first file from manifest\n", files[i].c_str());
             }
         }
+        if (err)
+            EXIT(DATA_INCONSISTENCY);
+
         args.pop_back();
 
         destroy_data_vcfview(bcfargs);
