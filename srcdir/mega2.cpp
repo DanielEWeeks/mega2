@@ -722,7 +722,7 @@ int main(int argc, char **argv, char **env)
 
     if (queue) {
         if (Script) {
-            S = fopen(Script, "a");
+            S = fopen(Script, "w");
             if (S == NULL) {
                 printf("File for output script(\"%s\") could not be created.  Exitting.\n",  Script);
                 EXIT(FILE_NOT_FOUND);
@@ -801,16 +801,17 @@ int main(int argc, char **argv, char **env)
             else if (! index(argv[i], ' '))
                 nargv[j++] = argv[i];
             else {
+                int qqq = _job_manager_index == 2 ? queue : 0;
                 size_t agv = strlen(argv[i]);
                 size_t ll = agv + 3;
-//              if (queue) ll += 2;
+                if (qqq) ll += 2;
                 char *xargv = CALLOC(ll, char);
                 char *xp = xargv;
-//              if (queue) {*xp++ = '\\';}
+                if (qqq) {*xp++ = '\\';}
                 *xp++ = '"';
                 strcpy(xp, argv[i]);
                 xp += agv;
-//              if (queue) {*xp++ = '\\';}
+                if (qqq) {*xp++ = '\\';}
                 *xp++ = '"';
                 *xp++ = 0;
                 nargv[j++] = xargv;
