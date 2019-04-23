@@ -803,14 +803,14 @@ int main(int argc, char **argv, char **env)
             else {
                 size_t agv = strlen(argv[i]);
                 size_t ll = agv + 3;
-                if (queue) ll += 2;
+//              if (queue) ll += 2;
                 char *xargv = CALLOC(ll, char);
                 char *xp = xargv;
-                if (queue) {*xp++ = '\\';}
+//              if (queue) {*xp++ = '\\';}
                 *xp++ = '"';
                 strcpy(xp, argv[i]);
                 xp += agv;
-                if (queue) {*xp++ = '\\';}
+//              if (queue) {*xp++ = '\\';}
                 *xp++ = '"';
                 *xp++ = 0;
                 nargv[j++] = xargv;
@@ -823,6 +823,7 @@ int main(int argc, char **argv, char **env)
         if (Script) {
             argc -= 2;
         }
+
         for (size_t l = 0; l < fields.size(); l++) {
             if (k >= 0) {
                 dash.clear();
@@ -1814,8 +1815,18 @@ int mega2(int argc, char **argv, char **env)
 char *qsub(const char *num)
 {
     char *quep = q_param;
+    char *Rname = (char *)Dname;
 
-    snprintf(quep, QSIZE, "qsub -b y -N %s ", Dname);
+    if (index(Dname, '/')) {
+        Rname = CALLOC(strlen(Dname)+1, char);
+        char *dp = (char *)Dname, *rp = Rname, c = 1;
+        while (c) {
+            while ( (c = *dp++) && c && c != '/') *rp++ = c;
+            *rp++ = c ? '_' : c;
+        }
+    }
+    snprintf(quep, QSIZE, "qsub -b y -N %s ", Rname);
+
     int ll = strlen(quep);
     if (_job_manager_args.size())
         strcpy(quep + ll, C(_job_manager_args));
