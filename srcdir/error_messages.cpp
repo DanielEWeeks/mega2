@@ -81,6 +81,25 @@ void open_logs(void)
     hello(Mega2errf);
 }
 
+void reopen_logs(void)
+{
+
+    Mega2logf = fopen(Mega2LogRun, "a");
+    if (Mega2logf == NULL) {
+        fprintf(stderr,
+                "Could not open Mega2 log file (not enough access rights?)!\n");
+        EXIT(FILE_WRITE_ERROR);
+
+    }
+    Mega2errf = fopen(Mega2ErrRun, "a");
+    if (Mega2errf == NULL) {
+        fprintf(stderr,
+                "Could not open Mega2 error file (not enough access rights?)!\n");
+        EXIT(FILE_WRITE_ERROR);
+    }
+
+}
+
 void time_stamp_logs(void)
 {
     summary_time_stamp(mega2_input_files, Mega2logf, "");

@@ -122,6 +122,7 @@ void           exclaim(void);
 void           delete_file(const char *flname);
 void           copy_file(char *flname1, char *flname2);
 void           move_file(char *flname1, char *flname2);
+int            link_file(char *flname1, char *flname2);
 int            makedir(char *dirname);
 int            makedirpath(char *dirname);
 void           move_logs(char *sumdir) ;
@@ -1342,6 +1343,40 @@ void move_file(char *flname1, char *flname2)
     }
 }
 
+int link_file(char *flname1, char *flname2)
+{
+    int err = 1;
+
+    if (access(flname1, F_OK)==0) {
+        if (access(flname2, F_OK) == 0) {
+            err = unlink(flname2);
+            if (err < 0) {
+                switch(errno) {
+                case EACCES:
+                case ENOENT:
+                default:
+                    warnvf("link_file: unlink(%s) failed with errno %d (\"%s\")\n",
+			   flname2, errno, strerror(errno));
+                }
+                return err;
+            }            
+        }
+        err = link(flname1, flname2);
+        if (err < 0) {
+            switch(errno) {
+            case EACCES:
+            case ENOENT:
+            case EINVAL:
+            default:
+                warnvf("link_file: link(%s,%s) failed with errno %d (\"%s\")\n",
+		       flname1, flname2, errno, strerror(errno));
+            }
+        }
+    }
+
+    return err;
+}
+
 void backup_file(char *flname)
 {
     char           *backupname;
@@ -1497,17 +1532,22 @@ void move_logs(char *new_location)
 {
     char new_file[FILENAME_LENGTH+45];
 
-    if (access(Mega2LogRun, F_OK) == 0){
+    close_logs();
+
+    if (access(Mega2LogRun, F_OK) == 0) {
         sprintf(new_file, "%s/%s", new_location, Mega2Log);
         move_file(Mega2LogRun,  new_file);
+//      if (! link_file(Mega2LogRun,  new_file) )
+//          delete_file(Mega2LogRun);
+        strcpy(Mega2LogRun,  new_file);
     }
 
-    if (access(Mega2RecodeRun, F_OK) == 0){
+    if (access(Mega2RecodeRun, F_OK) == 0) {
         sprintf(new_file, "%s/%s", new_location, Mega2Recode);
         move_file(Mega2RecodeRun,  new_file);
     }
 
-    if (access(Mega2ResetRun, F_OK) == 0){
+    if (access(Mega2ResetRun, F_OK) == 0) {
         sprintf(new_file, "%s/%s", new_location, Mega2Reset);
         move_file(Mega2ResetRun,  new_file);
     }
@@ -1515,9 +1555,12 @@ void move_logs(char *new_location)
     if (access(Mega2ErrRun, F_OK) == 0) {
         sprintf(new_file, "%s/%s",  new_location, Mega2Err);
         move_file(Mega2ErrRun,  new_file);
+//      if (! link_file(Mega2ErrRun,  new_file) )
+//          delete_file(Mega2ErrRun);
+        strcpy(Mega2ErrRun,  new_file);
     }
 
-    if (access(Mega2KeysRun, F_OK) == 0){
+    if (access(Mega2KeysRun, F_OK) == 0) {
         sprintf(new_file, "%s/%s", new_location, Mega2Keys);
         move_file(Mega2KeysRun, new_file);
     }
@@ -1526,6 +1569,9 @@ void move_logs(char *new_location)
         sprintf(new_file, "%s/%s", new_location, Mega2Sim);
         move_file(Mega2SimRun, new_file);
     }
+
+    extern void reopen_logs();
+    reopen_logs();
 }
 
 void move_batch(char *new_location)

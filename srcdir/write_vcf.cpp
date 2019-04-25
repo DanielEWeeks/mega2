@@ -1074,9 +1074,10 @@ void CLASS_VCF::convert_vcf_vcfgz(char *filename) {
 }
 
 void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chromo, linkage_ped_top *Top) {
-    int choice, choice2, choice3, done, stem, chromo, fileout, ref,reftableexists,change_build_allowed, indmenu, pedmenu;
+    int choice, choice2, choice3, done, stem, chromo, fileout, ref, reftableexists;
+    int /*change_build_allowed,*/ indmenu, pedmenu;
     reftableexists = 0;
-    change_build_allowed = 1;
+//  change_build_allowed = 1;
 
     std::string refchoice = "Major_Allele";
     strcpy(prefix, file_name_stem);
@@ -1149,8 +1150,8 @@ void CLASS_VCF::option_menu (char *file_names[], char *prefix, int *combine_chro
                 strcpy(buildname, "B19");
             if (rfile.find("HG19") != std::string::npos || rfile.find("hg19") != std::string::npos)
                 strcpy(buildname, "HG19");
-*/
             change_build_allowed = 0;
+*/
         }
         if(!_strand_flips)
             refchoice = "Original_Order";
