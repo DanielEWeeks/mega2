@@ -1532,16 +1532,6 @@ void move_logs(char *new_location)
 {
     char new_file[FILENAME_LENGTH+45];
 
-    close_logs();
-
-    if (access(Mega2LogRun, F_OK) == 0) {
-        sprintf(new_file, "%s/%s", new_location, Mega2Log);
-        move_file(Mega2LogRun,  new_file);
-//      if (! link_file(Mega2LogRun,  new_file) )
-//          delete_file(Mega2LogRun);
-        strcpy(Mega2LogRun,  new_file);
-    }
-
     if (access(Mega2RecodeRun, F_OK) == 0) {
         sprintf(new_file, "%s/%s", new_location, Mega2Recode);
         move_file(Mega2RecodeRun,  new_file);
@@ -1550,14 +1540,6 @@ void move_logs(char *new_location)
     if (access(Mega2ResetRun, F_OK) == 0) {
         sprintf(new_file, "%s/%s", new_location, Mega2Reset);
         move_file(Mega2ResetRun,  new_file);
-    }
-
-    if (access(Mega2ErrRun, F_OK) == 0) {
-        sprintf(new_file, "%s/%s",  new_location, Mega2Err);
-        move_file(Mega2ErrRun,  new_file);
-//      if (! link_file(Mega2ErrRun,  new_file) )
-//          delete_file(Mega2ErrRun);
-        strcpy(Mega2ErrRun,  new_file);
     }
 
     if (access(Mega2KeysRun, F_OK) == 0) {
@@ -1570,6 +1552,22 @@ void move_logs(char *new_location)
         move_file(Mega2SimRun, new_file);
     }
 
+    close_logs();
+    if (access(Mega2LogRun, F_OK) == 0) {
+        sprintf(new_file, "%s/%s", new_location, Mega2Log);
+        move_file(Mega2LogRun,  new_file);
+//      if (! link_file(Mega2LogRun,  new_file) )
+//          delete_file(Mega2LogRun);
+        strcpy(Mega2LogRun,  new_file);
+    }
+
+    if (access(Mega2ErrRun, F_OK) == 0) {
+        sprintf(new_file, "%s/%s",  new_location, Mega2Err);
+        move_file(Mega2ErrRun,  new_file);
+//      if (! link_file(Mega2ErrRun,  new_file) )
+//          delete_file(Mega2ErrRun);
+        strcpy(Mega2ErrRun,  new_file);
+    }
     extern void reopen_logs();
     reopen_logs();
 }

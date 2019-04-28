@@ -646,8 +646,10 @@ char q_param[QSIZE];
 char *qsub(const char *num);
 char *sbatch(const char *num);
 
+int mega2(int argc, char **argv, char **env);
+
 static
-void mega2_once(const char *nargv[], int argc, const char *num, FILE *S)
+void mega2_once(int argc, char *nargv[], char **env, const char *num, FILE *S)
 {
     int i = 0;
     int ll = 0;
@@ -696,9 +698,17 @@ void mega2_once(const char *nargv[], int argc, const char *num, FILE *S)
         if (S == NULL)
             system(quep);
 
-     } else  {
+        return;
+    }
+
+    if (! queue) {
+        mega2(argc, nargv, env);
+
+    }  else {
+
         argv.push_back(quep);
         for (i = 0; i < argc; i++) argv.push_back(nargv[i]);
+
         join(argv, str, " ");
         if (S != NULL || _job_manager_index == 3)
             str += " & ";
@@ -711,7 +721,6 @@ void mega2_once(const char *nargv[], int argc, const char *num, FILE *S)
 }
 
 static char mi_chr_num[4];
-int mega2(int argc, char **argv, char **env);
 
 int main(int argc, char **argv, char **env)
 {
@@ -753,6 +762,8 @@ int main(int argc, char **argv, char **env)
 
         if (index(CHR_list, '-')) dash_size += 2;
         split(fields, CHR_list, ",");
+//xx
+        /*
         if (fields.size() <= 1 && dash_size <= 1 && exec_sh == 0) {
             chr1 = STR_CHR(CHR_list);
             if (chr1 == -1) {
@@ -771,12 +782,10 @@ int main(int argc, char **argv, char **env)
                 printf("arg +: %s\n", (CHR_list && *CHR_list == '0') ? CHR_list+1 : CHR_list);
             }
 #endif
-
             return mega2(argc, argv, env);
-
         }
-
-        const char *nargv[argc];
+        */
+        char *nargv[argc];
         for (i = 0; i < argc; i++) {
             if ( (!k) &&
                  ( (! strcasecmp(argv[i], "--chr")) ||
@@ -786,7 +795,7 @@ int main(int argc, char **argv, char **env)
 
             if ( (!strcasecmp(argv[i], "--queue")) ||
                  (!strcasecmp(argv[i], "-q"))) {
-                nargv[j++] = "--Dname"; // queue name becomes D(ir)name
+                nargv[j++] = (char *) "--Dname"; // queue name becomes D(ir)name
             } else if ( (!strcasecmp(argv[i], "--cmd")) ||
                         (!strcasecmp(argv[i], "-m"))) {
                 i++;
@@ -795,9 +804,9 @@ int main(int argc, char **argv, char **env)
                 i++;
             } else if (! *argv[i])
                 if (queue)
-                    nargv[j++] = "\\\"\\\"";
+                    nargv[j++] = (char *) "\\\"\\\"";
                 else
-                    nargv[j++] = "\"\"";
+                    nargv[j++] = (char *) "\"\"";
             else if (! index(argv[i], ' '))
                 nargv[j++] = argv[i];
             else {
@@ -836,8 +845,9 @@ int main(int argc, char **argv, char **env)
                         EXIT(DATA_INCONSISTENCY);
                     }
                     CHR_STR(chr1, mi_chr_num);
+                    CHR_ = mi_chr_num;             // used by $0 replacement arg
                     nargv[k] = mi_chr_num;
-                    mega2_once(nargv, argc, mi_chr_num, S);
+                    mega2_once(argc, nargv, env, mi_chr_num, S);
 
                 } else {
                     int st = *dash[0] ? STR_CHR(dash[0]) : 1;
@@ -852,8 +862,9 @@ int main(int argc, char **argv, char **env)
                     }
                     for (int l2 = st; l2 <= nd; l2++) {
                         CHR_STR(l2, mi_chr_num);
+                        CHR_ = mi_chr_num;
                         nargv[k] = mi_chr_num;
-                        mega2_once(nargv, argc, mi_chr_num, S);
+                        mega2_once(argc, nargv, env, mi_chr_num, S);
                     }
                 }
             }
@@ -962,10 +973,12 @@ int mega2(int argc, char **argv, char **env)
 
         batchfile_process(Mega2Batch, &analysis);
 
+        /*
         if (queue) {
             extern void set_job_manager_values();
             set_job_manager_values();
         }
+        */
 
 	// initialize globals form the batch file input if any...
         genetic_distance_index = Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option;
