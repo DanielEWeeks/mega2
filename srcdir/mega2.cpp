@@ -699,10 +699,6 @@ void mega2_once(int argc, char *nargv[], char **env, const char *num, FILE *S)
             system(quep);
 
         return;
-    }
-
-    if (! queue) {
-        mega2(argc, nargv, env);
 
     }  else {
 
@@ -762,8 +758,7 @@ int main(int argc, char **argv, char **env)
 
         if (index(CHR_list, '-')) dash_size += 2;
         split(fields, CHR_list, ",");
-//xx
-        /*
+
         if (fields.size() <= 1 && dash_size <= 1 && exec_sh == 0) {
             chr1 = STR_CHR(CHR_list);
             if (chr1 == -1) {
@@ -782,9 +777,10 @@ int main(int argc, char **argv, char **env)
                 printf("arg +: %s\n", (CHR_list && *CHR_list == '0') ? CHR_list+1 : CHR_list);
             }
 #endif
-            return mega2(argc, argv, env);
+            if (! queue)
+                return mega2(argc, argv, env);
         }
-        */
+
         char *nargv[argc];
         for (i = 0; i < argc; i++) {
             if ( (!k) &&
