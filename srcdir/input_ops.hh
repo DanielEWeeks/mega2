@@ -52,8 +52,6 @@ enum INPUT_FORMAT {
     in_format_bgen2 = 9,
     in_format_bgen = 10,
     in_format_bcfs = 11,
-    in_format_gzcfs = 12,
-    in_format_vcfs = 13,
 
     in_format_traditional = 100,
 } INPUT_FORMAT_t;

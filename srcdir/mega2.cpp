@@ -1105,9 +1105,7 @@ int mega2(int argc, char **argv, char **env)
             if (mega2_input_files[ii]) {
                 if ((fp=fopen(mega2_input_files[ii], "r")) == NULL) {
                     if(ii == PEDIGREE &&
-                       (Input_Format == in_format_vcfs ||
-                        Input_Format == in_format_bcfs ||
-                        Input_Format == in_format_gzcfs ) &&
+                       (Input_Format == in_format_bcfs) &&
                        (strcmp(pedfl_name,"-.fam") == 0)) {
                         mssgvf("No pedigree file provided, so one with no family structure will be constructed.\n");
                     }

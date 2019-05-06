@@ -299,6 +299,7 @@ int NUM_KEYS = sizeof(keywords)  / sizeof (keyw_t);
 pair<Cstr,Cstr> keyword_aliases[] = {
     make_pair("Value_Missing_Quant_On_Input", "Value_Missing_Quant"),
     make_pair("VCF_Args", "VCF_ARGS"),
+    make_pair("BCF_Args", "BCF_ARGS"),
     make_pair("PLINK_Args", "PLINK"),
     make_pair("Input_Aux_File", "Input_Binary_File"),
     make_pair("AlleleFreq_SquaredDev", "AlleleFreq_SquaredError"),
@@ -1458,8 +1459,7 @@ void batchfile_process(char *batch_file_name, analysis_type *analysis)
 
         input_set = 1;
         if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
-            Input_Format == in_format_VCF        || Input_Format == in_format_bcfs ||
-            Input_Format == in_format_gzcfs      || Input_Format == in_format_vcfs)
+            Input_Format == in_format_VCF        || Input_Format == in_format_bcfs)
             xcf = 1;
 
     }

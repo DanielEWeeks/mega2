@@ -252,16 +252,6 @@ public:
     Input_BCFS(INPUT_FORMAT_t i): Input_BCFs(i) {};
 };
 
-class Input_GZCFS: public Input_BCFs {
-public:
-    Input_GZCFS(INPUT_FORMAT_t i): Input_BCFs(i) {};
-};
-
-class Input_VCFS: public Input_BCFs {
-public:
-    Input_VCFS(INPUT_FORMAT_t i): Input_BCFs(i) {};
-};
-
 class Input_Traditional : public Input_Old {
 public:
     Input_Traditional(INPUT_FORMAT_t i): Input_Old(i) {}

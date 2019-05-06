@@ -129,9 +129,9 @@ const char *INPUT_FORMAT_STR[] = {
      "IMPUTE2 GEN format (gen/impute2)",
      "IMPUTE2 BGEN 1.3 format (bgen)",
 /*a*/"IMPUTE2 BGEN format (bgen)",
-     "BCF v2.2 or higher (bcf)",
-     "VCF compressed format (vcf.gz)",
-     "VCF format (vcf)",
+     "BCF v2.2 or higher (bcf, vcf.gz or vcf)",
+//   "VCF compressed format (vcf.gz)",
+//   "VCF format (vcf)",
 };
 const char *INPUT_FORMAT_STR100 = "Traditional (4.6.1) format";
 
@@ -194,12 +194,6 @@ Input_Base *createinput(INPUT_FORMAT in_format) {
         break;
     case in_format_bcfs:
         return new Input_BCFS(in_format);
-        break;
-    case in_format_gzcfs:
-        return new Input_GZCFS(in_format);
-        break;
-    case in_format_vcfs:
-        return new Input_VCFS(in_format);
         break;
     case in_format_traditional:
         return new Input_Traditional(in_format);
@@ -1100,14 +1094,7 @@ void menu1(file_format *infl_type,
         } else if(Input_Format == in_format_bcfs){
             strcpy(&mega2_input_file_type[BED][0], "BCF Split by Chromosome");
             xcf = 1;
-        } else if(Input_Format == in_format_gzcfs){
-            strcpy(&mega2_input_file_type[BED][0], "GZ.VCF Split by Chromosome");
-            xcf = 1;
-        } else if(Input_Format == in_format_vcfs){
-            strcpy(&mega2_input_file_type[BED][0], "VCF Split by Chromosome");
-            xcf = 1;
         }
-
 
         menu1_batch_set_files(infl_type, pedfl_name, locusfl_name,
                               mapfl_name, pmapfl_name, input_path, omitfl_name,
@@ -1276,33 +1263,6 @@ void menu1(file_format *infl_type,
 
                 fln_init_mega2(! MAP_REQ);
 
-            } else if(Input_Format == in_format_gzcfs) {
-                xcf = 1;
-                plinkf = 0;
-                PLINK_clr(not_plink_format);
-                PLINK_str(PLINKArgs, FILENAME_LENGTH);
-                strcpy(extension_name, "-");
-                strcpy(pedo->name,"-");
-                pedo->specified = true;
-
-                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
-                fln_init_plink(0);
-
-                fln_init_mega2(! MAP_REQ);
-
-            } else if(Input_Format == in_format_vcfs) {
-                xcf = 1;
-                plinkf = 0;
-                PLINK_clr(not_plink_format);
-                PLINK_str(PLINKArgs, FILENAME_LENGTH);
-                strcpy(extension_name, "-");
-                strcpy(pedo->name,"-");
-                pedo->specified = true;
-
-                fln_init(pedo, "PLINK", "fam", "[optional]", "fam");
-                fln_init_plink(0);
-
-                fln_init_mega2(! MAP_REQ);
             }
             reset_extension = 1;
         }
@@ -1332,10 +1292,9 @@ void menu1(file_format *infl_type,
                 printf("%2d) %-*s%s\n", idx, line_len, "Enter PLINK parameters:", PLINKArgs);
                 choiceA[idx++] = plink_args_i;
             } else if (xcf) {
-                if (Input_Format != in_format_bcfs && Input_Format != in_format_gzcfs &&
-                    Input_Format != in_format_vcfs) {
+                if (Input_Format != in_format_bcfs) {
                     char tmp[2000];
-                    printf("%2d) %-*s%s\n", idx, line_len, "Enter VCF parameters:", VCFArgs);
+                    printf("%2d) %-*s%s\n", idx, line_len, "Enter BCF parameters:", VCFArgs);
                     choiceA[idx++] = vcf_args_i;
 
                     if (strcmp(VCFMarkerAlternativeKey, "") == 0) sprintf(tmp, "%s", "ID field");
@@ -1362,8 +1321,7 @@ void menu1(file_format *infl_type,
 
         Input->GetOps()->do_menu_display(idx, line_len, choiceA);
 
-        if(Input_Format == in_format_bcfs || Input_Format == in_format_gzcfs ||
-           Input_Format == in_format_vcfs){
+        if(Input_Format == in_format_bcfs){
 /*
             if(strcmp(*pedfl_name, "-.fam") == 0 || strcmp(*pedfl_name, "-") == 0) {
                 //do nothing
@@ -1500,9 +1458,7 @@ void menu1(file_format *infl_type,
                 }
             }
             if (access(*pedfl_name, F_OK) != 0) {
-                if(!(Input_Format == in_format_bcfs ||
-                   Input_Format == in_format_vcfs ||
-                   Input_Format == in_format_gzcfs)) {
+                if(!(Input_Format == in_format_bcfs)) {
                     printf("ERROR: You must specify a pedigree file.\n");
                     exit_loop = 0;
                 }
@@ -1542,13 +1498,11 @@ void menu1(file_format *infl_type,
                 exit_loop=0;
             }
             if (xcf) {
-                if (access(*auxfl_name, F_OK) != 0 && Input_Format != in_format_bcfs &&
-                    Input_Format != in_format_gzcfs && Input_Format != in_format_vcfs) {
+                if (access(*auxfl_name, F_OK) != 0 && Input_Format != in_format_bcfs) {
                     printf("ERROR: You did not specify a Variant file.\n");
                     exit_loop=0;
                 }
-                if (Input_Format == in_format_bcfs || Input_Format == in_format_gzcfs ||
-                    Input_Format == in_format_vcfs) {
+                if (Input_Format == in_format_bcfs) {
                     char bcfsfile_name[FILENAME_LENGTH], *bcfsfile = bcfsfile_name;
                     BatchValueGet(bcfsfile, "BCFs_File");
                     if (access(bcfsfile, F_OK) != 0) {

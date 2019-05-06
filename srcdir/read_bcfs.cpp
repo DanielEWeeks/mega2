@@ -120,11 +120,7 @@ int ReadBCFs::do_menu_parse(int choice_) {
         while (1){
             draw_line();
             if(Input->input_format == in_format_bcfs)
-                printf("Enter a BCF file or a file that contains a list of BCF files to be read:\n");
-            else if(Input->input_format == in_format_gzcfs)
-                printf("Enter a VCF.gz file or a file that contains a list of VCF.gz files to be read:\n");
-            else if(Input->input_format == in_format_vcfs)
-                printf("Enter a VCF file or a file that contains a list of VCF files to be read:\n");
+                printf("Enter a file in BCF, VCF.gz, or VCF format or enter a file that contains\na list of files in these formats:\n");
             fcmap(stdin, "%s", bcfs_file);
             newline;
 
@@ -485,7 +481,13 @@ void ReadBCFs::build_markers_and_samples() {
 
         int count = 0;
         char sname[50];
-        while ( bcf_sr_next_line(bcfargs->files) ) {
+        if (! hdr->id[BCF_DT_CTG]) {
+            errorf("Probably missing ##contig entries.\n"
+                   "Possibly problems with marker position.\n"
+                   "ABORTING!\n");
+            EXIT(DATA_INCONSISTENCY);
+        }
+        while (bcf_sr_next_line(bcfargs->files) ) {
             bcf1_t * line = bcfargs->files->readers[0].buffer[0];
             if ( subset_vcf(bcfargs, line) ) {
                 Vecs alleles;
@@ -518,6 +520,7 @@ void ReadBCFs::build_markers_and_samples() {
             errorf("BCFTools encountered a problem with the given command.\n"
                    "Mega2 was unable to process allele labels and is exiting.\n"
                    "Please verify your BCFTools command is valid.\n");
+            EXIT(DATA_INCONSISTENCY);
         }
 
 
@@ -1064,6 +1067,3 @@ void ReadBCFs::do_gc() {
     markers.clear();
     MarkerVector().swap(markers);
 }
-
-
-

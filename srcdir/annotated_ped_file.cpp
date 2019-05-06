@@ -1631,9 +1631,7 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
     int xcf = Input_Format == in_format_binary_VCF ||
 	      Input_Format == in_format_compressed_VCF ||
               Input_Format == in_format_VCF ||
-              Input_Format == in_format_bcfs ||
-              Input_Format == in_format_gzcfs||
-              Input_Format == in_format_vcfs;
+              Input_Format == in_format_bcfs;
 
     // allele_count should be == 0 when using a .ped file...
 
@@ -4379,9 +4377,7 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     int  xcf = Input_Format == in_format_binary_VCF ||
                Input_Format == in_format_compressed_VCF ||
                Input_Format == in_format_VCF  ||
-               Input_Format == in_format_bcfs ||
-               Input_Format == in_format_gzcfs||
-               Input_Format == in_format_vcfs;
+               Input_Format == in_format_bcfs;
 
     init_tokens();
 
