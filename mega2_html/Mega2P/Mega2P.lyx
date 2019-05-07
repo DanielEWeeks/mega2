@@ -1,0 +1,917 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\newcommand{\dwcomment}[1]{{\color{red}[DW: #1]}}
+
+\newcommand{\rvb}[1]{{\color{red}[#1]}}
+
+\usepackage{lineno}
+% Uncomment the next line to turn on linenumbers
+% \linenumbers
+
+\usepackage[section]{placeins}
+% The 'endfloat' package moves the tables and figures to the end.
+% \usepackage[nolists,tablesfirst]{endfloat}
+\usepackage{caption}
+
+%To make the whole document ragged right, 
+% put \raggedright at the beginning of the doucment.
+\raggedright
+
+\setcounter{secnumdepth}{0}
+
+\usepackage{floatpag}
+\floatpagestyle{plain} % Default page style for pages with only floats
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command bibtex
+\index_command default
+\paperfontsize default
+\spacing double
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize letterpaper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 0
+\use_package mhchem 1
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Mega2P: Mega2 in Parallel
+\end_layout
+
+\begin_layout Standard
+Robert V.
+ Baron
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+
+, Daniel E.
+ Weeks
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+1,2,*
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+
+Department of Human Genetics, Graduate School of Public Health, University
+ of Pittsburgh, Pittsburgh, Pennsylvania, 15261, USA
+\end_layout
+
+\begin_layout Standard
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+
+Department of Biostatistics, Graduate School of Public Health, University
+ of Pittsburgh, Pittsburgh, Pennsylvania, 15261, USA
+\end_layout
+
+\begin_layout Standard
+Email: Robert V.
+ Baron - rvb5@pitt.edu, Daniel E.
+ Weeks - weeks@pitt.edu
+\end_layout
+
+\begin_layout Standard
+*Corresponding author
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Abstract
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Background: 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Results: 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Conclusions:
+\series default
+ Documentation for 
+\series bold
+Mega
+\series default
+2P can be found at 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register/docs/Mega2R.html
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section*
+Keywords
+\end_layout
+
+\begin_layout Standard
+association studies, database, genotypes, genome-wide association studies,
+ linkage, Mega2, SQLite, phenotypes
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Background
+\end_layout
+
+\begin_layout Standard
+In 1999, we created a program, Mega2 [], to aid us in our linkage studies.
+ We found it necessary to analyze the data with several different programs;
+ it was often difficult to get data into the format required by each different
+ linkage computer program.
+ Not only must the data be converted to the proper format, but also the
+ loci must be reordered into their proper order.
+ Writing custom reformatting scripts can be error-prone and time-consuming.
+ We created the Mega2 program to facilitate these conversions; the initial
+ Mega2 could read input data in LINKAGE format or Mega2 table format and
+ convert to a few standard package like Loki [], Mendel [], and Merlin [].
+ In addition, Mega2 allowed trait locus penetrance data, allele frequencies
+ data, etc.
+ to be added and used by the linkage programs.
+ Necessary steps, like calculating the allele frequencies if necessary and
+ not provided, or cleaning the data for HWE consistency can be requested.
+\end_layout
+
+\begin_layout Standard
+As time went on, other linkage analysis programs where added to the set
+ of programs that Mega2 could massage data for.
+ Now, there are over 40 programs supported among them: SOLAR, PLINK, SimWalk2,
+ Cranefoot, IQLS, FBAT, MORGAN, BEAGLE, Eigenstrat, Structure, and PLINK/SEQ.
+ In addition, several new inputs are supported such as PLINK [], VCF/BCF
+ [], and IMPUTE/BGEN [] formats are processed.
+ The new data input formats were needed to represent additional data as
+ well as more data than were available just a few years earlier.
+ To cope with the additional data, both contents and processing time, Mega2
+ was enhanced to store genotype data in compressed format (as is commonly
+ done) and the results of data cleaning and allele frequency calculation
+ was stored in a canonical format so that different linkage analysis programs
+ can use these data without recalculating them for each use.
+\end_layout
+
+\begin_layout Standard
+The canonical representation for the pedigree, genotype and phenotype data
+ is stored in a SQLite3 database[].
+ Processing libraries for SQLite3 databases are available in several popular
+ computer languages.
+ In our case, many programs for linkage analysis are available in R [] but
+ they require the genetic data to be converted to R data frame format.
+ We created an R package, Mega2R [], available via CRAN [], which can convert
+ the canonical data stored in SQLite3 into R data frames.
+ The package also provides data to decompress genotype data and iterate
+ over ranges of markers and genes.
+\end_layout
+
+\begin_layout Standard
+Unfortunately, with all the GWAS data generated in a study especially if
+ imputation [] is performed, Mega2 is faced again with too much genotype
+ data for it to process.
+ But fortunately, the new genotype data is generated separately for each
+ chromosome; in addition, most analyses can only be done one chromosome
+ at a time.
+ Mega2 can take advantage of this orthogonality and generate and subsequently
+ process a distinct SQLite3 database for each chromosome.
+ And it can process each chromosome's data at the same time on a sufficiently
+ powerful multiprocessor.
+\end_layout
+
+\begin_layout Section
+Implementation
+\end_layout
+
+\begin_layout Subsection
+Working Directory
+\end_layout
+
+\begin_layout Standard
+The Mega2 can process a set of input files that contains a genotype file
+ with multiple chromosomes as it always has.
+ The full explanation is in the Mega2 manual.
+ But the same Mega2, given select command line flags, can process files
+ of chromosomes, for an arbitrary list of chromosomes and on multiple machines.
+ The first thing to note is that Mega2 must be careful about which directories
+ to store data in.
+ For example, suppose we were computing Merlin and Mendel results on the
+ same set of chromosomes at the same time (different machines).
+ It would be very easy to have the MEGA2.LOG (and related files) be written
+ to the same directory and have one an unusable mess.
+ If the MEGA2.LOG (etc) file was stored in 
+\begin_inset Quotes eld
+\end_inset
+
+summary
+\begin_inset Quotes erd
+\end_inset
+
+ directory (named by the date: year-month-date-hour-minute), it is till
+ possible that two different computers might start a task at exactly the
+ same time.
+ Most of the data files for Merlin and Mendel are named differently and
+ would likely not be blended; this can not be guaranteed in general.
+ So the first necessary solution step is to generate a working directory
+ that at least had the chromosome number at part of its name.
+ It would also be useful to add a component with the name of the analysis
+ that could also serve as the name of the processor job.
+ Thus we can easily separate the Mendel job from the Merlin job.
+ Finally, Mega2 has always supported an 
+\begin_inset Quotes eld
+\end_inset
+
+Output_Directory
+\begin_inset Quotes erd
+\end_inset
+
+ field to indicate where relative to the current directory the generated
+ results should be stored.
+ Often this value is 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ which means that the results should be in the current directory.
+ But this field could be 
+\begin_inset Quotes eld
+\end_inset
+
+Mendel
+\begin_inset Quotes erd
+\end_inset
+
+ for the Mendel jobs and 
+\begin_inset Quotes eld
+\end_inset
+
+Merlin
+\begin_inset Quotes erd
+\end_inset
+
+ for the Merlin jobs.
+ The lesson from all this is the data are stored in the the directory constructe
+d below relative to the current directory:
+\end_layout
+
+\begin_layout LyX-Code
+Job_Name/Output_Directory/chrxx
+\end_layout
+
+\begin_layout Standard
+The Output_Directory can be empty.
+ But Job_Name and the chromosome name (chrxx) must be present.
+\end_layout
+
+\begin_layout Subsection
+MEGA2.BATCH file
+\end_layout
+
+\begin_layout Standard
+It would be rather inconvenient to enter the same (or similar) data 23 times
+ to create processing jobs for all the chromosomes.
+ We will take advantage of the MEGA2.BATCH file to simplify and standardize
+ multi chromosome operation.
+ Firstly, you should find a MEGA2.BATCH file that you have used before for
+ the kind of analysis you plan to do.
+ Alternatively, you can manually start an interactive Mega2 run which will
+ as a side affect create a MEGA2.BATCH file.
+ (Note: you might process chromosome 21 or 22 for this task; they tend to
+ have the fewest markers.) Now when you are supplying chromosome arguments
+ (will show you in just a bit) you can follow the MEGA2.BATCH file on the
+ command line with more arguments, viz.
+\end_layout
+
+\begin_layout LyX-Code
+mega2 <options> <chromosome options> MEGA2.BATCH arg1 arg2
+\end_layout
+
+\begin_layout Standard
+When the MEGA2.BATCH file is processed each line is scanned for a 
+\begin_inset Quotes eld
+\end_inset
+
+$
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+%
+\begin_inset Quotes erd
+\end_inset
+
+ followed by a digit (e.g.
+ $1, $2, %2); if one is found, the two characters are replaced by the indicated
+ argument following MEGA2.BATCH on the command line.
+ Suppose the MEGA2.BATCH has a line that reads:
+\end_layout
+
+\begin_layout LyX-Code
+Output_Path=%2
+\end_layout
+
+\begin_layout Standard
+This would be rendered in the file as
+\end_layout
+
+\begin_layout LyX-Code
+Output_Path=arg2
+\end_layout
+
+\begin_layout Standard
+with 
+\begin_inset Quotes eld
+\end_inset
+
+arg2
+\begin_inset Quotes erd
+\end_inset
+
+ being the corresponding text from the command line.
+ Thus we might be able to use the exact same BATCH file for both Mendel
+ and Merlin and have the output go to different directories.
+\end_layout
+
+\begin_layout Standard
+Of course, this example is not the real reason for this mechanism; we want
+ to indicate what chromosome we are processing and possibly where to find
+ the SQLite3 database that corresponds to that chromosome.
+ Our convention is that argument 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ contains the chromosome that this invocation of Mega2 is processing.
+ Thus to set the chromosome for processing we would use the line
+\end_layout
+
+\begin_layout LyX-Code
+Chromosome_Single=$0
+\end_layout
+
+\begin_layout Standard
+And to chose the database that contains the chromosome, we would use
+\end_layout
+
+\begin_layout LyX-Code
+DBfile_name=<mydir>/%1/db%0.db
+\end_layout
+
+\begin_layout Standard
+Note: The %1 fetches the first argument after the BATCH argument from the
+ command line, allowing me to organize all the database files into a single
+ directory.
+ I tend to use 
+\begin_inset Quotes eld
+\end_inset
+
+db
+\begin_inset Quotes erd
+\end_inset
+
+ as the directory name or possibly 
+\begin_inset Quotes eld
+\end_inset
+
+dbx
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Note: %0/$0 always expands to two characters (for chromosomes 1 to 22).
+ In particular, if the chromosome is 7, then %0/$0 is 
+\begin_inset Quotes eld
+\end_inset
+
+07
+\begin_inset Quotes erd
+\end_inset
+
+ – not 
+\begin_inset Quotes eld
+\end_inset
+
+7
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If you are have a file containing sample data, it may be named by just
+ the chromosome number without the leading 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+.
+ In this case, you may use 
+\begin_inset Quotes eld
+\end_inset
+
++
+\begin_inset Quotes erd
+\end_inset
+
+ vs 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ as the second digit, viz.
+ %+/$+ instead of the %0/$0.
+\end_layout
+
+\begin_layout Subsection
+<chromosome options>
+\end_layout
+
+\begin_layout Standard
+The Mega2 <chromosome options> is indicated by the keyword 
+\begin_inset Quotes eld
+\end_inset
+
+- - chr
+\begin_inset Quotes erd
+\end_inset
+
+ (or -c) followed by a list or range of numbers, viz.
+\end_layout
+
+\begin_layout LyX-Code
+–chr 1,2,3-5
+\end_layout
+
+\begin_layout LyX-Code
+-c 1-22
+\end_layout
+
+\begin_layout Standard
+The first line indicates chromosome 1, 2, 3, 4, 5; the second line indicates
+ all the autosomes.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Subsection
+Preliminary Details
+\end_layout
+
+\begin_layout Standard
+The rest of this document first discusses
+\end_layout
+
+\begin_layout Subsection
+
+\emph on
+mega2
+\emph default
+ Package Primitive Functions
+\end_layout
+
+\begin_layout Section
+Example
+\end_layout
+
+\begin_layout Subsection
+E1
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+An 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Subsection
+Performance
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Time
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Number
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Discussion
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Performance 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Summary 
+\end_layout
+
+\begin_layout Standard
+As with all software projects, 
+\series bold
+Mega2P
+\series default
+ is a work in progress, and so there are a number of possible improvements
+ that could be made in the future.
+ These include:
+\end_layout
+
+\begin_layout Section
+Availability and requirements
+\end_layout
+
+\begin_layout Standard
+Project name: 
+\series bold
+Mega2P
+\end_layout
+
+\begin_layout Standard
+Project home page: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Project BitBucket repository: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://bitbucket.org/dweeks/mega2/
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Project documentation page: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://watson.hgen.pitt.edu/register/docs/megaR2.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Operating system(s): Platform independent
+\end_layout
+
+\begin_layout Standard
+Programming language: C++
+\end_layout
+
+\begin_layout Standard
+Other requirements; 
+\end_layout
+
+\begin_layout Standard
+License: GNU GPL 3
+\end_layout
+
+\begin_layout Section
+List of abbreviations used
+\end_layout
+
+\begin_layout Section
+Competing interests
+\end_layout
+
+\begin_layout Standard
+The authors declare that they have no competing interests.
+\end_layout
+
+\begin_layout Section
+Authors' contributions
+\end_layout
+
+\begin_layout Standard
+RVB designed, debugged, and maintains MegaR2.
+ DEW provided inspiration and provided the problems that MegaR2 solves.
+ RVB, with assistance from DEW, wrote this manuscript.
+\end_layout
+
+\begin_layout Section
+Acknowledgments
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "bmc_article"
+options "bmc_article"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Illustrations and figures
+\end_layout
+
+\begin_layout Subsection
+Figure captions
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Additional files
+\end_layout
+
+\begin_layout Section
+\start_of_appendix
+Appendix
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thisfloatpagestyle{empty}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace{-
+\backslash
+headsep}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+The
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
