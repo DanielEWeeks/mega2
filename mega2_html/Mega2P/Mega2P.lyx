@@ -209,7 +209,7 @@ status collapsed
 
 \begin_layout Plain Layout
 
-https://watson.hgen.pitt.edu/register/docs/Mega2R.html
+https://watson.hgen.pitt.edu/register/docs/Mega2.html
 \end_layout
 
 \end_inset
@@ -295,6 +295,10 @@ Unfortunately, with all the GWAS data generated in a study especially if
  process a distinct SQLite3 database for each chromosome.
  And it can process each chromosome's data at the same time on a sufficiently
  powerful multiprocessor.
+\end_layout
+
+\begin_layout Section
+Overview
 \end_layout
 
 \begin_layout Section
@@ -566,7 +570,7 @@ The Mega2 <chromosome options> is indicated by the keyword
 \begin_inset Quotes eld
 \end_inset
 
-- - chr
+- -chr
 \begin_inset Quotes erd
 \end_inset
 
@@ -582,36 +586,287 @@ The Mega2 <chromosome options> is indicated by the keyword
 \end_layout
 
 \begin_layout Standard
-The first line indicates chromosome 1, 2, 3, 4, 5; the second line indicates
+Note: The 
+\begin_inset Quotes eld
+\end_inset
+
+chr
+\begin_inset Quotes erd
+\end_inset
+
+ begins with two dashes.
+ The first line indicates chromosome 1, 2, 3, 4, 5; the second line indicates
  all the autosomes.
-\end_layout
-
-\begin_layout Standard
-
-\end_layout
-
-\begin_layout Subsection
-Preliminary Details
-\end_layout
-
-\begin_layout Standard
-The rest of this document first discusses
+ When only one chromosome is specified, Mega2 processes the analysis requested
+ for that chromosome.
+ When multiple chromosomes are specified, a separate Mega2 program is created
+ and invoked for each chromosome and the chromosomes are processed one after
+ another.
 \end_layout
 
 \begin_layout Subsection
+<multiprocessor options>
+\end_layout
 
-\emph on
-mega2
-\emph default
- Package Primitive Functions
+\begin_layout Standard
+As hinted above, we will take a very course approach to parallelism with
+ Mega2.
+ Our goal will be to process all the chromosomes at the same time.
+ Of course this will mean that some some chromosomes will have their results
+ computed before others.
+ Another approach, which we leave for later, is to process a marker at a
+ time; the locking is more complicated.
+ The important point to note is that you will be submitting multiple independent
+ tasks, twenty two or so each using one processor.
+ You will not need more than one processor per tasks.
+ Mega2 will create one background task for each chromosome.
+ The command line will start with srun/qbatch depending on batching system
+ followed by options, indicated below, that you select for the batch system,
+ then finally for an invocation of Mega2 and the arguments you provided
+ to the Mega2 command you provided.
+\end_layout
+
+\begin_layout Standard
+This option is indicated by
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Quotes eld
+\end_inset
+
+--queue
+\begin_inset Quotes erd
+\end_inset
+
+ Name or
+\end_layout
+
+\begin_layout LyX-Code
+-q Name
+\end_layout
+
+\begin_layout Standard
+The name is used by the underlying multiprocessor scheduler.
+ We have experimented with both the Sun Grid Engine [] and Slurm [].
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Name
+\begin_inset Quotes erd
+\end_inset
+
+ will be used for the name of the job that is created.
+ This option will invoke a menu to collect parameters for either engine
+ first asking for a choice of engine.
+ In both cases, you will be asked for a memory limit for each created task.
+ The task will be terminated when the memory limit is hit; you will have
+ to experiment with the value.
+ Also charging is often dependent on the amount of memory used.
+\end_layout
+
+\begin_layout Standard
+There are many other options available for each job system.
+ Describing them is beyond the scope of this document.
+ Some limit the cpu time, others let you set the name of the standard out
+ and standard error files.
+ But the menus will allow you to select a list of desired options.
+ One detail to note is that Mega2 provides a few options and their values
+ as a default for each engine.
+ If you provide any options besides the memory limit, the default option
+ values will not be provided and you will have to supply what the default
+ values should be, if you choose to use the defaults at all.
+\end_layout
+
+\begin_layout Subsubsection
+Sun Grid Engine
+\end_layout
+
+\begin_layout Paragraph
+default option
+\end_layout
+
+\begin_layout LyX-Code
+-o o<process><chr> -o e<process><chr>
+\end_layout
+
+\begin_layout Subsubsection
+Slurm
+\end_layout
+
+\begin_layout Paragraph
+default option
+\end_layout
+
+\begin_layout LyX-Code
+-cwd
+\end_layout
+
+\begin_layout Subsection
+<program option>
+\end_layout
+
+\begin_layout Standard
+You will initially invoke a single Mega2 program which will launch a cascade
+ of Mega2 programs.
+ The subsequent invocations will have the execution PATH that is established
+ by Parallel Engine.
+ Sometimes Mega2 is not on this later PATH.
+ You may indicate a relative or absolute path to the secondary Mega2 by
+ providing the option below
+\end_layout
+
+\begin_layout LyX-Code
+- -cmd <mega2program>
+\end_layout
+
+\begin_layout LyX-Code
+-m <mega2program>
+\end_layout
+
+\begin_layout Subsection
+<execution option>
+\end_layout
+
+\begin_layout Standard
+Hopefully, you will recall that as part of the preparations that Mega2 does
+ for data analysis a shell script is created that will invoked the analysis
+ program with the data Mega2 has prepared.
+ There is a Mega2 option, –exec, that causes Mega2 to invoke the shell script
+ rather than Mega2.
+\end_layout
+
+\begin_layout LyX-Code
+- -exec
+\end_layout
+
+\begin_layout LyX-Code
+-e
+\end_layout
+
+\begin_layout Standard
+This option solves two problems: The first is that is puts the directory
+ components together to access the directory that contains the script and
+ the working data.
+ The second is that all you may select a 
+\begin_inset Quotes eld
+\end_inset
+
+–queue
+\begin_inset Quotes erd
+\end_inset
+
+ option and arguments as with Mega2; in which case all the invocations of
+ the analysis for the selected chromosomes will be done in parallel.
+ As you might expect, without a 
+\begin_inset Quotes eld
+\end_inset
+
+–queue
+\begin_inset Quotes erd
+\end_inset
+
+ option, analyses are performed one chromosome at a time sequentially.
+ Note: We have seen cases where the parallel analysis on different chromosomes
+ but done at the same time does not appear to compute the correct results;
+ Be careful.
+\end_layout
+
+\begin_layout Subsubsection
+supplying a custom script
+\end_layout
+
+\begin_layout Standard
+If you supply a program, with the 
+\begin_inset Quotes eld
+\end_inset
+
+–cmd
+\begin_inset Quotes erd
+\end_inset
+
+ option, that program will be run rather than the provided analysis shell
+ script.
+ It will be provided with the several path components as separate arguments
+ that are necessary to access the analysis directory.
+ These arguments are then followed by any additional arguments provided
+ on the initial Mega2 command line.
+\end_layout
+
+\begin_layout Subsection
+<script option>
+\end_layout
+
+\begin_layout Standard
+This is an advanced feature that you will probably not need or want to use,
+ but I suppose it might be usefull depending on how the Multiprocessor resources
+ are charged for.
+ The SLURM model allows you to define a script which is invoked with 
+\begin_inset Quotes eld
+\end_inset
+
+sbatch
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The script looks like a shell script, but you may provide options and allocate
+ resourses on what looks like a comment line.
+ Subsequent lines in the script may be steps that also may have options
+ and shares the resources of the batch.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+- - script path
+\end_layout
+
+\begin_layout LyX-Code
+-s path
+\end_layout
+
+\begin_layout Standard
+This option causes Mega2 to generate an sbatch file rather than run any
+ programs.
+ You are expected to add options to finish the sbatch files before you run
+ it.
 \end_layout
 
 \begin_layout Section
 Example
 \end_layout
 
+\begin_layout Standard
+Mega2 -q db -c 1-X -m ~/bin/Mega2 samoa/C11/BATCH db samoa/C11/all.hght freeze.5
+ minDP10 "--min-af 0.05"
+\end_layout
+
+\begin_layout Standard
+Mega2 -q PLINK -c 1-22 -m ~/bin/Mega2 work/PLINK work/db plink2 "--maf 0.1
+ --hwe 1e-2 --geno 0.1 --mind 0.1 --linear" Mega2 -q PLINK -c 1-22 -m ~/bin/Mega2
+ work/PLINK work/db plink1 "--maf 0.1 --hwe 1e-2 --geno 0.1 --mind 0.1 --assoc
+ --missing-phenotype -9 --noweb"
+\end_layout
+
+\begin_layout Standard
+Mega2 -n PLINK -c 1-22 -o plink2 -e plink Mega2 -q PLINK -c 1-22 -o plink1
+ -e plink
+\end_layout
+
+\begin_layout Standard
+Mega2 -n PLINK -c 1-22 -m bin/pl2 -o plink2 -e plink|sort --key=12g |head
+ -2000|tee plink.2.PHENO1.glm.linear Mega2 -n PLINK -c 1-22 -m bin/pl -o plink1
+ -e plink|sort --key=9g |head -2000|tee plink.1.qassoc
+\end_layout
+
+\begin_layout Standard
+4/17/19 Mega2 -q work/db -c 20-22 -m ~/~/bin/Mega2 work/BATCH work/db work/1000G.
+fam "--min-af 0.05" Mega2 -q work/db -c 22 -m ~/~/bin/Mega2 work/BATCH work/db
+ work/1000G.fam "--min-af 0.05" 
+\end_layout
+
 \begin_layout Subsection
-E1
+E
 \end_layout
 
 \begin_layout Standard
