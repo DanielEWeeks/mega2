@@ -1,0 +1,133 @@
+	    <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	    "http://www.w3.org/TR/html4/loose.dtd">
+	    <html> 
+	    <head> 
+	    <title> MEGA2.LOG </title></head>
+<body text=navy font=helvetica bgcolor="#ffffff" link="#6666ff"  VLINK="#6666ff">
+<pre>
+==========================================================
+                          MEGA2 5.0.2
+     Copyright 1999-2019, University of Pittsburgh. All Rights Reserved.
+     Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
+     Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+     and Daniel E. Weeks.
+
+
+     Mega2 comes with ABSOLUTELY NO WARRANTY.
+     See LICENSE.txt for terms of copying, modifying & redistributing Mega2.
+==========================================================
+NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.
+
+Run date:                  2019-5-19-12-08
+
+
+Running Mega2 in batch mode from MEGA2.BATCH_annotated.
+
+Input filenames and missing value indicator read in from batch file.
+Dump Analysis option read in from batch file.
+Keyword Input_PLINK_Map_File not in batch file, PLINK map file assumed to be unspecified.
+Keyword Input_Omit_File not in batch file, Omit file assumed to be unspecified.
+Keyword Input_Aux_File not in batch file, Aux file assumed to be unspecified.
+Keyword Input_Phenotype_File not in batch file, Phenotype file assumed to be unspecified.
+Keyword Input_Imputed_Info_File not in batch file, Imputed Info file assumed to be unspecified.
+Creating/Using Output_path: ../example_db_annotated
+-----------------------------------------------------
+        Mega2 version 5.0.2
+Run date:                  2019-5-19-12-08
+This file created on       Sun May 19 12:08:21 2019
+Input file names
+#       Pedigree file:               pedin.annotated
+#          Locus file:               names.annotated
+#            Map file:               map.annotated
+#      Frequency file:               frequency.annotated
+#     Penetrance file:               penetrance.annotated
+Untyped pedigree option: Include all pedigrees whether typed or not
+---------------------------------------------
+
+===========================================================
+Analysis Class: Dump.
+
+Input Format: Mega2 format with header
+Quantitative  Input Missing Value  -99.99 
+Affection     Input Missing Value    "-99"
+Quantitative Output Missing Value      "*"
+Affection    Output Missing Value      "*"
+Count option: all individuals
+Count half-typed individuals' alleles : no 
+===========================================================
+Pedigree, names and map file specified as Mega2 format.
+Input files will be read in as Mega2 format files.
+Reading Mega2 format names file: names.annotated
+Input Map name: Map, type: average genetic map, units: haldane centiMorgans
+Found 1 possible maps in the map.annotated file.
+Done reading map file: map.annotated
+
+===========================================================
+Total number of loci =  5
+2 trait loci 
+      1 Affection status locus: 
+                TRAIT
+      1 Quantitative locus: 
+                Q1
+      3 Marker loci 
+Number of loci found per chromosome (chromosome:number)
+   5:3
+===========================================================
+Reading Mega2 format frequency file: frequency.annotated
+Reading Mega2 format penetrance file: penetrance.annotated
+Reading Mega2 format pedigree file: pedin.annotated
+Pedigree exclusion option : Include all pedigrees whether typed or not.
+Connecting loops in pedigree 2...
+Ped 2: Loop-breaker ids 2_2_8 and 2_2_11
+        Saving 2_2_8, deleting 2_2_11
+Recoding pedigree genotypes ... 
+WARNING: No physical map was specified for the database.  So analysis as
+WARNING: PLINK, PSEQ, Eigenstrat, SHAPEIT, IQLS and others will not be allowed.
+
+===== Messages of type "quant_stat": 
+------------------------------------------------------------
+Per-pedigree quantitative phenotype summary:
+Pedigree     Mean      Std Dev     Minimum    Maximum  #Phenotypes
+------------------------------------------------------------
+Q1
+------------------------------------------------------------
+------------------------------------------------------------
+1            13.87273    8.76175    0.70000   22.10000       11
+2            14.19000    9.26264    0.70000   22.30000       10
+===== 3 total records of type "quant_stat" are in MEGA2.LOG
+
+
+===== Messages of type "quant_stat_sum": 
+               Quantitative trait phenotype statistics
+-------------------------------------------------------------------------------
+QTL            Missing  Minimum   Maximum   Total      Pedigrees    Total
+                                            pedigrees  phenotyped   phenotypes
+-------------------------------------------------------------------------------
+Q1                   0    0.700    22.300           2           2           21
+NOTE: The Missing QTL value on input has been assigned as '-99.99'.
+-------------------------------------------------------------------------
+QTL                 Mean   Std Dev  Skewness  Kurtosis
+-------------------------------------------------------------------------
+Q1                14.024     8.776    -0.756    -1.324
+===========================================================
+===== 1 total records of type "quant_stat_sum" are in MEGA2.LOG
+
+===========================================================
+Pedigree statistics after selecting chromosomes and marker loci:
+Input pedigree file is in post-makeped format.
+                                                  Marker Genotypes
+                                                  Fully    Half
+     Pedigrees   People   Males   Females         Typed    Typed     Total
+TOTAL        2       21       9        12            63        0         63
+Typed        2       21       9        12
+Untyped      0        0       0         0
+===========================================================
+Database file "../example_db/dbAnnotated.db" will be created.
+Dumping SQLite3 DB to file "../example_db/dbAnnotated.db"
+SQLite3 database "../example_db/dbAnnotated.db" was processed to generate this output.
+Output is in ../example_db_annotated
+===========================================================
+See run summaries in directory
+   MEGA2.LOG, MEGA2.ERR, MEGA2.KEYS
+</pre>
+</body></html>
