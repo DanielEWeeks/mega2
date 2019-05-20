@@ -11,7 +11,7 @@
 ==========================================================
 NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.
 
-Run date:                  2019-5-19-12-08
+Run date:                  2019-5-20-10-50
 
 
 Running Mega2 in batch mode from MEGA2.BATCH_bcf2mendel.
@@ -24,8 +24,8 @@ Reading SQLite3 DB from file "../example_db/dbBcf.db"
 ===========================================================
 The path to this SQLite3 database is ../example_db/dbBcf.db.
 This database was created using Mega2 version 5.0.2.
-This database was created using   SQLite3 3.9.2 on 2019-5-19-12-08.
-This database was processed using SQLite3 3.9.2 on 2019-5-19-12-08.
+This database was created using   SQLite3 3.9.2 on 2019-5-20-10-50.
+This database was processed using SQLite3 3.9.2 on 2019-5-20-10-50.
 This database was created from BCF format data using the following files:
 	       Pedigree file   bed.fam
 	            Map file   map.preannotated
