@@ -32,7 +32,7 @@ Input file names
 #            Map file:               map.preannotated
 #      Frequency file:               study.freq
 #     Penetrance file:               study.pen
-# BCF Split by Chromosome:               studyBCF2.bcf
+#       BCF v2.2 file:               studyBCF2.bcf
 # PLINK Phenotype file:               study.phe
 Untyped pedigree option: Include all pedigrees whether typed or not
 ---------------------------------------------

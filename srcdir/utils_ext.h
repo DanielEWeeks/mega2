@@ -78,6 +78,8 @@ extern void           init_file(char *file_name);
 
 extern int            is_dir(char *file_name);
 
+extern int            is_file(char *file_name);
+
 extern int            linecount(FILE *fp);
 
 extern int            columncount(FILE *fp);

@@ -1092,7 +1092,7 @@ void menu1(file_format *infl_type,
         } else if (Input_Format == in_format_bgen || Input_Format == in_format_bgen2) {
             strcpy(&mega2_input_file_type[BED][0],  "IMPUTE2 BGEN file");
         } else if(Input_Format == in_format_bcfs){
-            strcpy(&mega2_input_file_type[BED][0], "BCF Split by Chromosome");
+            strcpy(&mega2_input_file_type[BED][0], "BCF v2.2 file");
             xcf = 1;
         }
 
@@ -1997,8 +1997,8 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         idx++;
 
         db_exists = db_exists_db();
-        printf("%2d) %-*s%s%10s\n", idx, line_len, "Database filename:", fn, 
-               db_exists ? "[exists]" : "[undefined]");
+        printf("%2d) %-*s%s%12s\n", idx, line_len, "Database filename:", fn, 
+               db_exists ? "[exists]" : "[not found]");
         choiceA[idx] = db_i;
         idx++;
 
