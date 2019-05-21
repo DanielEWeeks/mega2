@@ -2051,7 +2051,7 @@ extern int dump_dbCompress, dbCompress;
 int CHR_argc; char **CHR_argv;
 extern char            *Cmd;
 extern char            *Script;
-extern int              queue;
+extern int              parallel;
 extern int              exec_sh;
 
 void mega2_opts(int argc, char **argv)
@@ -2073,9 +2073,9 @@ void mega2_opts(int argc, char **argv)
                 if (strcasecmp(as, "chr") == 0) {
 		    argv++; --argc;
                     CHR_list = *argv;
-                } else if (strcasecmp(as, "queue") == 0) {
+                } else if (strcasecmp(as, "parallel") == 0) {
                     argv++; --argc;
-                    queue++;
+                    parallel++;
                     Dname = *argv;
                 } else if (strcasecmp(as, "dname") == 0) {
                     argv++; --argc;
@@ -2213,9 +2213,9 @@ void mega2_opts(int argc, char **argv)
                         argv++; --argc;
                         CHR_list = *argv;
                         break;
-                    case 'q': case 'Q':
+                    case 'p': case 'P':
                         argv++; --argc;
-                        queue++;
+                        parallel++;
                         Dname = *argv;
                         break;
                     case 'n': case 'N':
@@ -2400,12 +2400,12 @@ void print_mega2_help(void)
     printf("                recode alleles as numbers even though analysis can accept letter alleles.\n");
 
 
-    printf("             -q, --queue (--dname) <name>\n");
-    printf("                    request queue'd execution; name the jobs and path prefix <name>.\n");
+    printf("             -p, --parallel (--dname) <name>\n");
+    printf("                    request parallel'd execution; name the jobs and path prefix <name>.\n");
     printf("             -c, --chr <chromosome list>\n");
     printf("                    iterate (batch file) over specified chromosomes.\n");
-    printf("             -m, --mega2 <path to mega2 on queue machine>>\n");
-    printf("                    path to Mega2 on queue machine if it is different.\n");
+    printf("             -m, --mega2 <path to mega2 on parallel machine>>\n");
+    printf("                    path to Mega2 on parallel machine if it is different.\n");
     printf("             -x, --nosave\n");
     printf("                    Do not create a new run-folder.\n");
     printf("             -w, --noweb\n");

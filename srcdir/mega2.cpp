@@ -372,7 +372,7 @@ const char      *CHR_;
 
 char            *Cmd;
 char            *Script;
-int             queue;
+int             parallel;
 int             exec_sh;
 
 int lastautosome    = 0;
@@ -543,7 +543,7 @@ static void    init_globals(char *argv0)
     Cmd = NULL;
     Script = NULL;
     CHR_ = "";
-    queue = 0;
+    parallel = 0;
     exec_sh = 0;
 }
 
@@ -658,7 +658,7 @@ void mega2_once(int argc, char *nargv[], char **env, const char *num, FILE *S)
     std::vector<const char *> argv;
 
     *quep = 0;
-    if (queue) {
+    if (parallel) {
         if (_job_manager_index == 2)
             quep = qsub(num);
 
@@ -725,7 +725,7 @@ int main(int argc, char **argv, char **env)
     mega2_opts(argc, argv);
     
 
-    if (queue) {
+    if (parallel) {
         if (Script) {
             S = fopen(Script, "w");
             if (S == NULL) {
@@ -777,7 +777,7 @@ int main(int argc, char **argv, char **env)
                 printf("arg +: %s\n", (CHR_list && *CHR_list == '0') ? CHR_list+1 : CHR_list);
             }
 #endif
-            if (! queue)
+            if (! parallel)
                 return mega2(argc, argv, env);
         }
 
@@ -789,9 +789,9 @@ int main(int argc, char **argv, char **env)
                 k = j+1;
             } 
 
-            if ( (!strcasecmp(argv[i], "--queue")) ||
-                 (!strcasecmp(argv[i], "-q"))) {
-                nargv[j++] = (char *) "--Dname"; // queue name becomes D(ir)name
+            if ( (!strcasecmp(argv[i], "--parallel")) ||
+                 (!strcasecmp(argv[i], "-p"))) {
+                nargv[j++] = (char *) "--Dname"; // parallel name becomes D(ir)name
             } else if ( (!strcasecmp(argv[i], "--cmd")) ||
                         (!strcasecmp(argv[i], "-m"))) {
                 i++;
@@ -799,14 +799,14 @@ int main(int argc, char **argv, char **env)
                         (!strcasecmp(argv[i], "-s"))) {
                 i++;
             } else if (! *argv[i])
-                if (queue)
+                if (parallel)
                     nargv[j++] = (char *) "\\\"\\\"";
                 else
                     nargv[j++] = (char *) "\"\"";
             else if (! index(argv[i], ' '))
                 nargv[j++] = argv[i];
             else {
-                int qqq = _job_manager_index == 2 ? queue : 0;
+                int qqq = _job_manager_index == 2 ? parallel : 0;
                 size_t agv = strlen(argv[i]);
                 size_t ll = agv + 3;
                 if (qqq) ll += 2;
@@ -970,7 +970,7 @@ int mega2(int argc, char **argv, char **env)
         batchfile_process(Mega2Batch, &analysis);
 
         /*
-        if (queue) {
+        if (parallel) {
             extern void set_job_manager_values();
             set_job_manager_values();
         }
@@ -1619,8 +1619,8 @@ int mega2(int argc, char **argv, char **env)
         extern void strand_flip_reference_alleles(linkage_ped_top *Top);
         strand_flip_reference_alleles(LPedTreeTop);
 
-        //call to the menu to handle various job queueing options
-        if (queue) {
+        //call to the menu to handle various job paralleling options
+        if (parallel) {
             extern void set_job_manager_values();
             set_job_manager_values();
         }

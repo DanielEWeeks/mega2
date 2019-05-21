@@ -458,6 +458,14 @@ void db_open_db() {
 #ifndef HIDEFILE
             msgvf("Database file \"%s\" will be created.\n", DBfile);
 #endif
+            char *cp = strrchr(DBfile, '/');
+            if (! cp) cp = strrchr(DBfile, '\\');
+            if (cp) {
+                char c = *cp;
+                *cp = 0;
+                makedirpath(DBfile);
+                *cp = c;
+            }
         }
     } else {
         if (! db_exists_db()) {
