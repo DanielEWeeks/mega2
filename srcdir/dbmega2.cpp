@@ -400,21 +400,18 @@ int db_exists_db() {
         BatchValueSet(dbf, "DBfile_name");
     } 
 
-    FILE *f = fopen(DBfile, "r");
-    if (f == NULL) {
-        return 0;
-    }
-    fclose(f);
-    return 1;
+    return (access(DBfile, R_OK) == 0);
 }
 
 //allows check for if a table is present
 //currently this is used for the ref_allele_table but should be extensible
 int db_table_exists(const char *table){
     int exists = 0;
-    MasterDB.open(DBfile);
 
     if(db_exists_db()){
+
+        MasterDB.open(DBfile);
+
         DBstmt *select;
 
         char select_string[255] = "";
@@ -435,10 +432,10 @@ int db_table_exists(const char *table){
 
         delete select;
     }
-    else {
-        exists = 0;
-        EXIT(FILE_NOT_FOUND);
-    }
+//    else {
+//        exists = 0;
+//        EXIT(FILE_NOT_FOUND);
+//    }
 
     return exists;
 }

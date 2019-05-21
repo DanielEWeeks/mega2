@@ -1460,6 +1460,24 @@ int is_dir(char *dirname)
     }
 }
 
+int is_file(const char *filename)
+{
+    struct stat stbuf;
+    int err = stat(filename, &stbuf);
+    if (! err) return S_ISREG(stbuf.st_mode);
+    else {
+        switch(errno) {
+        case ENOENT:
+            break;
+        default:
+            warnvf("can not stat: stat(%s, buf) failed with errno %d (\"%s\")\n",
+                   filename, errno, strerror(errno));
+            break;
+        }
+        return 0;
+    }
+}
+
 void getRunDate(void)
 {
 /* Should be defined in time.h

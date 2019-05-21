@@ -1,0 +1,166 @@
+#Version4.4
+#          Fri Aug 29 02:14:00 1997
+# Lines beginning with # are comments.
+# 
+# Currently implemented "keywords type default_value (.mega2rc value)":
+#    1) additional_program_args                    LINE  ""
+#    2) Align_Strand_Input                         YORN  n
+#    3) AlleleFreq_SquaredDev                     FLOAT  0.0
+#    4) Analysis_Option                          STRING  ""
+#    5) Analysis_Sub_Option                      STRING  ""
+#    6) batch_cpu_count                             INT  1
+#    7) BCF_Args                                   LINE  "-m2 -M2 -v snps -c 1"
+#    8) BCF_Sample_Style                            INT  -1
+#    9) BCFs_File                                STRING  ""
+#   10) Chromosome_Single                           INT  1
+#   11) Chromosomes_Multiple                  CHRM_LIST  
+#   12) Chromosomes_Multiple_Num                    INT  0
+#   13) Count_Genotypes                             INT  2
+#   14) Count_Halftyped                            YORN  n
+#   15) Count_HWE_genotypes                         INT  2
+#   16) Covariates_Selected                        LINE  ""
+#   17) DBcompression                               INT  1
+#   18) DBfile_name                              STRING  "dbmega2.db"
+#   19) Default_Ignore_Nonfatal                    YORN  n
+#   20) Default_Other_Values                       YORN  n
+#   21) Default_Outfile_Names                      YORN  n
+#   22) Default_Reset_Alleleerr                    YORN  y
+#   23) Default_Reset_Halftype                     YORN  y
+#   24) Default_Reset_Invalid                      YORN  y
+#   25) Default_Reset_Mendelerr                    YORN  y
+#   26) Default_Rplot_Options                      YORN  n
+#   27) Default_Set_Uniq                           YORN  y
+#   28) Error_Except_Loci                      INT_LIST  
+#   29) Error_Loci                             INT_LIST  
+#   30) Error_Loci_Num                              INT  0
+#   31) Error_Model                                CHAR  X
+#   32) Error_Probabilities                  FLOAT_LIST  
+#   33) file_name_stem                           STRING  ""
+#   34) human_genome_build                       STRING  "B37"
+#   35) ID_pedigree                                 INT  0
+#   36) ID_person                                   INT  0
+#   37) Imputed_Allow_Duplicate_Markers            YORN  n
+#   38) Imputed_Allow_Indels                       YORN  n
+#   39) Imputed_Genotype_Missing_Fraction         FLOAT  0.1
+#   40) Imputed_Hard_Call_Threshold               FLOAT  0.9
+#   41) Imputed_Info_Metric_Threshold             FLOAT  0.3
+#   42) Imputed_Missing_Codes                 NAME_LIST  
+#   43) Imputed_Oxford_Single_Chr                STRING  "--"
+#   44) Imputed_RSID_Separator                   STRING  ":"
+#   45) Input_Aux_File                           STRING  ""
+#   46) Input_Database_Mode                         INT  2
+#   47) Input_Do_Error_Sim                         YORN  n
+#   48) Input_Format_Type                           INT  0
+#   49) Input_Frequency_File                     STRING  ""
+#   50) Input_Imputed_Info_File                  STRING  ""
+#   51) Input_Locus_File                         STRING  ""
+#   52) Input_Map_File                           STRING  ""
+#   53) Input_Omit_File                          STRING  ""
+#   54) Input_Path                               STRING  ""
+#   55) Input_Pedigree_File                      STRING  ""
+#   56) Input_Penetrance_File                    STRING  ""
+#   57) Input_Phenotype_File                     STRING  ""
+#   58) Input_PLINK_Map_File                     STRING  ""
+#   59) Input_Untyped_Ped_Option                    INT  -1
+#   60) Job_Manager_Additional_Args              STRING  ""
+#   61) Job_Manager_Index                           INT  1
+#   62) Job_Manager_Memory                          INT  4
+#   63) Loci_Selected                              LINE  ""
+#   64) Loci_Selected_Num                           INT  0
+#   65) Loop_Over_Chromosomes                      YORN  n
+#   66) minimac_reference_haplotype_template     STRING  "?"
+#   67) minimac_reference_panel_directory        STRING  "."
+#   68) MQLS_female_prevalence                    FLOAT  0.1
+#   69) MQLS_male_prevalence                      FLOAT  0.1
+#   70) Output_Path                              STRING  ""
+#   71) PLINK_Args                                 LINE  ""
+#   72) program_name                               LINE  ""
+#   73) raw_command_line                           LINE  ""
+#   74) Reference_Allele_File                    STRING  ""
+#   78) RoadTrips_female_prevalence               FLOAT  0.123
+#   79) RoadTrips_male_prevalence                 FLOAT  0.123
+#   80) Rplot_Statistics                           LINE  ""
+#   81) Select_Loop_Break                           INT  0
+#   82) shapeit_haps_file_selected                  INT  0
+#   83) Shapeit_recomb_directory                 STRING  "" ("/Users/rbaron/rvb/Work/shapeit.r837/genetic_map_b37")
+#   84) Shapeit_recomb_template                  STRING  "?" ("genetic_map_chr?_combined_b37.txt")
+#   85) shapeit_reference_haplotype_template     STRING  "?"
+#   86) shapeit_reference_legend_template        STRING  "?"
+#   87) shapeit_reference_map_directory          STRING  "."
+#   88) shapeit_reference_map_template           STRING  "?"
+#   89) shapeit_reference_panel_directory        STRING  "."
+#   90) shapeit_reference_sample_file            STRING  ""
+#   91) Show_Ped_Stats                             YORN  n
+#   92) Structure.PopDataPheno                   STRING  ""
+#   93) Trait_Single                                INT  0
+#   94) Trait_Subdirs                         NAME_LIST  
+#   95) Traits_Combine                             LINE  ""
+#   96) Traits_Loop_Over                           LINE  ""
+#   97) Value_Affecteds                       NAME_LIST  
+#   98) Value_Base_Pair_Position_Index              INT  -1
+#   99) Value_Genetic_Distance_Index                INT  -1
+#  100) Value_Genetic_Distance_SexTypeMap           INT  -1
+#  101) Value_Marker_Compression                    INT  1
+#  102) Value_Missing_Affect_On_Input              LINE  "0"
+#  103) Value_Missing_Affect_On_Output             LINE  "0"
+#  104) Value_Missing_Allele_Aff                   LINE  ""
+#  105) Value_Missing_Quant_On_Input              FLOAT  0.0
+#  106) Value_Missing_Quant_On_Output              LINE  "0.0"
+#  107) VCF_Allele_Order                         STRING  "Original_Order"
+#  108) VCF_Args                                   LINE  ""
+#  109) VCF_Marker_Alternative_INFO_Key            LINE  ""
+#  110) VCF_output_file_type                        INT  1
+#  111) Xlinked_Analysis_Mode                       INT  2
+
+# Restrictions on usage:
+
+#   Use either Chromosome_Single or 
+#     Chromosome_Single and Loci_Selected or
+#     Chromosomes_Multiple and Chromsomes_Multiple_Num
+
+#  Use either Trait_Single or
+#             Traits_Loop_Over or
+#             Traits_Combine.
+#  Keyword    Trait_Subdirs is allowed only if
+#  keyword    Traits_Loop_Over is defined.
+
+#     Error_Loci and Error_Loci_Num or
+#     Error_Except_Loci and Error_Loci_Num.
+
+# Default settings:
+
+# Default_Reset_Invalid: 
+#   "yes"= set inconsistent genotypes to 0 and continue.
+#   "no"= continue without setting inconsistent genotypes to 0.
+
+# Default_Ignore_Nonfatal : 
+#   Don't pause for other non-fatal errors in input:
+
+# Default_Other_Values: 
+#   Use Mega2's default values instead of asking user
+#   inside analysis-option menus. 
+
+# Xlinked_Analysis_Mode:
+#   Set x-linked based on chromosome number(human).
+#   treat all markers as autosomal,
+#   or treat all markers as x-linked.
+
+# Count_Genotypes and Count_Halftyped
+#   These correspond to the Select Individuals menu
+#   within the allele-recoding step.
+# 
+
+Input_Database_Mode=2
+Align_Strand_Input=no 
+Output_Path=../example_output_bcf2
+Input_Untyped_Ped_Option=2
+Input_Do_Error_Sim=no 
+Show_Ped_Stats=no 
+AlleleFreq_SquaredDev=999999999.000000
+Analysis_Option=Mendel7+
+DBfile_name=../example_db/dbBcf2.db
+Value_Missing_Quant_On_Output= 
+Value_Missing_Affect_On_Output= 
+Chromosome_Single=5
+Traits_Combine=1 3 e
+Default_Outfile_Names=yes
