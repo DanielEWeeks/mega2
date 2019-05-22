@@ -67,7 +67,7 @@ void File_table::stat() {
 #ifndef HIDEPATH
     for (int i = 0; i < NUMBER_OF_MEGA2_INPUT_FILES; i++) {
         if (mega2_input_files[i])
-            msgvf("\t%20s   %s\n",
+            msgvf("\t%24s   %s\n",
                   mega2_input_file_type[i], mega2_input_files[i]);
     }
 #endif

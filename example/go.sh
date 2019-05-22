@@ -1,6 +1,6 @@
 #
 # NOTE:
-# Mega2 should be compiled with make FLAGS=-DORDER_HETEROZYGOTE
+# Mega2 used to be compiled with make FLAGS=-DSORT_HETEROZYGOUS
 
 if [[ "$1" == "diff" ]] ; then
     for i in annotated bcf bcf2 bed impute ped post pre preannotated vcf
@@ -9,7 +9,7 @@ if [[ "$1" == "diff" ]] ; then
         diff -rsb ../example_db_$i ../example_db_$i.save
 
         echo diffing ../example_output_$i with ../example_output_$i.save
-        diff -rsb ../example_db_$i ../example_db_$i.save
+        diff -rsb ../example_output_$i ../example_output_$i.save
     done
     exit 0
 fi
@@ -17,19 +17,18 @@ fi
 if [[ "$1" == "save" ]] ; then
     for i in annotated bcf bcf2 bed impute ped post pre preannotated vcf
     do
+        rm -rf ../example_db_$i.save
         echo moving ../example_db_$i to ../example_db_$i.save
         mv ../example_db_$i ../example_db_$i.save
 
+        rm -rf ../example_output_$i.save
         echo moving ../example_output_$i to ../example_output_$i.save
-        mv ../example_db_$i ../example_db_$i.save
+        mv ../example_output_$i ../example_output_$i.save
     done
-fi
+    rm -rf ../example_db.save
+    mv ../example_db ../example_db.save
 
-if [[ ! -d ../example_db ]] ; then
-    mkdir ../example_db
 fi
-
-echo Mega2 should be compiled with make FLAGS=-DORDER_HETEROZYGOTE
 
 mega2 --nosave MEGA2.BATCH_annotated
 mega2 --nosave MEGA2.BATCH_annotated2mendel
@@ -60,7 +59,8 @@ mega2 --nosave MEGA2.BATCH_ped2mendel
 #mv MEGA2.{ERR,KEYS,LOG} *.html ../example_output_ped
 
 mega2 --nosave MEGA2.BATCH_post
-mega2 --nosave MEGA2.BATCH_post2cranefoot
+mega2 --nosave MEGA2.BATCH_post2mendel
+#mega2         MEGA2.BATCH_post2cranefoot
 #datain.ex
 #pedin.ex
 #omit.ex

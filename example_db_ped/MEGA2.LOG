@@ -11,7 +11,7 @@
 ==========================================================
 NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.
 
-Run date:                  2019-5-20-10-50
+Run date:                  2019-5-22-13-11
 
 
 Running Mega2 in batch mode from MEGA2.BATCH_ped.
@@ -25,8 +25,8 @@ Keyword Input_Imputed_Info_File not in batch file, Imputed Info file assumed to 
 Creating/Using Output_path: ../example_db_ped
 -----------------------------------------------------
         Mega2 version 5.0.2
-Run date:                  2019-5-20-10-50
-This file created on       Mon May 20 10:50:14 2019
+Run date:                  2019-5-22-13-11
+This file created on       Wed May 22 13:11:07 2019
 Input file names
 #       Pedigree file:               ped.ped
 #            Map file:               ped.map
@@ -125,7 +125,7 @@ TOTAL        2       21       9        12            63        0         63
 Typed        2       21       9        12
 Untyped      0        0       0         0
 ===========================================================
-Database file "../example_db/dbPed.db" will be backed up.
+Database file "../example_db/dbPed.db" will be created.
 Dumping SQLite3 DB to file "../example_db/dbPed.db"
 SQLite3 database "../example_db/dbPed.db" was processed to generate this output.
 Output is in ../example_db_ped

@@ -4083,7 +4083,7 @@ void job_manager_menus() {
                     printf("0) Done with this menu - please proceed\n");
                     int idy = 1;
 
-                    printf(" %d) Node Memory Limit:                               %dGB\n", idy, nodememory);
+                    printf(" %d) Node Memory Limit:                               %d GB\n", idy, nodememory);
                     memchoice = idy++;
 
                     printf(" %d) Additional arguments:               %-s\n", idy,
