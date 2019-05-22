@@ -104,6 +104,8 @@ extern const char*    perl_pgm(const char *pl);
 extern int            press_return(void);
 
 extern void           print_mega2_help(void);
+extern void           print_mega2_short(void);
+extern void           print_mega2_help_full(int flag);
 
 extern void           print_mega2_version(void);
 

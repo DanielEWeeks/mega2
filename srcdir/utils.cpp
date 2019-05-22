@@ -1989,7 +1989,7 @@ void mega2_opts(int argc, char **argv)
     for (c=1; c < argc; c++) {
         if (!strcmp(argv[c], "-nosave")) {
             printf("Mega2 no longer supports the -nosave option.\n");
-            print_mega2_help();
+            print_mega2_short();
             exit(-1);
         }
     }
@@ -2083,7 +2083,7 @@ void mega2_opts(int argc, char **argv)
         if ((*as) == '-') {
             if (strcasecmp(as, "-nosave") == 0) {
                 printf("Mega2 no longer supports the -nosave option.\n");
-                print_mega2_help();
+                print_mega2_short();
                 EXIT(INPUT_DATA_ERROR);
             } else if (*(as+1) == '-') {
                 as += 2;
@@ -2174,6 +2174,8 @@ void mega2_opts(int argc, char **argv)
                     Input_Format = in_format_compressed_VCF;
                 else if (strcasecmp(as, "vcf") == 0)
                     Input_Format = in_format_VCF;
+                else if (strcasecmp(as, "bcf2") == 0)
+                    Input_Format = in_format_bcfs;
 
                 else if (strcasecmp(as, "mega2") == 0)
                     Input_Format = in_format_mega2;
@@ -2186,7 +2188,7 @@ void mega2_opts(int argc, char **argv)
                 else if (strcasecmp(as, "input") == 0)
                     Input_Format = in_format_traditional;
 
-                else if (strcasecmp(as, "gen") == 0)
+                else if (strcasecmp(as, "gen") == 0 || strcasecmp(as, "impute") == 0)
                     Input_Format = in_format_imputed;
                 else if (strcasecmp(as, "bgen") == 0)
                     Input_Format = in_format_bgen2;
@@ -2220,7 +2222,7 @@ void mega2_opts(int argc, char **argv)
 		    dump_dbCompress = 1;
 		    dbCompress = atoi(*argv);
                 } else {
-                    print_mega2_help();
+                    print_mega2_short();
                     EXIT(INPUT_DATA_ERROR);
                 }
             } else {
@@ -2297,7 +2299,7 @@ void mega2_opts(int argc, char **argv)
                         print_mega2_version();
                         break;
                     default:
-                        print_mega2_help();
+                        print_mega2_short();
                         EXIT(INPUT_DATA_ERROR);
                         break;
                     }
@@ -2324,7 +2326,7 @@ void mega2_opts(int argc, char **argv)
         strcpy(Mega2Batch, *argv);
     } else if (!CHR_list) {
         printf("First invalid argument to Mega2: %s\n", argv[1]);
-        print_mega2_help();
+        print_mega2_short();
         EXIT(INPUT_DATA_ERROR);
     } else
         strcpy(Mega2Batch, *argv);
@@ -2356,16 +2358,19 @@ string& param_replace(string& param, size_t start) {
     return param_replace(ret, (repeat ? fnd1 : fnd1 + strlen(repl)));
 }
 
+void print_mega2_short(void)
+{ print_mega2_help_full(0); }
+
 void print_mega2_help(void)
+{ print_mega2_help_full(1); }
 
-{
-
+void print_mega2_help_full(int flag){
     printf("Usage: mega2 [options] [batch-file-name] {arguments}\n");
 
     printf("  acceptable options:\n");
 
-    printf("             --DBfile\n");
-    printf("                change the database name from dbmega2.db to the next argument.\n");
+    printf("  DB         --DBfile <dbfile>\n");
+    printf("                change the database name from dbmega2.db to <dbfile>.\n");
     printf("             --DBdump\n");
     printf("                dump the database and if --DBread is also present, \n");
     printf("                then exec’s a new copy of Mega2 to process the database.\n");
@@ -2374,64 +2379,83 @@ void print_mega2_help(void)
     printf("             --DBcompress <value>\n");
     printf("                set database compression level: 0 == off; 1 == gzip.\n");
 
-    printf("             --cow\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for cow.\n");
-    printf("             --dog\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for dog.\n");
-    printf("             --horse\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for horse.\n");
-    printf("             --human\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for human.\n");
-    printf("             --mouse\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for mouse.\n");
-    printf("             --sheep\n");
-    printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for sheep.\n");
-    printf("             --autosome <value>\n");
-    printf("                set last autosome chromosome number to <value>.\n");
-    printf("             --pseudo <value>\n");
-    printf("                set pseudo autosome xy chromosome to <value>.\n");
-    printf("             --mito <value>\n");
-    printf("                set mitocondria chromosome to <value>.\n");
+    printf("  PARALLEL   --chr <chromosome list>, (-c <chromosome list>) \n");
+    printf("                run (BATCH FILE) once for each specified chromosomes.\n");
+    printf("                also set \"chrxx\" as the tail of the path that contains the created data.\n");
+    printf("             --parallel <name>, (-p <name>)\n");
+    printf("                request parallel execution; <name> names the job; then --dname is passed <name>.\n");
+    printf("             --dname <name> (-n <name>)\n");
+    printf("                set <name> as the prefix of the path that contains the created data.\n");
+    printf("             --cmd <path to mega2 on compute machine> (-m <path ...>)\n");
+    printf("                path to mega2 on compute machine; use if mega2 is not on PATH\n");
+    printf("             --out_path <directory> (-o <directory>)\n");
+    printf("                add middle component <directory> to the \"created data\" path.\n");
+    printf("                This <directory> can be provided by the BATCH FILE, \"Output_Path\", option.\n");
+    printf("             --script <file>, (-s <file>) \n");
+    printf("                create template script for parallel execution into <file>\n");
+    printf("             --exec, -e \n");
+    printf("                w/o --cmd arg, execute the script that mega2 created to perform the analysis\n");
+    printf("                otherwise perform the --cmd program with args as the components of the created data.\n");
 
-    printf("             --bed\n");
-    printf("                input files are in PLINK binary Ped format (bed).\n");
-    printf("             --ped\n");
-    printf("                input files are in PLINK Ped format (ped).\n");
-    printf("             --bcf\n");
-    printf("                input files are in binary Variant Call File (VCF) format (bcf).\n");
-    printf("             --vcf.gz\n");
-    printf("                input files are in compressed Variant Call File (VCF) format (vcf.gz).\n");
-    printf("             --vcf\n");
-    printf("                input files are in Variant Call File (VCF) format (vcf).\n");
-    printf("             --gen\n");
-    printf("                input files are in IMPUTE2 File (IMPUTE2) format (gen).\n");
-    printf("             --bgen\n");
-    printf("                input files are in IMPUTE2 BGEN File (BGEN) format (bgen).\n");
-    printf("             --mega2\n");
-    printf("                input files are in Mega2 format (tabular files with header line).\n");
-    printf("             --linkage\n");
-    printf("                input files are in Linkage format.\n");
-    printf("             --extended_linkage\n");
-    printf("                input files are in Linkage format with a Mega2 names file vs a linkage locus file.\n");
-
+    printf("  MISC       --nosave, -x\n");
+    printf("                Do not create a new run-folder.\n");
+    printf("             --noweb, -w\n");
+    printf("                Do not check for latest on-line version.\n");
     printf("             --force_numeric_alleles\n");
     printf("                recode alleles as numbers even though analysis can accept letter alleles.\n");
 
+    if (flag) {
+        printf("  SPECIES    --cow\n");
+        printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for cow.\n");
+        printf("             --dog\n");
+        printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for dog.\n");
+        printf("             --horse\n");
+        printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for horse.\n");
+        printf("             --human\n");
+        printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for human.\n");
+        printf("             --mouse\n");
+        printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for mouse.\n");
+        printf("             --sheep\n");
+        printf("                set last autosome, pseudo autosome, and mitocondria chromosome numbers for sheep.\n");
+        printf("             --autosome <value>\n");
+        printf("                set last autosome chromosome number to <value>.\n");
+        printf("             --pseudo <value>\n");
+        printf("                set pseudo autosome xy chromosome to <value>.\n");
+        printf("             --mito <value>\n");
+        printf("                set mitocondria chromosome to <value>.\n");
 
-    printf("             -p, --parallel (--dname) <name>\n");
-    printf("                    request parallel'd execution; name the jobs and path prefix <name>.\n");
-    printf("             -c, --chr <chromosome list>\n");
-    printf("                    iterate (batch file) over specified chromosomes.\n");
-    printf("             -m, --mega2 <path to mega2 on parallel machine>>\n");
-    printf("                    path to Mega2 on parallel machine if it is different.\n");
-    printf("             -x, --nosave\n");
-    printf("                    Do not create a new run-folder.\n");
-    printf("             -w, --noweb\n");
-    printf("                    Do not check for latest on-line version.\n");
-    printf("             -h, --help\n");
-    printf("                    Print this message.\n");
-    printf("             -v, --version\n");
-    printf("                    Print mega2 version number.\n");
+        printf("  INPUTS     --bed\n");
+        printf("                input files are in PLINK binary Ped format (bed).\n");
+        printf("             --ped\n");
+        printf("                input files are in PLINK Ped format (ped).\n");
+        printf("             --bcf\n");
+        printf("                input files are in binary Variant Call File (VCF) format (bcf).\n");
+        printf("             --vcf.gz\n");
+        printf("                input files are in compressed Variant Call File (VCF) format (vcf.gz).\n");
+        printf("             --vcf\n");
+        printf("                input files are in Variant Call File (VCF) format (vcf).\n");
+        printf("             --bcf2\n");
+        printf("                input files are in Variant Call File (version 2.2) format (bcf, vcf.gz, vcf).\n");
+        printf("             --gen (or --impute)\n");
+        printf("                input files are in IMPUTE2 File (IMPUTE2) format (gen).\n");
+        printf("             --bgen\n");
+        printf("                input files are in IMPUTE2 BGEN File (BGEN) format (bgen).\n");
+        printf("             --mega2\n");
+        printf("                input files are in Mega2 format (tabular files with header line).\n");
+        printf("             --linkage\n");
+        printf("                input files are in Linkage format.\n");
+        printf("             --extended_linkage\n");
+        printf("                input files are in Linkage format with a Mega2 names file vs a linkage locus file.\n");
+    }
+
+    printf("             --help, -h\n");
+    printf("                Print this message.\n");
+    printf("             --version, -v\n");
+    printf("                Print mega2 version number.\n");
+
+    if (!flag) {
+        printf("\n  For a complete list of options type: mega2 --help\n\n");
+    }
 }
 
 void print_mega2_version(void)
