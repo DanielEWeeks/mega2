@@ -1,0 +1,27 @@
+-----------------------------------------------------
+        Mega2 version 5.0.2
+Run date:                  2019-5-24-15-26
+This file created on       Fri May 24 15:26:47 2019
+Input file names
+#       Pedigree file:               bed.fam
+#            Map file:               map.preannotated
+#      Frequency file:               study.freq
+#     Penetrance file:               study.pen
+#        Variant file:               study.vcf
+# PLINK Phenotype file:               study.phe
+Untyped pedigree option: Include all pedigrees whether typed or not
+No frequency estimates done on this data.
+---------------------------------------------
+
+Marker 3: M1 has 2 alleles; 
+Allele  Code
+     1  A         
+     2  T         
+Marker 4: M3 has 2 alleles; 
+Allele  Code
+     2  C         
+     1  G         
+Marker 5: M2 has 2 alleles; 
+Allele  Code
+     2  A         
+     1  T         

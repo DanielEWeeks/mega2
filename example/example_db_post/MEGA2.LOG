@@ -1,0 +1,146 @@
+==========================================================
+                          MEGA2 5.0.2
+     Copyright 1999-2019, University of Pittsburgh. All Rights Reserved.
+     Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
+     Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+     and Daniel E. Weeks.
+
+
+     Mega2 comes with ABSOLUTELY NO WARRANTY.
+     See LICENSE.txt for terms of copying, modifying & redistributing Mega2.
+==========================================================
+NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.
+
+Run date:                  2019-5-24-15-26
+
+Running Mega2 in batch mode from MEGA2.BATCH_post.
+
+Input filenames and missing value indicator read in from batch file.
+Dump Analysis option read in from batch file.
+Keyword Input_PLINK_Map_File not in batch file, PLINK map file assumed to be unspecified.
+Keyword Input_Frequency_File not in batch file, Frequency file assumed to be unspecified.
+Keyword Input_Penetrance_File not in batch file, Penetrance file assumed to be unspecified.
+Keyword Input_Aux_File not in batch file, Aux file assumed to be unspecified.
+Keyword Input_Phenotype_File not in batch file, Phenotype file assumed to be unspecified.
+Keyword Input_Imputed_Info_File not in batch file, Imputed Info file assumed to be unspecified.
+-----------------------------------------------------
+        Mega2 version 5.0.2
+Run date:                  2019-5-24-15-26
+This file created on       Fri May 24 15:26:47 2019
+Input file names
+#       Pedigree file:               pedin.ex
+#          Locus file:               datain.ex
+#            Map file:               map.ex
+#           Omit file:               omit.ex
+Untyped pedigree option: Include all pedigrees whether typed or not
+---------------------------------------------
+
+===========================================================
+Analysis Class: Dump.
+
+Input Format: Linkage format
+Quantitative  Input Missing Value  -99.99 
+Affection     Input Missing Value    "-99"
+Quantitative Output Missing Value      "*"
+Affection    Output Missing Value      "*"
+Count option: all individuals
+Count half-typed individuals' alleles : no 
+===========================================================
+Pedigree, names and map file specified as LINKAGE format.
+Input files will be read in as LINKAGE format files.
+===========================================================
+Checking format of pedigree file pedin.ex.
+Pedigree file pedin.ex will be read in as post-makeped format.
+Reason:
+Observed 0s in gender column (5th col).
+First occurrence is in line 8.
+Observed values > 2 in gender column (5th col).
+First occurrence is in line 2.
+===========================================================
+Locus file is in Linkage format
+Reading in map file map.ex.
+Data read in from map file.
+
+===========================================================
+Locus file is in LINKAGE format.
+Total number of loci =  4
+1 trait locus 
+      1 Affection status locus: 
+                TRAIT
+      3 Marker loci 
+Number of loci found per chromosome (chromosome:number)
+   5:2, 6:1
+===========================================================
+Data read in from pedigree file:
+All pedigree records have "Ped" and "Per" fields.
+All pedigree records have "ID" fields.
+===========================================================
+Input pedigree data contains:
+Input pedigree file is in post-makeped format.
+                                                  Marker Genotypes
+                                                  Fully    Half
+     Pedigrees   People   Males   Females         Typed    Typed     Total
+TOTAL        2       22      10        12            66        0         66
+Typed        2       22      10        12
+Untyped      0        0       0         0
+===========================================================
+Reading omit file omit.ex ...
+
+===== Messages of type "read_omit_file": 
+Untyped all individuals in pedigree 1 at all marker loci.
+Untyped individual 10 in pedigree 2 at locus M2.
+Untyped all individuals in pedigree 2 at locus M1.
+===== 3 total records of type "read_omit_file" are in MEGA2.LOG
+
+Pedigree exclusion option : Include all pedigrees whether typed or not.
+===========================================================
+After reading in omit file and excluding untyped pedigrees :
+
+===== Messages of type "untyped_pedigree": 
+------------------------------------------------------------
+Completely untyped pedigrees:
+1 
+===== 1 total records of type "untyped_pedigree" are in MEGA2.LOG
+
+Input pedigree file is in post-makeped format.
+                                                  Marker Genotypes
+                                                  Fully    Half
+     Pedigrees   People   Males   Females         Typed    Typed     Total
+TOTAL        2       22      10        12            21        0         66
+Typed        1       11       5         6
+Untyped      1       11       5         6
+===========================================================
+Connecting loops in pedigree 2...
+Ped 2: Loop-breaker ids 2_8 and 2_11
+        Saving 2_8, deleting 2_11
+WARNING: No physical map was specified for the database.  So analysis as
+WARNING: PLINK, PSEQ, Eigenstrat, SHAPEIT, IQLS and others will not be allowed.
+===========================================================
+Pedigree statistics after selecting chromosomes and marker loci:
+
+===== Messages of type "untyped_pedigree": 
+------------------------------------------------------------
+Completely untyped pedigrees:
+1 
+===== 1 total records of type "untyped_pedigree" are in MEGA2.LOG
+
+Input pedigree file is in post-makeped format.
+                                                  Marker Genotypes
+                                                  Fully    Half
+     Pedigrees   People   Males   Females         Typed    Typed     Total
+TOTAL        2       21       9        12            19        0         63
+Typed        1       10       4         6
+Untyped      1       11       5         6
+===========================================================
+Database file "../example_db/dbPost.db" will be backed up.
+Dumping SQLite3 DB to file "../example_db/dbPost.db"
+SQLite3 database "../example_db/dbPost.db" was processed to generate this output.
+Output is in ../example_db_post
+===========================================================
+See run summaries in directory
+   MEGA2.LOG, MEGA2.ERR, MEGA2.KEYS
+The script 'mega2log2html.pl' exited normally.
+To view the HTML-formatted run summaries, open
+/Users/dweeks/data/src/mega2/mega2_dev_src/example/example/../example_db_post/MEGA2run.html
+in a web browser.
+===========================================================

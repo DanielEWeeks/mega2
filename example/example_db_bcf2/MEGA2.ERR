@@ -1,0 +1,28 @@
+==========================================================
+                          MEGA2 5.0.2
+     Copyright 1999-2019, University of Pittsburgh. All Rights Reserved.
+     Contributors to Mega2: Robert Baron, Justin R. Stickel, Charles P. Kollar,
+     Nandita Mukhopadhyay, Lee Almasy, Mark Schroeder, William P. Mulvihill,
+     and Daniel E. Weeks.
+
+
+     Mega2 comes with ABSOLUTELY NO WARRANTY.
+     See LICENSE.txt for terms of copying, modifying & redistributing Mega2.
+==========================================================
+NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.
+
+Run date:                  2019-5-24-15-26
+
+-----------------------------------------------------
+        Mega2 version 5.0.2
+Run date:                  2019-5-24-15-26
+This file created on       Fri May 24 15:26:48 2019
+Input file names
+#       Pedigree file:               bed.fam
+#            Map file:               map.preannotated
+#      Frequency file:               study.freq
+#     Penetrance file:               study.pen
+# PLINK Phenotype file:               study.phe
+Untyped pedigree option: Include all pedigrees whether typed or not
+---------------------------------------------
+

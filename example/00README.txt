@@ -1,4 +1,4 @@
-This directory contains sample data in various formats:
+The 'example' subdirectory of this directory contains sample data in various formats:
      annotated bcf bcf2 bed impute ped post pre preannotated vcf
 (Note: post is mega2 format postmakeped; pre and preannotated are mega2
  format premakeped)
