@@ -20,7 +20,7 @@ build the database.
 
 If go.sh is given the argument "save", all the directories ../example_db_xxx and
 ../example_output_xxx are renamed to ../example_db_xxx.save and
-../example_output_xxx.save respectively before the new directories are created.
+../example_output_xxx.save respectively.
 (Any original .save files are deleted.)
 
 If go.sh is given the argument "diff", each directory is diff'ed with the older

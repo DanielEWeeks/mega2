@@ -862,7 +862,7 @@ static void menu1_batch_set_outfiles(char **output_path, char **db_name)
 
     char *cp = *db_name;
     if (*cp == 0)
-        BatchValueGet(cp, "DBfile_name");
+        BatchValueGet(cp, "Database_File");
 }
 
 static void menu1_batch_set_misc(int *Untyped_ped_opt, int *Error_sim_opt,
@@ -1719,11 +1719,12 @@ void menu1(file_format *infl_type,
                     printf("WARNING: %s is not a writable directory.\n", *output_path);
                     printf("Please specify a new or valid directory.\n");
             }
+
         } else if (choice_ == db_file_i) {   /* The database file */
             draw_line();
             printf("Please enter SQLite3 database file name > ");
             fcmap(stdin, "%s", *db_name); newline;
-            BatchValueSet(*db_name, "DBfile_name");
+            BatchValueSet(*db_name, "Database_File");
 
         } else if (choice_ == in_dir_i) {   /* The input directory */
             draw_line();
@@ -1869,10 +1870,15 @@ void menu1(file_format *infl_type,
             fln++;
         }
 
-        strcpy(Mega2BatchItems[/* 33 */ Output_Path].value.name, *output_path);
-        batchf(Output_Path);
         strcpy(Mega2BatchItems[/* 54 */ Input_Path].value.name, *input_path);
         batchf(Input_Path);
+
+        strcpy(Mega2BatchItems[/* 33 */ Output_Path].value.name, *output_path);
+        batchf(Output_Path);
+
+        if (BatchValueRead("Database_File"))
+            batchf("Database_File");
+
 
 #ifdef USER_UNKNOWN
         strcpy(Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name, REC_UNKNOWN);
@@ -1946,7 +1952,7 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
         menu1_batch_set_outfiles(output_path, db_name);
 
         if (*fn == 0)
-            BatchValueIfSet(fn,   "DBfile_name");
+            BatchValueIfSet(fn,   "Database_File");
 
         menu1_batch_set_misc(Untyped_ped_opt, Error_sim_opt, freq_mismatch_thresh);
 
@@ -1972,7 +1978,7 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
     sprintf(*output_path, ".");
     if (*fn == 0)
-        BatchValueGet(fn,   "DBfile_name");
+        BatchValueGet(fn,   "Database_File");
 
 /*
     printf("\n");
@@ -2068,6 +2074,8 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
             draw_line();
             printf("Please enter SQLite database filename > ");
             fcmap(stdin, "%s", fn); newline;
+            BatchValueSet(fn, "Database_File");
+            batchf("Database_File");
 
             db_ref_table_exists = db_table_exists("ref_allele_table");
 
@@ -2104,8 +2112,6 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
     }
 
     if (InputMode == INTERACTIVE_INPUTMODE) {
-
-        BatchValueSet(fn, "DBfile_name");
 
         BatchValueSet(yorn[*strand_flip_opt][0], "Align_Strand_Input");
         batchf("Align_Strand_Input");

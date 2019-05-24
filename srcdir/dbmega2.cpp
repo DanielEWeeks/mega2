@@ -387,7 +387,7 @@ int db_exists_db() {
     char *dbf = DBfile;
 
     if (DBfile[0] == 0) { // not on commandline
-        BatchValueGet(dbf, "DBfile_name");
+        BatchValueGet(dbf, "Database_File");
     }
 
     if (strchr(DBfile, '/')) {
@@ -397,7 +397,7 @@ int db_exists_db() {
         memmove(DBfile+l+1, DBfile, strlen(DBfile)+1);
         strcpy(DBfile, Mega2OutputPath);
         DBfile[l] = '/';
-        BatchValueSet(dbf, "DBfile_name");
+        BatchValueSet(dbf, "Database_File");
     } 
 
     return (access(DBfile, R_OK) == 0);

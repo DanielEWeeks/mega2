@@ -272,7 +272,7 @@ static keyw_t keywords[] = {
     {"shapeit_reference_panel_directory",     STRING,     "."},
     {"minimac_reference_panel_directory",     STRING,     "."},
 
-    {"DBfile_name",                           STRING,     "dbmega2.db"},
+    {"Database_File",                         STRING,     "dbmega2.db"},
     {"DBcompression",                         INT,        "1"},
     {"Input_Database_Mode",                   INT,        "2"},  
 
@@ -306,6 +306,7 @@ pair<Cstr,Cstr> keyword_aliases[] = {
     make_pair("Count_Halftyped", "Count_Halftypes"),
     make_pair("REMOutput_Map_Num", "Output_Map_Num"),
     make_pair("Imputed_Allow_Duplicate_Markers", "Imputed_Allow_Duplicates"),
+    make_pair("Database_File", "DBfile_name"),
 
     make_pair("file_name_stem", "Output_File_Stem"),
 
@@ -318,7 +319,7 @@ Cstr mega2rc[] = {"Shapeit_recomb_directory", "Shapeit_recomb_template",
                   "shapeit_haps_file_selected", "shapeit_reference_sample_file",
                   "shapeit_reference_legend_template", "shapeit_reference_haplotype_template",
                   "shapeit_reference_map_template", "minimac_reference_haplotype_template",
-                  "DBfile_name", "",};
+                  "Database_File", "",};
 
 typedef struct kv {
     char *key;

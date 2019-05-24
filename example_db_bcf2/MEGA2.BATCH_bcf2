@@ -19,8 +19,8 @@
 #   14) Count_Halftyped                            YORN  n
 #   15) Count_HWE_genotypes                         INT  2
 #   16) Covariates_Selected                        LINE  ""
-#   17) DBcompression                               INT  1
-#   18) DBfile_name                              STRING  "dbmega2.db"
+#   17) Database_File                            STRING  "dbmega2.db"
+#   18) DBcompression                               INT  1
 #   19) Default_Ignore_Nonfatal                    YORN  n
 #   20) Default_Other_Values                       YORN  n
 #   21) Default_Outfile_Names                      YORN  n
@@ -82,7 +82,7 @@
 #   80) Rplot_Statistics                           LINE  ""
 #   81) Select_Loop_Break                           INT  0
 #   82) shapeit_haps_file_selected                  INT  0
-#   83) Shapeit_recomb_directory                 STRING  "" ("/Users/rbaron/rvb/Work/shapeit.r837/genetic_map_b37")
+#   83) Shapeit_recomb_directory                 STRING  "" ("/home/rvb5/test/data/shapeit.r837/genetic_map_b37")
 #   84) Shapeit_recomb_template                  STRING  "?" ("genetic_map_chr?_combined_b37.txt")
 #   85) shapeit_reference_haplotype_template     STRING  "?"
 #   86) shapeit_reference_legend_template        STRING  "?"
@@ -154,31 +154,29 @@ Input_Database_Mode=1
 Input_Format_Type=11
 Input_Pedigree_File=bed.fam
 Input_Map_File=map.preannotated
-Input_Aux_File=studyBCF2.bcf
+BCFs_File=studyBCF2.bcf
 Input_Phenotype_File=study.phe
-VCF_ARGS=--remove-indels
-PLINK=--trait Q1 --quantitative --missing-phenotype -99.99
+PLINK_Args= --missing-phenotype -99.00 --trait Q1 --quantitative
 Input_Frequency_File=study.freq
 Input_Penetrance_File=study.pen
 Input_Path=.
 Input_Untyped_Ped_Option=2
 Input_Do_Error_Sim=no 
 Output_Path=../example_db_bcf2
+Database_File=../example_db/dbBcf2.db
 Show_Ped_Stats=no 
 AlleleFreq_SquaredDev=999999999.000000
 Value_Marker_Compression=1
 Reference_Allele_File=
-BCF_Sample_Style=0
+BCF_Sample_Style=1
 Analysis_Option=Dump
 Value_Missing_Quant_On_Input=-99.990000
 Value_Missing_Affect_On_Input=-99.99
 Rplot_Statistics= 1 2 e
 Count_Genotypes=4
-Count_HWE_genotypes=2
 Count_Halftyped=no 
 Default_Reset_Invalid=no 
 Select_Loop_Break=0
 Value_Genetic_Distance_Index=0
 Value_Genetic_Distance_SexTypeMap=0
 Value_Base_Pair_Position_Index=1
-DBfile_name=../example_db/dbBcf2.db

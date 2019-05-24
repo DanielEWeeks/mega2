@@ -18,7 +18,7 @@
 ==========================================================
 NOTE: For humans, chromosome 23 codes for X, 24 codes for Y and 25 codes for XY.
 
-Run date:                  2019-5-22-13-11
+Run date:                  2019-5-24-14-35
 
 
 Running Mega2 in batch mode from MEGA2.BATCH_bcf2.
@@ -28,18 +28,17 @@ Dump Analysis option read in from batch file.
 Keyword Input_Locus_File not in batch file, Locus file assumed to be unspecified.
 Keyword Input_PLINK_Map_File not in batch file, PLINK map file assumed to be unspecified.
 Keyword Input_Omit_File not in batch file, Omit file assumed to be unspecified.
+Keyword Input_Aux_File not in batch file, Aux file assumed to be unspecified.
 Keyword Input_Imputed_Info_File not in batch file, Imputed Info file assumed to be unspecified.
-Creating/Using Output_path: ../example_db_bcf2
 -----------------------------------------------------
         Mega2 version 5.0.2
-Run date:                  2019-5-22-13-11
-This file created on       Wed May 22 13:11:09 2019
+Run date:                  2019-5-24-14-35
+This file created on       Fri May 24 14:35:28 2019
 Input file names
 #       Pedigree file:               bed.fam
 #            Map file:               map.preannotated
 #      Frequency file:               study.freq
 #     Penetrance file:               study.pen
-#       BCF v2.2 file:               studyBCF2.bcf
 # PLINK Phenotype file:               study.phe
 Untyped pedigree option: Include all pedigrees whether typed or not
 ---------------------------------------------
@@ -58,7 +57,7 @@ Count half-typed individuals' alleles : no
 
 Input File:                                 studyBCF2.bcf
 BCF Arguments:                              -m2 -M2 -v snps -c 1
-Sample Index:                               0
+Sample Index:                               1
 read_BCFs: Found file "studyBCF2.bcf"
 reading phenotype file study.phe ... (1 columns)
 Input Map name: Map, type: average genetic map, units: kosambi centiMorgans
@@ -81,6 +80,9 @@ Number of loci found per chromosome (chromosome:number)
 Reading Mega2 format frequency file: study.freq
 Reading Mega2 format penetrance file: study.pen
 Reading PLINK .ped file: bed.fam (6 columns).
+
+Checking SAMPLEID consistency within files.
+Since 'BCF_Sample_Style' is 1, the VCF header is checked against the .phe file SampleID Column.
 Reading pedigree information from bed.fam
 21 individuals read from bed.fam
 21 individuals with nonmissing phenotypes
@@ -132,7 +134,7 @@ TOTAL        2       21       9        12            63        0         63
 Typed        2       21       9        12
 Untyped      0        0       0         0
 ===========================================================
-Database file "../example_db/dbBcf2.db" will be created.
+Database file "../example_db/dbBcf2.db" will be backed up.
 Dumping SQLite3 DB to file "../example_db/dbBcf2.db"
 SQLite3 database "../example_db/dbBcf2.db" was processed to generate this output.
 Output is in ../example_db_bcf2

@@ -724,6 +724,19 @@ int main(int argc, char **argv, char **env)
     init_globals(argv[0]);
     mega2_opts(argc, argv);
     
+    if ( (parallel || CHR_list) && ! ((*Mega2Batch != 0) && strcmp(Mega2Batch, "none")) ) {
+        // generate a BATCH file
+        mega2(argc, argv, env);
+        printf("\n");
+        printf("The BATCH file, %s, was just created.  Please edited\n", Mega2Batch);
+        printf("it to use the chromosome variables: ($0/%%0) and other script\n");
+        printf("variables ($1, $2, ...) as necessary and rename the %s\n", Mega2Batch);
+        printf("file. Then rerun mega2 with the same options and the new\n");
+        printf("BATCH file.\n");
+        printf("\n");
+        // and exit
+        exit(0);
+    }
 
     if (parallel) {
         if (Script) {
@@ -1188,6 +1201,9 @@ int mega2(int argc, char **argv, char **env)
 
         (void) break_no_founders_menu();
 
+        if ( (parallel || CHR_list) && (InputMode == INTERACTIVE_INPUTMODE) )
+            return SUCCESS;
+
         Tod tod_files("read all files");
         if (Input_Format == in_format_mega2) {
 #ifndef HIDESTATUS
@@ -1405,8 +1421,8 @@ int mega2(int argc, char **argv, char **env)
                 batchf("DBcompression");
         }
         db_open_db();
-        if (InputMode == INTERACTIVE_INPUTMODE && BatchValueRead("DBfile_name"))
-            batchf("DBfile_name");
+//      if (InputMode == INTERACTIVE_INPUTMODE && BatchValueRead("Database_File"))
+//          batchf("Database_File");
 
         db_init_all();
         dbmega2_export(LPedTreeTop);
@@ -1522,8 +1538,8 @@ int mega2(int argc, char **argv, char **env)
 
         Tod dbimport("db_import");
         db_open_db();
-        if (InputMode == INTERACTIVE_INPUTMODE && BatchValueRead("DBfile_name"))
-            batchf("DBfile_name");
+//      if (InputMode == INTERACTIVE_INPUTMODE && BatchValueRead("Database_File"))
+//          batchf("Database_File");
         db_init_all();
         dbmega2_import(&SQLop);
         db_fini_all();
@@ -1655,6 +1671,9 @@ int mega2(int argc, char **argv, char **env)
                                                  linkage_ped_top *LPedTreeTop);
             set_file_names_and_paths(analysis, LPedTreeTop);
         }
+
+        if ( (parallel || CHR_list) && (InputMode == INTERACTIVE_INPUTMODE) )
+            return SUCCESS;
 
         /* Now to analysis-specific options */
         ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);

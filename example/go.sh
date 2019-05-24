@@ -27,7 +27,7 @@ if [[ "$1" == "save" ]] ; then
     done
     rm -rf ../example_db.save
     mv ../example_db ../example_db.save
-
+    exit 0
 fi
 
 mega2 --nosave MEGA2.BATCH_annotated
