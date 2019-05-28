@@ -2377,25 +2377,27 @@ void print_mega2_help_full(int flag){
     printf("             --DBread\n");
     printf("                read an existing database file and do an analysis.\n");
     printf("             --DBcompress <value>\n");
-    printf("                set database compression level: 0 == off; 1 == gzip.\n");
+    printf("                set database compression level: 0 == off; 1 == gzip; (default == 1).\n");
 
     printf("  PARALLEL   --chr <chromosome list>, (-c <chromosome list>) \n");
     printf("                run (BATCH FILE) once for each specified chromosomes.\n");
     printf("                also set \"chrxx\" as the tail of the path that contains the created data.\n");
     printf("             --parallel <name>, (-p <name>)\n");
     printf("                request parallel execution; <name> names the job; then --dname is passed <name>.\n");
-    printf("             --dname <name> (-n <name>)\n");
+    printf("             --dname <name>, (-n <name>)\n");
     printf("                set <name> as the prefix of the path that contains the created data.\n");
-    printf("             --cmd <path to mega2 on compute machine> (-m <path ...>)\n");
+    printf("             --cmd <path to mega2 on compute machine>, (-m <path ...>)\n");
     printf("                path to mega2 on compute machine; use if mega2 is not on PATH\n");
-    printf("             --out_path <directory> (-o <directory>)\n");
+    printf("                If -e is specified, path to program on compute machine to execute.\n");
+    printf("                Without --cmd, if -e is specified, execute mega2 custom script.\n");
+    printf("             --out_path <directory>, (-o <directory>)\n");
     printf("                add middle component <directory> to the \"created data\" path.\n");
     printf("                This <directory> can be provided by the BATCH FILE, \"Output_Path\", option.\n");
     printf("             --script <file>, (-s <file>) \n");
     printf("                create template script for parallel execution into <file>\n");
     printf("             --exec, -e \n");
     printf("                w/o --cmd arg, execute the script that mega2 created to perform the analysis\n");
-    printf("                otherwise perform the --cmd program with args as the components of the created data.\n");
+    printf("                otherwise execute the --cmd program; args are the components of the created directory.\n");
 
     printf("  MISC       --nosave, -x\n");
     printf("                Do not create a new run-folder.\n");
@@ -2449,7 +2451,7 @@ void print_mega2_help_full(int flag){
     }
 
     printf("             --help, -h\n");
-    printf("                Print this message.\n");
+    printf("                Print full (long) help message.\n");
     printf("             --version, -v\n");
     printf("                Print mega2 version number.\n");
 
