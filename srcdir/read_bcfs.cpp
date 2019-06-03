@@ -572,7 +572,10 @@ void ReadBCFs::do_map(std::vector<m2_map>& additional_maps)
 {
     m2_map bcf_map("VCF (created from input)", 'p');
 
-    build_bcf_map(bcf_map);
+    extern int just_gen_batch_file;
+
+    if (! just_gen_batch_file)
+        build_bcf_map(bcf_map);
 
     additional_maps.push_back(bcf_map);
 }

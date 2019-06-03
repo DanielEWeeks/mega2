@@ -141,6 +141,8 @@ static linkage_ped_top *read_common_ped_file(FILE *filep, char *pedfile,
 
 annotated_file_desc AnnotatedFileInfo;
 
+int just_gen_batch_file = 0;
+
 #ifdef DEFUNCT
 static void ann_field_widths(linkage_ped_top *TTop,
 			     annotated_file_desc *file_desc);
@@ -2801,6 +2803,8 @@ static ext_linkage_locus_top *read_common_map_file(FILE *mapfp,
     mssgvf("Found %d possible maps in the %s file.\n", num_maps, map_file);
 #endif
     printf("Now checking each record in map file %s ...\n", map_file);
+
+    if (just_gen_batch_file) return EXLTop;
     
     human_x = human_y = human_xy = human_unknown = human_mt = human_auto = 0;
     
@@ -4979,6 +4983,258 @@ linkage_ped_top *read_annotated_files(char *ped_file, char *names_file,
     tod_anfiles();
     return Top;
 }
+
+#ifndef HIDESTATUS
+extern int guess_input_format;
+#endif
+
+ext_linkage_locus_top *
+read_hdr_annotated_map_file(linkage_locus_top *LTop, analysis_type analysis)
+{
+    plink_info_type plink_info;
+    const char *pm_file = 0;
+    const char * m_file = 0;
+    int i = 0;
+
+    if (Input_Format == in_format_mega2) {
+#ifndef HIDESTATUS
+        if (mega2_input_files[3] == NULL) {
+            msgvf("Pedigree, names and map file %s Mega2 format.\n",
+                  guess_input_format ? "appear to be in" : "specified as");
+        } else {
+            msgvf("Pedigree, names, map and omit file %s Mega2 format.\n",
+                  guess_input_format ? "appear to be in" : "specified as");
+        }
+        mssgf("Input files will be read in as Mega2 format files.");
+#endif
+//      add_allele("NA", zero);
+//      REC_UNKNOWN = zero;
+
+        pm_file = *(Input->input_files.pmapfl);
+         m_file = *(Input->input_files.mapfl);
+
+    } else if (Input_Format == in_format_binary_PED || Input_Format == in_format_PED) {
+        int it = PLINK_Args;
+        if (Mega2BatchItems[it].items_read == 0) {
+            errorvf("PLINK arguments not specified.\n");
+            EXIT(BATCH_FILE_ITEM_ERROR);
+        }
+
+#ifndef HIDESTATUS
+        msgvf("Pedigree and map files %s PLINK format.\n",
+              guess_input_format ? "appear to be in" : "specified as");
+        mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
+        mssgf("Input files will be read in as PLINK or Mega2 format files as appropriate.");
+#endif
+//      add_allele("NA", zero);
+//      REC_UNKNOWN = zero;
+
+        pm_file = *(Input->input_files.pmapfl);
+         m_file = *(Input->input_files.mapfl);
+         m_file = ((m_file && *m_file != 0) ? m_file : pm_file);
+
+    } else if (Input_Format == in_format_binary_VCF || Input_Format == in_format_compressed_VCF ||
+               Input_Format == in_format_VCF) {
+
+        int it = PLINK_Args;
+        if (Mega2BatchItems[it].items_read)
+            PLINK_args(Mega2BatchItems[it].value.name, 1);
+
+        it = VCF_Args;
+        if (Mega2BatchItems[it].items_read == 0) {
+            errorvf("VCF arguments not specified.\n");
+            EXIT(BATCH_FILE_ITEM_ERROR);
+        }
+        char *cp = CALLOC(FILENAME_LENGTH, char);
+        strcpy(cp, Mega2BatchItems[it].value.name);
+        if (Input_Format == in_format_binary_VCF) {
+          strcat(cp, " --bcf ");
+        } else if (Input_Format == in_format_compressed_VCF) {
+          strcat(cp, " --gzvcf ");
+        } else if (Input_Format == in_format_VCF) {
+          strcat(cp, " --vcf ");
+        }
+        strcat(cp, *(Input->input_files.bedfl));
+
+        if (VCFtools_process_cmd_line_if_necessary_inclusive(cp) != -1) {
+          errorvf("VCF arguments can not be processed.\n");
+          EXIT(BATCH_FILE_ITEM_ERROR);
+        }
+        free(cp);
+
+        mssgf("\nProcessing VCF file meta information and header.");
+        VCFtools_process_file_meta_information_and_header();
+
+#ifndef HIDESTATUS
+        mssgf("Pedigree (.fam) file appears to be in PLINK format.");
+        mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
+#endif
+//      add_allele("NA", zero);
+//      REC_UNKNOWN = zero;
+
+        pm_file = *(Input->input_files.pmapfl);
+         m_file = *(Input->input_files.mapfl);
+
+    } else if (Input_Format == in_format_linkage ||
+               Input_Format == in_format_extended_linkage) {
+
+#ifndef HIDESTATUS
+        if (Input_Format == in_format_linkage) {
+            msgvf("Pedigree, names and map file %s LINKAGE format.\n",
+                  guess_input_format ? "appear to be in" : "specified as");
+            mssgf("Input files will be read in as LINKAGE format files.");
+        } else if (Input_Format == in_format_extended_linkage) {
+            msgvf("Pedigree and map file %s LINKAGE format.\n",
+                  guess_input_format ? "appear to be in" : "specified as");
+            mssgf("Names (aka locus) file appears to be in Mega2 format w/o header.");
+            mssgf("Input files will be read appropriately.");
+        }
+
+        if (*(Input->input_files.penfl) != NULL) {
+            warnvf("Penetrance file %s will not be read in (only available in Mega2 format.\n",
+                   *(Input->input_files.penfl));
+        }
+        if (*(Input->input_files.freqfl) != NULL) {
+            warnvf("Frequency file %s will not be read in (only available in Mega2 format.\n",
+                   *(Input->input_files.freqfl));
+        }
+#endif
+//      REC_UNKNOWN = zero;
+
+        pm_file = *(Input->input_files.pmapfl);
+         m_file = *(Input->input_files.mapfl);
+
+         // nothing to do.  Data are in m_file.  Only one map (genetic) is possible.
+
+    } else if (Input_Format < 8 ||
+               Input->GetOps()->use_getops() ||
+               Input_Format == in_format_traditional) { 
+
+        Input->GetOps()->do_batch2local();
+
+//      add_allele("NA", zero);
+//      REC_UNKNOWN = zero;
+
+        pm_file = *(Input->input_files.pmapfl);
+         m_file = *(Input->input_files.mapfl);
+
+    } else {
+        errorf("Input files appear to be in mixed Mega2 format and LINKAGE format.");
+        errorf("Please use only Mega2 files or only LINKAGE files.");
+        errorf("Unsuccessful in reading input files - aborting mega2!\n");
+        EXIT(INPUT_DATA_ERROR);
+    }
+
+// from read_annotated_files prelude for read_map_files
+
+    m2_map vcf_map;
+    m2_map impute_map;
+
+    int xcf = Input->xcf;
+    if (xcf) {
+        std::string alternative_key = std::string(Mega2BatchItems[/* 57 */ VCF_Marker_Alternative_INFO_Key].value.name);
+
+        // This is a physical map that is 'attached to the side' of the VCF file...
+        // It will later be coppied to EXLTop, and the map object will be deleted by C++
+        // when it goes out of scope.
+        vcf_map = VCFtools_get_map(alternative_key, "chr");
+
+    }
+
+    ext_linkage_locus_top *EXLTop;
+    std::vector<m2_map> additional_maps;
+    if (Input->GetOps()->use_getops()) {
+        Input->GetOps()->do_map(additional_maps);
+        EXLTop = NULL; // but additional_maps.size() > 0 so see below; this makes compiler happy
+    } else if (PLINK.plink) {
+        // if this is PLINK format (double negative)
+        // CPK: If the .map file is a .bim file we gather the alleles into the
+        // vector that is described earlier in this routine...
+        Tod tod_pmf("read plink map file");
+        EXLTop = read_plink_map_file(pm_file ? pm_file : m_file,
+                                     LTop,
+                                     &AnnotatedFileInfo,
+                                     &plink_info);
+        tod_pmf();
+    } else if (xcf) {
+        // Create an extra map slot in EXLTop for the map from the VCF file...
+        additional_maps.push_back(vcf_map);
+        EXLTop = NULL; // but additional_maps.size() > 0 so see below; this makes compiler happy
+    } else {
+        // only mega2 is left (and linkage ;-) No additional maps...
+        EXLTop = read_annotated_map_file(m_file, LTop, additional_maps, &AnnotatedFileInfo);
+        if (EXLTop == (ext_linkage_locus_top *)NULL) {
+            // The map file was empty and there were no additional maps.
+            // We error here now because this is not VCF or PLINK, so it's not OK to have no Mega2 map file...
+            errorvf("could not open %s for reading!\n", m_file);
+            EXIT(FILE_READ_ERROR);
+        }
+    }
+
+    if (additional_maps.size() > 0) {
+        EXLTop = read_annotated_map_file(m_file, LTop, additional_maps, &AnnotatedFileInfo);
+        if (EXLTop == (ext_linkage_locus_top *)NULL) {
+            // This will be the case if the map file was empty, or it contained no maps.
+            // So we need to create the EXLTop data structure...
+            EXLTop = new_EXLTop(LTop);
+            // SEE: annotated_ped_file.cpp::get_map_names()
+            // Continue to set up EXLTop for the '1' map in 'vcf_map'...
+            EXLTop->map_functions = CALLOC((size_t)2, char); // e.g., 'h', 'k', or 'p'
+            EXLTop->MapNames = CALLOC((size_t)1, char*);
+            EXLTop->SexMaps = CALLOC((size_t)1, int *);
+        }
+
+        if (EXLTop->MapCnt == 0) {
+            insert_m2_map_into_EXLTop(EXLTop, LTop, 0, additional_maps[0]);
+            insert_zero_sex_average_genetic_map_in_EXLTop(EXLTop, LTop);
+            // In this case, the batch file items must be set since the user does not specify these maps...
+
+            //Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option = 0;
+            base_pair_position_index = 0;
+            Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].items_read=1;
+
+            //Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option = 1;
+            genetic_distance_index = 1;
+            Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].items_read=1;
+
+            //Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option = SEX_AVERAGED_GDMT;
+            genetic_distance_sex_type_map = SEX_AVERAGED_GDMT;
+            Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].items_read=1;
+        } else {
+            // 'read_common_map_file()' will only initialize map positions (EXLTop .pos*)
+            // if it finds an entry in the Mega2 map file. Because the VCF map file may contain a super set
+            // of the marker from a mega2 map, position data for these markers will not have been created.
+            // This is OK if any of the maps from the mega2 map file are used because the mega2 map
+            // is used to 'subset' the markers found in the VCF file.
+            for (i = LTop->PhenoCnt; i < LTop->LocusCnt; i++)
+                if (EXLTop->EXLocus[i].positions == NULL)
+                    new_EXLTop_positions(EXLTop, i, EXLTop->MapCnt+1);
+            // When processing a vcf file, we have asked 'read_common_map_file()' above to create
+            // an additional map slot, It will fill the first N-1 map slots with maps from the Mega2
+            // annotated map file. We will fill the slot at the end (e.g., indexed by EXLTop->MapCnt)
+            // which 'read_common_map_file()' creates but ignores.
+            insert_m2_map_into_EXLTop(EXLTop, LTop, EXLTop->MapCnt, additional_maps[0]);
+            // Since a genetic map is currently required for all analysis types (will fix this in the future)...
+            if (!valid_genetic_map_exists_in_EXLTop(EXLTop)) {
+                insert_zero_sex_average_genetic_map_in_EXLTop(EXLTop, LTop);
+
+                // Since there was no genetic map in the Mega2 Map File, we added one at the end...
+                genetic_distance_index = EXLTop->MapCnt - 1;
+                Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].items_read=1;
+
+                genetic_distance_sex_type_map = SEX_AVERAGED_GDMT;
+                Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].items_read=1;
+            }
+        }
+    }
+
+    for (size_t ii = 0; ii < additional_maps.size(); ii++) {
+        additional_maps[ii].gc();
+    }
+
+    return EXLTop;
+}
+
 
 /*
 static void Free_AnnotatedFileInfo(void) {

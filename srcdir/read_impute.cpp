@@ -305,7 +305,9 @@ void ReadImputed::do_map(std::vector<m2_map>& additional_maps)
 //  m2_map 
     impute_map = m2_map("IMPUTE", 'p');
 
-    build_impute2_map(impute_map);
+    extern int just_gen_batch_file;
+    if (! just_gen_batch_file)
+        build_impute2_map(impute_map);
 
     additional_maps.push_back(impute_map);
 }

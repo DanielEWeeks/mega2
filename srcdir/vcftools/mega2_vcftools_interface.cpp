@@ -1164,6 +1164,10 @@ m2_map VCFtools_get_map(const std::string info_id_alternative_key,
     vector<char> variant_line;
     m2_map map("VCF", 'p');
 
+    extern int just_gen_batch_file;
+    if (just_gen_batch_file) return map;
+
+
     if (params == (parameters *)NULL) {
         errorf("INTERNAL: The VCFtools command line arguments were not parsed.");
         EXIT(SYSTEM_ERROR);

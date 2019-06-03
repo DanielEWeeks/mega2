@@ -725,7 +725,7 @@ int main(int argc, char **argv, char **env)
     mega2_opts(argc, argv);
     
     if ( (parallel || CHR_list) && ! ((*Mega2Batch != 0) && strcmp(Mega2Batch, "none")) ) {
-        // generate a BATCH file
+        // just generate a BATCH file
         mega2(argc, argv, env);
         printf("\n");
         printf("The BATCH file, %s, was just created.  Please edited\n", Mega2Batch);
@@ -889,6 +889,10 @@ int main(int argc, char **argv, char **env)
 
     return 0;
 }
+
+#ifndef HIDESTATUS
+int guess_input_format = 0;
+#endif
 
 int mega2(int argc, char **argv, char **env)
 {
@@ -1158,9 +1162,6 @@ int mega2(int argc, char **argv, char **env)
             }
         }
 
-#ifndef HIDESTATUS
-        int guess;
-#endif
         int af;
         if (Input_Format == in_format_traditional) {
             af = check_annotated_file_format(mega2_input_files);
@@ -1180,13 +1181,13 @@ int mega2(int argc, char **argv, char **env)
                 Input_Format = in_format_mega2;
             msgvf("\nInput Format Deduced as: %s\n", INPUT_FORMAT_STR[Input_Format]);
 #ifndef HIDESTATUS
-            guess = 1;
+            guess_input_format = 1;
 #endif
 
         } else {
             msgvf("\nInput Format: %s\n", INPUT_FORMAT_STR[Input_Format]);
 #ifndef HIDESTATUS
-            guess = 0;
+            guess_input_format = 0;
 #endif
         }
 //
@@ -1201,18 +1202,23 @@ int mega2(int argc, char **argv, char **env)
 
         (void) break_no_founders_menu();
 
-        if ( (parallel || CHR_list) && (InputMode == INTERACTIVE_INPUTMODE) )
+        // just generate a BATCH file (last piece and then exit)
+        if ( (parallel || CHR_list) && (InputMode == INTERACTIVE_INPUTMODE) ) { 
+            extern void select_maps_for_BATCH(analysis_type *analysis);
+            select_maps_for_BATCH(&analysis);
+
             return SUCCESS;
+        }
 
         Tod tod_files("read all files");
         if (Input_Format == in_format_mega2) {
 #ifndef HIDESTATUS
             if (mega2_input_files[3] == NULL) {
                 msgvf("Pedigree, names and map file %s Mega2 format.\n",
-                      guess ? "appear to be in" : "specified as");
+                      guess_input_format ? "appear to be in" : "specified as");
             } else {
                 msgvf("Pedigree, names, map and omit file %s Mega2 format.\n",
-                      guess ? "appear to be in" : "specified as");
+                      guess_input_format ? "appear to be in" : "specified as");
             }
             mssgf("Input files will be read in as Mega2 format files.");
 #endif
@@ -1232,7 +1238,7 @@ int mega2(int argc, char **argv, char **env)
 
 #ifndef HIDESTATUS
             msgvf("Pedigree and map files %s PLINK format.\n",
-                  guess ? "appear to be in" : "specified as");
+                  guess_input_format ? "appear to be in" : "specified as");
             mssgf("omit, penetrance, and frequency files are always in Mega2 format.");
             mssgf("Input files will be read in as PLINK or Mega2 format files as appropriate.");
 #endif
@@ -1293,11 +1299,11 @@ int mega2(int argc, char **argv, char **env)
 #ifndef HIDESTATUS
             if (Input_Format == in_format_linkage) {
                 msgvf("Pedigree, names and map file %s LINKAGE format.\n",
-                      guess ? "appear to be in" : "specified as");
+                      guess_input_format ? "appear to be in" : "specified as");
                 mssgf("Input files will be read in as LINKAGE format files.");
             } else if (Input_Format == in_format_extended_linkage) {
                 msgvf("Pedigree and map file %s LINKAGE format.\n",
-                      guess ? "appear to be in" : "specified as");
+                      guess_input_format ? "appear to be in" : "specified as");
                 mssgf("Names (aka locus) file appears to be in Mega2 format w/o header.");
                 mssgf("Input files will be read appropriately.");
             }

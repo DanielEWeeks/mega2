@@ -2075,7 +2075,6 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
             printf("Please enter SQLite database filename > ");
             fcmap(stdin, "%s", fn); newline;
             BatchValueSet(fn, "Database_File");
-            batchf("Database_File");
 
             db_ref_table_exists = db_table_exists("ref_allele_table");
 
@@ -2113,11 +2112,14 @@ void menu1a(int *Untyped_ped_opt, int *Error_sim_opt,
 
     if (InputMode == INTERACTIVE_INPUTMODE) {
 
-        BatchValueSet(yorn[*strand_flip_opt][0], "Align_Strand_Input");
-        batchf("Align_Strand_Input");
+        if (BatchValueRead("Database_File"))
+            batchf("Database_File");
 
         strcpy(Mega2BatchItems[/* 33 */ Output_Path].value.name, *output_path);
         batchf(Output_Path);
+
+        BatchValueSet(yorn[*strand_flip_opt][0], "Align_Strand_Input");
+        batchf("Align_Strand_Input");
 
 #ifdef USER_UNKNOWN
         strcpy(Mega2BatchItems[/* 42 */ Value_Missing_Allele].value.name, REC_UNKNOWN);
@@ -3408,6 +3410,27 @@ void test_modified(int choice)
     }
 }
 
+void select_maps_for_BATCH(analysis_type *analysis)
+{
+extern ext_linkage_locus_top *read_hdr_annotated_map_file(linkage_locus_top *LTop,
+                                                          analysis_type analysis);
+    linkage_ped_top Top;
+    linkage_locus_top LTop;
+    Top.LocusTop = &LTop;
+    LTop.LocusCnt = 0;
+    LTop.MarkerCnt = 0;
+
+    extern int just_gen_batch_file;
+
+    just_gen_batch_file = 1;
+
+    Top.EXLTop = read_hdr_annotated_map_file(Top.LocusTop, *analysis);
+
+    distance_init_dump(&Top, analysis);
+
+    just_gen_batch_file = 0;
+
+}
 // Cranefoot, and smmary needs order but not position. In these cases we could use physical also.
 // For a map there is order and relative/absolute position.
 // Programs that require genetic maps are only interested in relative positions
@@ -3684,6 +3707,14 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
         
         // So, the batch file referenced a valid map!
         free(gdi); free(gdsm);
+        extern int just_gen_batch_file;
+        if (just_gen_batch_file) {
+            Mega2BatchItems[/* 46 */ Value_Genetic_Distance_Index].value.option = genetic_distance_index;
+            batchfdb(Value_Genetic_Distance_Index);
+            
+            Mega2BatchItems[/* 48 */ Value_Genetic_Distance_SexTypeMap].value.option = genetic_distance_sex_type_map;
+            batchfdb(Value_Genetic_Distance_SexTypeMap);
+        }
         return;
     } else if (genetic_distance_index == -1 &&
                ITEM_READ(Value_Genetic_Distance_Index)) {
@@ -3735,6 +3766,7 @@ void get_genetic_distance_index(ext_linkage_locus_top *EXLTop) {
                 mssgf("NOTE: No genetic map was specified in the batch file, so the first map will be used.\n");
             }
 #endif /* HIDESTATUS */
+            // PLINK bed/ped file gets here
             genetic_distance_index = gdi[0];
             genetic_distance_sex_type_map = gdsm[0];
             
@@ -3942,6 +3974,11 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
         
         // So, the batch file referenced a valid map!
         free(bppi);
+        extern int just_gen_batch_file;
+        if (just_gen_batch_file) {
+            Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option = base_pair_position_index;
+            batchfdb(Value_Base_Pair_Position_Index);            
+        }
         return;
     } else if (base_pair_position_index == -1 &&
                ITEM_READ(Value_Base_Pair_Position_Index)) {
@@ -3975,7 +4012,7 @@ void get_base_pair_position_index(ext_linkage_locus_top *EXLTop) {
                 mssgf("NOTE: Only one physical map is available for use, so it will be used.\n");
             }
 #endif /* HIDESTATUS */
-            
+            // PLINK bed/ped gets here
             base_pair_position_index = bppi[0];
             
             Mega2BatchItems[/* 47 */ Value_Base_Pair_Position_Index].value.option = base_pair_position_index;
