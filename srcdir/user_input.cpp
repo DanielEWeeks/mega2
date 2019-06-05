@@ -4115,8 +4115,12 @@ void job_manager_menus() {
             fcmap(stdin, "%s", selectstr);
             newline;
             sscanf(selectstr, "%d", &select1);
-            if (select1 && select1 < idx)
+            if (select1 && select1 < idx) {
                 set = select1;
+
+                _job_manager_index = set;
+                BatchValueSet(_job_manager_index, "Job_Manager_Index");
+            }
 
             //only want this menu for option 2 and 3
             if (set > 1 && select1 != 0) {
@@ -4144,6 +4148,10 @@ void job_manager_menus() {
                     if (select2 == memchoice) {
                         printf("Enter node memory limit in gigabytes > ");
                         fcmap(stdin, "%d", &nodememory);
+
+                        _job_manager_mem   = nodememory;
+                        BatchValueSet(_job_manager_mem,   "Job_Manager_Memory");
+
                         newline;
                     } else if (select2 == argchoice) {
                         printf("Enter additional arguments for job manager > ");
@@ -4151,27 +4159,28 @@ void job_manager_menus() {
                         int nl = strlen(selection);
                         if (selection[nl - 1] == '\n') selection[nl - 1] = 0;
                         additional_program_args = selectionp;
+
+                        _job_manager_args  = additional_program_args;
+                        BatchValueSet(_job_manager_args,  "Job_Manager_Additional_Args");
                     }
                 }
                 select2 = -1;
             }
         }
 
-        _job_manager_index = set;
-        _job_manager_mem   = nodememory;
-        _job_manager_args  = additional_program_args;
-
     }
 }
 
 void set_job_manager_values() {
 
-    BatchValueSet(_job_manager_index, "Job_Manager_Index");
-    BatchValueSet(_job_manager_mem,   "Job_Manager_Memory");
-    BatchValueSet(_job_manager_args,  "Job_Manager_Additional_Args");
-    batchf("Job_Manager_Index");
-    batchf("Job_Manager_Memory");
-    batchf("Job_Manager_Additional_Args");
+    if (BatchValueRead("Job_Manager_Index"))
+        batchf("Job_Manager_Index");
+
+    if (BatchValueRead("Job_Manager_Memory"))
+        batchf("Job_Manager_Memory");
+
+    if (BatchValueRead("Job_Manager_Additional_Args"))
+        batchf("Job_Manager_Additional_Args");
 
     //strcpy(_job_manager_args,additional_program_args);
 }
