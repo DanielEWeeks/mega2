@@ -1408,7 +1408,7 @@ static void process_batch_file_items(analysis_type *analysis)
     pair<Cstr,char *> hacks[] = {
 	make_pair("Value_Missing_Quant_On_Input", Str_Missing_Quant_On_Input),
 	make_pair("Value_Missing_Quant_On_Output", Str_Missing_Quant_On_Output),
-	make_pair("Value_Missing_Affect_On_Input", Str_Missing_Affect_on_Input),
+	make_pair("Value_Missing_Affect_On_Input", Str_Missing_Affect_On_Input),
 	make_pair("Value_Missing_Affect_On_Output", Str_Missing_Affect_On_Output),
     };
     for (int i = 0; i < 4; i++) {

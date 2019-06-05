@@ -33,7 +33,7 @@
 #define MENU_VALUE_MISSING_EXT_H
 
 extern char Str_Missing_Quant_On_Input[50];
-extern char Str_Missing_Affect_on_Input[50];
+extern char Str_Missing_Affect_On_Input[50];
 extern char Str_Missing_Quant_On_Output[50];
 extern char Str_Missing_Affect_On_Output[50];
 

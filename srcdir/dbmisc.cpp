@@ -213,7 +213,26 @@ void dbmisc_export(linkage_ped_top *Top) {
     else
         stuff_table.insert("FemaleRecomb", 0, 0);
 
-    charstar_table.insert("human_genome_build", BatchItemGet("human_genome_build")->value.name);
+    const char *ccp;
+    ccp = "human_genome_build";
+    charstar_table.insert(ccp, BatchItemGet(ccp)->value.name);
+
+//060519 newly added to database
+//  {"Value_Missing_Quant_On_Input",          FLOAT,   "0.0"}, 
+
+    ccp = "Value_Missing_Quant_On_Input";
+    double_table.insert(ccp, BatchItemGet(ccp)->value.fvalue);
+
+    ccp = "Value_Missing_Affect_On_Input";
+    charstar_table.insert(ccp, BatchItemGet(ccp)->value.name);
+
+    extern char Str_Missing_Quant_On_Input[50];
+    ccp = "Str_Missing_Quant_On_Input";
+    charstar_table.insert(ccp, Str_Missing_Quant_On_Input);
+    extern char Str_Missing_Affect_On_Input[50];
+    ccp = "Str_Missing_Affect_On_Input";
+    charstar_table.insert(ccp, Str_Missing_Affect_On_Input);
+//
 
     MasterDB.commit();
 
@@ -309,6 +328,30 @@ void dbmisc_import(linkage_ped_top *Top) {
         warnvf("Database has no compression flag; assuming it is not compressed (i.e. 0)\n");
         dbCompress = 0;
     }
+
+
+//060519 newly added to database
+//  {"Value_Missing_Quant_On_Input",          FLOAT,   "0.0"}, 
+    const char *ccp;
+    ccp = "Value_Missing_Quant_On_Input";
+    double_table.get(ccp, BatchItemGet(ccp)->value.fvalue);
+
+    ccp = "Value_Missing_Affect_On_Input";
+    charstar_table.get(ccp, BatchItemGet(ccp)->value.name);
+
+    char *xp;
+    extern char Str_Missing_Quant_On_Input[50];
+    ccp = "Str_Missing_Quant_On_Input";
+    charstar_table.get(ccp, xp);
+    strcpy(Str_Missing_Quant_On_Input, xp);
+
+    extern char Str_Missing_Affect_On_Input[50];
+    ccp = "Str_Missing_Affect_On_Input";
+    charstar_table.get(ccp, xp);
+    strcpy(Str_Missing_Affect_On_Input, xp);
+
+//
+
 
 //needed
 

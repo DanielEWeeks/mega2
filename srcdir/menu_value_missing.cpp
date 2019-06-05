@@ -59,7 +59,7 @@
 extern Missing_Value missing_value;
 
 char Str_Missing_Quant_On_Input[50]   = "";
-char Str_Missing_Affect_on_Input[50]  = "";
+char Str_Missing_Affect_On_Input[50]  = "";
 char Str_Missing_Quant_On_Output[50]  = "";
 char Str_Missing_Affect_On_Output[50] = "";
 char Str_read[50] = "";
@@ -108,7 +108,7 @@ struct itl Value_Missing[]  =  {
     /*49,ln*/    {Value_Missing_Quant_On_Output,  0,  Str_Missing_Quant_On_Output,
      "Quantitative", "Output",  fix_Value_Missing_Quant_On_Output, 0, 0},
 
-    /*58,ln*/   {Value_Missing_Affect_On_Input,  0,  Str_Missing_Affect_on_Input,
+    /*58,ln*/   {Value_Missing_Affect_On_Input,  0,  Str_Missing_Affect_On_Input,
      "Affection", "Input",      fix_Value_Missing_Affect_On_Input, 0, 0},
 
     /*59,ln*/    {Value_Missing_Affect_On_Output, 1, Str_Missing_Affect_On_Output,

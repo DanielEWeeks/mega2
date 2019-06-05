@@ -1479,6 +1479,11 @@ int mega2(int argc, char **argv, char **env)
         }
     }
 
+//  if ( (parallel || CHR_list) && (InputMode == INTERACTIVE_INPUTMODE) ) { 
+         /* complete the batch file for all other analysis
+             but you still ahve to edit it to account for chr
+           */
+//  }
     if (database_read) {
         Tod tod_menu1a("menu1a");
         char *dbf = DBfile;
@@ -1642,11 +1647,13 @@ int mega2(int argc, char **argv, char **env)
         extern void strand_flip_reference_alleles(linkage_ped_top *Top);
         strand_flip_reference_alleles(LPedTreeTop);
 
+        /*
         //call to the menu to handle various job paralleling options
         if (parallel) {
             extern void set_job_manager_values();
             set_job_manager_values();
         }
+        */
 
         if (analysis->IsTypedNgeno() &&
             ( (LPedTreeTop->Ped == LPedTreeTop->PedBroken) || (recount_typed)) ) {
@@ -1678,9 +1685,6 @@ int mega2(int argc, char **argv, char **env)
                                                  linkage_ped_top *LPedTreeTop);
             set_file_names_and_paths(analysis, LPedTreeTop);
         }
-
-        if ( (parallel || CHR_list) && (InputMode == INTERACTIVE_INPUTMODE) )
-            return SUCCESS;
 
         /* Now to analysis-specific options */
         ped_ind_defaults(LPedTreeTop->UniqueIds, analysis);
