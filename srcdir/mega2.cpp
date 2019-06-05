@@ -728,10 +728,10 @@ int main(int argc, char **argv, char **env)
         // just generate a BATCH file
         mega2(argc, argv, env);
         printf("\n");
-        printf("The BATCH file, %s, was just created.  Please edited\n", Mega2Batch);
+        printf("The BATCH file %s was just created.  Please edit\n", Mega2Batch);
         printf("it to use the chromosome variables: ($0/%%0) and other script\n");
         printf("variables ($1, $2, ...) as necessary and rename the %s\n", Mega2Batch);
-        printf("file. Then rerun mega2 with the same options and the new\n");
+        printf("file. Then rerun Mega2 with the same options and the new\n");
         printf("BATCH file.\n");
         printf("\n");
         // and exit
