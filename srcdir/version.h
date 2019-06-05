@@ -40,9 +40,9 @@
  * whenever MEGA{VER,REV,PATCH} are changed.
  */
 
-#define MEGA2VER 5
+#define MEGA2VER 6
 #define MEGA2REV 0
-#define MEGA2PATCH 2
+#define MEGA2PATCH 0
 
 #define EXPIRE_YEAR 2019
 /* June */

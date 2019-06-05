@@ -59,7 +59,7 @@
 extern Missing_Value missing_value;
 
 char Str_Missing_Quant_On_Input[50]   = "";
-char Str_Missing_Affect_on_Input[50]  = "";
+char Str_Missing_Affect_On_Input[50]  = "";
 char Str_Missing_Quant_On_Output[50]  = "";
 char Str_Missing_Affect_On_Output[50] = "";
 char Str_read[50] = "";
@@ -108,7 +108,7 @@ struct itl Value_Missing[]  =  {
     /*49,ln*/    {Value_Missing_Quant_On_Output,  0,  Str_Missing_Quant_On_Output,
      "Quantitative", "Output",  fix_Value_Missing_Quant_On_Output, 0, 0},
 
-    /*58,ln*/   {Value_Missing_Affect_On_Input,  0,  Str_Missing_Affect_on_Input,
+    /*58,ln*/   {Value_Missing_Affect_On_Input,  0,  Str_Missing_Affect_On_Input,
      "Affection", "Input",      fix_Value_Missing_Affect_On_Input, 0, 0},
 
     /*59,ln*/    {Value_Missing_Affect_On_Output, 1, Str_Missing_Affect_On_Output,
@@ -356,11 +356,13 @@ static int fix_Value_Missing_check_numeric(analysis_type *analysis, struct itl *
     int qnum = 0;
     int num = 0;
     if (itp->it == Value_Missing_Quant_On_Input) {
-        if ((Input_Format != in_format_mega2 && Input_Format != in_format_imputed) ||
+        if ((Input_Format != in_format_mega2 && Input_Format != in_format_imputed &&
+             Input_Format != in_format_bgen  && Input_Format != in_format_bgen2) ||
             strcasecmp(value, "na"))
             qnum = 1;
     } else if (itp->it == Value_Missing_Affect_On_Input) {
-        if ((Input_Format != in_format_mega2 && Input_Format != in_format_imputed) ||
+        if ((Input_Format != in_format_mega2 && Input_Format != in_format_imputed &&
+             Input_Format != in_format_bgen  && Input_Format != in_format_bgen2) ||
             strcasecmp(value, "na")) {
             if (PLINK.plink || PLINK.xcf)
                 qnum = 1;
@@ -421,6 +423,8 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
         } else switch (Input_Format) {
         case in_format_mega2:
         case in_format_imputed:
+        case in_format_bgen:
+        case in_format_bgen2:
             itp->set = 1;
             itp->source = 9;
             df = "NA";
@@ -436,6 +440,7 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
         case in_format_binary_VCF:
         case in_format_compressed_VCF:
         case in_format_VCF:
+        case in_format_bcfs:
             itp->set = 1;
             if (PLINK.missing_pheno) {
                 itp->source = 2;
@@ -456,6 +461,8 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
         } else switch (Input_Format) {
         case in_format_mega2:
         case in_format_imputed:
+        case in_format_bgen:
+        case in_format_bgen2:
             itp->set = 1;
             itp->source = 9;
             df = "NA";
@@ -471,6 +478,7 @@ static void fix_Value_Missing_default(analysis_type *analysis, int vmidx)
         case in_format_binary_VCF:
         case in_format_compressed_VCF:
         case in_format_VCF:
+        case in_format_bcfs:
             itp->set = 1;
             if (PLINK.missing_pheno) {
                 itp->source = 2;
