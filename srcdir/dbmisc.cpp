@@ -339,7 +339,7 @@ void dbmisc_import(linkage_ped_top *Top) {
     ccp = "Value_Missing_Affect_On_Input";
     charstar_table.get(ccp, BatchItemGet(ccp)->value.name);
 
-    char *xp;
+    char *xp = (char *)"";
     extern char Str_Missing_Quant_On_Input[50];
     ccp = "Str_Missing_Quant_On_Input";
     charstar_table.get(ccp, xp);

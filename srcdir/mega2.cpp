@@ -696,7 +696,7 @@ void mega2_once(int argc, char *nargv[], char **env, const char *num, FILE *S)
 
         fprintf(S ? S : stderr, "%s\n", quep);
         if (S == NULL)
-            system(quep);
+            IgnoreValue(system(quep));
 
         return;
 
@@ -711,7 +711,7 @@ void mega2_once(int argc, char *nargv[], char **env, const char *num, FILE *S)
 
         fprintf(S ? S : stderr, "%s\n", C(str));
         if (S == NULL)
-            system(C(str));
+            IgnoreValue(system(C(str)));
     }
     return;
 }

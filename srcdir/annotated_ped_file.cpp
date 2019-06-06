@@ -5104,6 +5104,8 @@ read_hdr_annotated_map_file(linkage_locus_top *LTop, analysis_type analysis)
         pm_file = *(Input->input_files.pmapfl);
          m_file = *(Input->input_files.mapfl);
 
+        return (ext_linkage_locus_top *) NULL;
+
          // nothing to do.  Data are in m_file.  Only one map (genetic) is possible.
 
     } else if (Input_Format < 8 ||

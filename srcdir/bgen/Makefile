@@ -44,6 +44,9 @@ endif
 L0xFLAGS= -std=c++11
 CFLAGS += -D_mega2_ -Igenfile/include
 
+#ifeq ($(OSTYPE),linux)
+#CFLAGS +=  -Wimplicit-fallthrough=0
+#endif
 ifeq ($(OSTYPE),msys2_7)
 CFLAGS +=  -Wimplicit-fallthrough=0
 endif

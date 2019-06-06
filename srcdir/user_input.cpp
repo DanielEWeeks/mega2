@@ -3426,7 +3426,7 @@ extern ext_linkage_locus_top *read_hdr_annotated_map_file(linkage_locus_top *LTo
 
     Top.EXLTop = read_hdr_annotated_map_file(Top.LocusTop, *analysis);
 
-    distance_init_dump(&Top, analysis);
+    if (Top.EXLTop) distance_init_dump(&Top, analysis);
 
     just_gen_batch_file = 0;
 
