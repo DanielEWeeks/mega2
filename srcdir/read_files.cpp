@@ -113,7 +113,7 @@ linkage_ped_top *read_linkage2(char *pedfl_name, char *locusfl_name,
 			       char *omitfl_name, char *mapfl_name,
 			       int untyped_ped_opt,
 			       analysis_type analysis);
-static ext_linkage_locus_top *read_map_file(char *mapfl_name,  linkage_locus_top *LTop1);
+ext_linkage_locus_top *read_map_file(char *mapfl_name,  linkage_locus_top *LTop1);
 linkage_ped_top *read_linkage_ped_file(FILE *filep, linkage_locus_top *LTop, int *col2loc);
 
 void check_size_dos(void);
@@ -2717,7 +2717,7 @@ static  ext_linkage_locus_top *make_EXLTop_from_LTop(linkage_locus_top *LTop, in
    to  include reeading in a 4th column of genotyping error
    probabilities, only if the heading has a 4th keyword called
    error (case-insensitive) */
-static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top *LTop1)
+ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top *LTop1)
 {
     /* check the map file for the following :
        ERRORS:
@@ -2788,6 +2788,18 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
         }
     }
 
+    if (!strncasecmp(CM, "kosambi", (size_t)7)) {
+        LTop1->map_distance_type = 'k';
+    } else {
+        LTop1->map_distance_type = 'h';
+    }
+
+    extern int just_gen_batch_file;
+    if (just_gen_batch_file) {
+        fclose(filep);
+        return make_EXLTop_from_LTop(LTop1, male_col, female_col);
+    }
+
     // Read the entire file once to decide the maximum chromosome value.
     // This will be the first value (column) in each data line (row).
     // Also to decide number of unmapped loci (second field == UNKNOWN_CHROMO.
@@ -2801,11 +2813,6 @@ static ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top 
     }
     /*  printf("largest chromosome number %d\n", MaxChromo); */
     fclose(filep);
-    if (!strncasecmp(CM, "kosambi", (size_t)7)) {
-        LTop1->map_distance_type = 'k';
-    } else {
-        LTop1->map_distance_type = 'h';
-    }
 
     for (i = 0; i < LTop1->LocusCnt; i++) {
         LTop1->Locus[i].number = -1; /* Not in map file to begin with */

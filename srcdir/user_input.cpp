@@ -3421,13 +3421,15 @@ extern ext_linkage_locus_top *read_hdr_annotated_map_file(linkage_locus_top *LTo
     LTop.MarkerCnt = 0;
 
     extern int just_gen_batch_file;
-
     just_gen_batch_file = 1;
-
     Top.EXLTop = read_hdr_annotated_map_file(Top.LocusTop, *analysis);
 
-    if (Top.EXLTop) distance_init_dump(&Top, analysis);
-
+    if (Input_Format == in_format_linkage ||
+        Input_Format == in_format_extended_linkage) {
+        // already done
+    } else
+        distance_init_dump(&Top, analysis);
+    
     just_gen_batch_file = 0;
 
 }

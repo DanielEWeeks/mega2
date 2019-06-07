@@ -4992,8 +4992,8 @@ ext_linkage_locus_top *
 read_hdr_annotated_map_file(linkage_locus_top *LTop, analysis_type analysis)
 {
     plink_info_type plink_info;
-    const char *pm_file = 0;
-    const char * m_file = 0;
+    char *pm_file = 0;
+    char * m_file = 0;
     int i = 0;
 
     if (Input_Format == in_format_mega2) {
@@ -5104,9 +5104,8 @@ read_hdr_annotated_map_file(linkage_locus_top *LTop, analysis_type analysis)
         pm_file = *(Input->input_files.pmapfl);
          m_file = *(Input->input_files.mapfl);
 
-        return (ext_linkage_locus_top *) NULL;
-
-         // nothing to do.  Data are in m_file.  Only one map (genetic) is possible.
+        extern ext_linkage_locus_top *read_map_file(char *mapfl_name, linkage_locus_top *LTop1);
+        return read_map_file(m_file, LTop);
 
     } else if (Input_Format < 8 ||
                Input->GetOps()->use_getops() ||
