@@ -817,6 +817,8 @@ static void menu1_batch_set_outfiles(char **output_path, char **db_name)
     int ir = Mega2BatchItems[/* 33 */ Output_Path].items_read;
     if (ir)
         opp = Mega2BatchItems[/* 33 */ Output_Path].value.name;
+    if (strcmp(opp, ".") == 0 || strcmp(opp, "./") == 0)
+        ir = 0;
 
     if (CHR_ && *CHR_ != 0) {
         if (Dname) {
@@ -4121,7 +4123,7 @@ void job_manager_menus() {
                 set = select1;
 
                 _job_manager_index = set;
-                BatchValueSet(_job_manager_index, "Job_Manager_Index");
+//                BatchValueSet(_job_manager_index, "Job_Manager_Index");
             }
 
             //only want this menu for option 2 and 3
@@ -4152,7 +4154,7 @@ void job_manager_menus() {
                         fcmap(stdin, "%d", &nodememory);
 
                         _job_manager_mem   = nodememory;
-                        BatchValueSet(_job_manager_mem,   "Job_Manager_Memory");
+//                        BatchValueSet(_job_manager_mem,   "Job_Manager_Memory");
 
                         newline;
                     } else if (select2 == argchoice) {
@@ -4163,7 +4165,7 @@ void job_manager_menus() {
                         additional_program_args = selectionp;
 
                         _job_manager_args  = additional_program_args;
-                        BatchValueSet(_job_manager_args,  "Job_Manager_Additional_Args");
+//                        BatchValueSet(_job_manager_args,  "Job_Manager_Additional_Args");
                     }
                 }
                 select2 = -1;
