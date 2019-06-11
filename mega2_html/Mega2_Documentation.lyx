@@ -847,7 +847,65 @@ https://bioconductor.org/packages/release/bioc/html/gdsfmt.html
 
 \end_inset
 
-).
+)
+\end_layout
+
+\begin_layout Subsection
+Overview of Mega2P
+\end_layout
+
+\begin_layout Standard
+Mega2P is the same program as Mega2, but we give it a different name to
+ emphasize that Mega2 has been augmented.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+P
+\begin_inset Quotes erd
+\end_inset
+
+ is for parallel; Mega2P can create a database or perform an analysis on
+ multiple chromosomes at the same time using either the Sun Grid Engine
+ or SLURM.
+ Simply put today's datasets are rather large and it is very typical to
+ get VCF data with a separate file (or even multiple files) per chromosome;
+ the same is true for IMPUTE files.
+ With data in this format, it makes sense to load each chromosome into a
+ separate Mega2 database.
+ The data loading can be done for many chromosomes at the same time depending
+ on how many compute processors are available.
+ The same level of parallelism is available for data analysis.
+ We will run Mega2 with the same options and menus as always, but now we
+ will specify which chromosomes to process and add a few extra parameters
+ to control the compute engine.
+\end_layout
+
+\begin_layout Standard
+The most up to date Mega2P documentation is available at 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://watson.hgen.pitt.edu/mega2/mega2p"
+target "https://watson.hgen.pitt.edu/mega2/mega2p"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The most up to date Mega2P code is available at via the Bitbucket git repository
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset href
+LatexCommand href
+name "https://bitbucket.org/dweeks/mega2"
+target "https://bitbucket.org/dweeks/mega2"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -1302,6 +1360,124 @@ Recent improvements and changes
 \end_layout
 
 \begin_layout Subsection
+Enhancements in Mega2 version 6.0.0
+\end_layout
+
+\begin_layout Itemize
+Create a manual to explain and illustrate parallel execution of Mega2.
+\end_layout
+
+\begin_layout Itemize
+Mega2 now supports parallel execution to create multiple databases partitioned
+ by chromosome and to use the databases to proceed to run multiple analysis
+ by chromosome.
+ It currently works with the Sun Grid Engine and SLURM (qsub/srun).
+ Features:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+special command line arguments: --parallel/--chr/-e...
+ {<batch file> or "none"}.
+\end_layout
+
+\begin_layout Itemize
+create distinct build directory <jobname>/<output_dir>/chr<chrm> to avoid
+ need for locking.
+\end_layout
+
+\begin_layout Itemize
+Create a BATCH file w/o running a complete (long) analysis (like reading
+ genotypes)
+\end_layout
+
+\begin_layout Itemize
+Since DUMP analysis needs to ask for a choice of Maps, it is necessary to
+ process the map file independent and before all the other file processings.
+ It was necessary to Pull the necessary code out of the read_annotated_files()
+ and read_linkage2() for the mega2 annotate style map and LINKAGE format
+ map, respectively.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Support: Microsoft WSL (Windows Subsystem for Linux).
+ In this case, we enable the feature and load Ubuntu linux onto Windows
+ and then build Mega2 on Ubuntu.
+ Checkout 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Windows-Subsystem-Linux-installation"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Support: Makefile -j<n> for parallel Mega2 compilation.
+ For your enjoyment, try 
+\begin_inset Quotes eld
+\end_inset
+
+make -j20
+\begin_inset Quotes erd
+\end_inset
+
+ if you machine has that many processors.
+\end_layout
+
+\begin_layout Itemize
+Upgrade: Add missing flag definitions to --help print out and group print
+ out into sections.
+\end_layout
+
+\begin_layout Itemize
+Upgrade: Update "example" directory for create database/use database version
+ of Mega2; see 00README.txt.
+\end_layout
+
+\begin_layout Itemize
+Upgrade: Add InputMissingValues for Quant and Affect to database so the
+ values can be accessed as defaults in analysis.
+\end_layout
+
+\begin_layout Itemize
+Upgrade: Use same menu id (input_format) for BCFS, gzcfs and vcfs distinguished
+ by file name suffix.
+\end_layout
+
+\begin_layout Itemize
+Bug: Use SAMPLEID from .phe for read_bcfs if BCF_Sample_Style is 1, else
+ use <pedigree>_<person> as sampleid when BCF_Sample_Style is 2 else use
+ <person> as sampleid when BCF_Sample_Style is 3.
+ You can not assume that people in the .fam file match the sample ordering
+ in the VCF/BCF file.
+\end_layout
+
+\begin_layout Itemize
+Bug: Generate a simple .fam file for bcf if it is not provided.
+\end_layout
+
+\begin_layout Itemize
+Bug: On Centos, you must close() Errlog & Log before moving them (see mega2log2h
+tml.pl).
+\end_layout
+
+\begin_layout Itemize
+Note: db_exists_db() will always create a file of the name of the database
+ even if the database is 
+\begin_inset Quotes eld
+\end_inset
+
+empty
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
 Enhancements in Mega2 version 5.0.1
 \end_layout
 
@@ -1422,7 +1598,7 @@ Mega2R now 'enhances' GenABEL instead of requires GenABEL because the GenABEL
 
 \begin_layout Itemize
 There is no Mega2 program compiled using the native Microsoft compilers.
- This should be available in release 5.0.1.
+ This should be available in release 6.0.0.
  For the present, you should use Msys2 Mega2 instead.
 \end_layout
 
@@ -1815,7 +1991,7 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 5.0.1 database mode menu: 
+Mega2 6.0.0 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -1827,7 +2003,7 @@ Mega2 5.0.1 database mode menu:
 \end_layout
 
 \begin_layout LyX-Code
- 1) Select Mega2 database create mode
+ 1) Select Mega2 database create mode1
 \end_layout
 
 \begin_layout LyX-Code
@@ -1882,7 +2058,7 @@ reference "sec:The-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 5.0.1 file input menu:
+              Mega2 6.0.0 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -2023,7 +2199,7 @@ database menu
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 5.0.1 database mode menu: 
+Mega2 6.0.0 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2080,7 +2256,7 @@ reference "sec:The-alternate-input-menu"
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 5.0.1 database input menu: 
+Mega2 6.0.0 database input menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -2349,12 +2525,12 @@ target "http://doi.org/10.1186/s13029-014-0026-y"
 
 \begin_layout Standard
 as well as citing the web site and the version that you used.
- For example, the web site citation for version 5.0.1 should be: 
+ For example, the web site citation for version 6.0.0 should be: 
 \end_layout
 
 \begin_layout Quote
 Baron RV, Kollar CP, Mukhopadhyay N, Almasy L, Schroeder M, Mulvihill WP,
- Weeks DE (2018) Mega2 (Version 5.0.1).
+ Weeks DE (2018) Mega2 (Version 6.0.0).
  
 \begin_inset Flex URL
 status open
@@ -2651,7 +2827,7 @@ https://watson.hgen.pitt.edu/register
 \end_layout
 
 \begin_layout Standard
-The latest version is 5.0.1 
+The latest version is 6.0.0 
 \end_layout
 
 \begin_layout Enumerate
@@ -2664,7 +2840,7 @@ Download the Mega2 distribution package:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v5.0.1_src.tar.gz
+mega2_v6.0.0_src.tar.gz
 \end_layout
 
 \end_deeper
@@ -2679,7 +2855,7 @@ Uncompress the package using the "gunzip" Unix command.
 
 \begin_deeper
 \begin_layout LyX-Code
-gunzip mega2_v5.0.1_src.tar.gz 
+gunzip mega2_v6.0.0_src.tar.gz 
 \end_layout
 
 \end_deeper
@@ -2693,7 +2869,7 @@ Untar the result using the "tar" Unix command:
 
 \begin_deeper
 \begin_layout LyX-Code
-tar xvf mega2_v5.0.1_src.tar 
+tar xvf mega2_v6.0.0_src.tar 
 \end_layout
 
 \begin_layout Standard
@@ -2701,7 +2877,7 @@ NOTE: You may combine the above two steps via a single command:
 \end_layout
 
 \begin_layout Standard
-tar xzvf mega2_v5.0.1_src.tar.gz 
+tar xzvf mega2_v6.0.0_src.tar.gz 
 \end_layout
 
 \begin_layout Standard
@@ -2714,7 +2890,7 @@ The "z" instructs tar that it is a compressed archive.
 \begin_layout Enumerate
 At this point, you should see a new folder named 
 \series bold
-mega2_v5.0.1_src
+mega2_v6.0.0_src
 \series default
 .
  This is the "distribution folder" which contains all the necessary components
@@ -2894,7 +3070,7 @@ Contents of a binary package
 \end_layout
 
 \begin_layout Standard
-If you downloaded and unpacked the mega2_v5.0.1_src.tar.gz bundle following
+If you downloaded and unpacked the mega2_v6.0.0_src.tar.gz bundle following
  the download section (
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -2902,13 +3078,13 @@ reference "subsec:Download-Instructions"
 
 \end_inset
 
-), you should see a directory named mega2_v5.0.1_src containing the following
+), you should see a directory named mega2_v6.0.0_src containing the following
  directories (in bold) or files listed in alphabetical order:
 \end_layout
 
 \begin_layout Quotation
 \begin_inset Tabular
-<lyxtabular version="3" rows="21" columns="2">
+<lyxtabular version="3" rows="25" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="2in">
 <column alignment="left" valignment="top" width="4in">
@@ -2972,11 +3148,10 @@ example
 
 \begin_layout Plain Layout
 Directory containing example data and batch files.
- The MEGA2.BATCH.post creates output files for the Cranefoot option and the
- other MEGA2.BATCH.* files create output files for the Mendel option.
- The last four batch files below: MEGA2.BATCH_pre, MEGA2.BATCH_ped, MEGA2.BATCH_bed
-, and MEGA2.BATCH_preannotated, run on the equivalent pre-makeped input files
- and will produce equivalent results.
+ The MEGA2.BATCH_post2cranefoot creates output files for the Cranefoot analysis
+ and the other MEGA2.BATCH_*2mendel files create output files for the Mendel
+ option.
+ 
 \end_layout
 
 \end_inset
@@ -2999,7 +3174,7 @@ example_output_post
 
 \begin_layout Plain Layout
 Folder containing output files created by running mega2 on the *.ex files
- using the MEGA2.BATCH.post batch file.
+ using the MEGA2.BATCH_post batch file.
 \end_layout
 
 \end_inset
@@ -3022,7 +3197,7 @@ example_output_annotated
 
 \begin_layout Plain Layout
 Folder containing output files created by running with mega2 input files,
- using the batch file MEGA2.BATCH.annotated.
+ using the batch file MEGA2.BATCH_annotated.
  
 \end_layout
 
@@ -3046,7 +3221,7 @@ example_output_pre
 
 \begin_layout Plain Layout
 Folder containing output files created by running mega2 on chromosome 5
- data using the MEGA2.BATCH.pre batch file from the example folder.
+ data using the MEGA2.BATCH_pre batch file from the example folder.
 \end_layout
 
 \end_inset
@@ -3069,7 +3244,7 @@ example_output_ped
 
 \begin_layout Plain Layout
 Folder containing output files created by running mega2 with PLINK PED input
- files, using the batch file MEGA2.BATCH.ped.
+ files, using the batch file MEGA2.BATCH_ped.
 \end_layout
 
 \end_inset
@@ -3092,14 +3267,14 @@ example_output_bed
 
 \begin_layout Plain Layout
 Folder containing output files created by running mega2 with PLINK binary
- input files, using the batch file MEGA2.BATCH.bed.
+ input files, using the batch file MEGA2.BATCH_bed.
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3110,19 +3285,111 @@ example_output_preannotated
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Folder containing output files created by running mega2 with mega2 input
- files, using the batch file MEGA2.BATCH.preannotated.
+ files, using the batch file MEGA2.BATCH_preannotated.
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+example_output_bcf
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Folder containing output files created by running mega2 with binary VCF
+ input files, using the batch file MEGA2.BATCH_bcf.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+example_output_bcf2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Folder containing output files created by running mega2 with binary BCF
+ input files version 2.2 or greater, using the batch file MEGA2.BATCH_bcf2.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+example_output_impute
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Folder containing output files created by running mega2 with IMPUTE2 input
+ files, using the batch file MEGA2.BATCH_impute.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+example_output_vcf
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Folder containing output files created by running mega2 with easily readable
+ VCF input files, using the batch file MEGA2.BATCH_vcf.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3131,7 +3398,7 @@ install.sh
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3579,7 +3846,7 @@ Installing Mega2
 \begin_layout Standard
 To install the mega2 executable, Perl scripts and nplplot, from within the
  Mega2 package folder (i.e.
- mega2_v5.0.1_src in above step), type the command:
+ mega2_v6.0.0_src in above step), type the command:
 \end_layout
 
 \begin_layout LyX-Code
@@ -3630,7 +3897,7 @@ name "subsec:Compiling-and-Installing"
 \end_layout
 
 \begin_layout Standard
-The mega2_v5.0.1_src.tar.gz package also includes a source code folder "srcdir"
+The mega2_v6.0.0_src.tar.gz package also includes a source code folder "srcdir"
  containing C source files, a Makefile, and several OS-specific Makedefs
  files that define compilation flags that govern locations of standard C
  libraries, and other OS-specific behavior.
@@ -3645,7 +3912,7 @@ To compile Mega2 follow these steps:
 \end_layout
 
 \begin_layout Enumerate
-From within the mega2_v5.0.1_src folder, type 
+From within the mega2_v6.0.0_src folder, type 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -3723,7 +3990,7 @@ Running Mega2 on Your Data
 Familiarize yourself by running Mega2 on the example data provided.
 \end_layout
 
-\begin_layout Enumerate
+\begin_layout Itemize
 cd into the 
 \series bold
 example/
@@ -3731,159 +3998,328 @@ example/
  folder.
 \end_layout
 
-\begin_layout Enumerate
+\begin_layout Itemize
 Check its contents by using the ls command.
-\begin_inset Separator latexpar
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Standard
-The 
+ The 
 \series bold
 example
 \series default
 / folder contains the following files:
 \end_layout
 
-\begin_layout Standard
-datain.05
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_annotated
 \end_layout
 
-\begin_layout Standard
-map.05
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_annotated2mendel
 \end_layout
 
-\begin_layout Standard
-MEGA2.BATCH.post
-\end_layout
-
-\begin_layout Standard
-datain.ex
-\end_layout
-
-\begin_layout Standard
-pedin.ex
-\end_layout
-
-\begin_layout Standard
-map.ex
-\end_layout
-
-\begin_layout Standard
-omit.ex
-\end_layout
-
-\begin_layout Standard
-pedin.pre.05
-\end_layout
-
-\begin_layout Standard
-MEGA2.BATCH.pre
-\end_layout
-
-\begin_layout Standard
-names.annotated
-\end_layout
-
-\begin_layout Standard
-frequency.annotated
-\end_layout
-
-\begin_layout Standard
-penetrance.annotated
-\end_layout
-
-\begin_layout Standard
-map.annotated
-\end_layout
-
-\begin_layout Standard
+\begin_layout Itemize
 pedin.annotated
 \end_layout
 
-\begin_layout Standard
-MEGA2.BATCH.annotated
+\begin_layout Itemize
+names.annotated
 \end_layout
 
-\begin_layout Standard
-names.preannotated
+\begin_layout Itemize
+map.annotated
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 frequency.annotated
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 penetrance.annotated
 \end_layout
 
-\begin_layout Standard
-map.preannotated
+\end_deeper
+\begin_layout Itemize
+MEGA2.BATCH_bed
 \end_layout
 
-\begin_layout Standard
-pedin.preannotated
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_bed2mendel 
 \end_layout
 
-\begin_layout Standard
-MEGA2.BATCH.preannotated
-\end_layout
-
-\begin_layout Standard
-ped.ped
-\end_layout
-
-\begin_layout Standard
-ped.map
-\end_layout
-
-\begin_layout Standard
-ped.phe
-\end_layout
-
-\begin_layout Standard
-ped.frequency
-\end_layout
-
-\begin_layout Standard
-ped.penetrance
-\end_layout
-
-\begin_layout Standard
-MEGA2.BATCH.ped
-\end_layout
-
-\begin_layout Standard
+\begin_layout Itemize
 bed.fam
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
+bed.bim
+\end_layout
+
+\begin_layout Itemize
 bed.bed
 \end_layout
 
-\begin_layout Standard
-bed.map
-\end_layout
-
-\begin_layout Standard
+\begin_layout Itemize
 ped.phe
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 ped.frequency
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 ped.penetrance
 \end_layout
 
-\begin_layout Standard
-MEGA2.BATCH.bed 
+\end_deeper
+\begin_layout Itemize
+MEGA2.BATCH_ped
 \end_layout
 
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_ped2mendel 
+\end_layout
+
+\begin_layout Itemize
+ped.ped
+\end_layout
+
+\begin_layout Itemize
+ped.map
+\end_layout
+
+\begin_layout Itemize
+ped.phe
+\end_layout
+
+\begin_layout Itemize
+ped.frequency
+\end_layout
+
+\begin_layout Itemize
+ped.penetrance
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+MEGA2.BATCH_post
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_post2mendel
+\end_layout
+
+\begin_layout Itemize
+MEGA2.BATCH_post2cranefoot
+\end_layout
+
+\begin_layout Itemize
+datain.ex
+\end_layout
+
+\begin_layout Itemize
+pedin.ex
+\end_layout
+
+\begin_layout Itemize
+omit.ex
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+MEGA2.BATCH_pre
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_pre2mendel
+\end_layout
+
+\begin_layout Itemize
+pedin.pre.05
+\end_layout
+
+\begin_layout Itemize
+map.05
+\end_layout
+
+\begin_layout Itemize
+datain.05
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+MEGA2.BATCH_preannotated
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_preannotated2mendel
+\end_layout
+
+\begin_layout Itemize
+pedin.preannotated
+\end_layout
+
+\begin_layout Itemize
+names.preannotated
+\end_layout
+
+\begin_layout Itemize
+map.preannotated
+\end_layout
+
+\begin_layout Itemize
+frequency.annotated
+\end_layout
+
+\begin_layout Itemize
+penetrance.annotated
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+MEGA2.BATCH_bcf
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_bcf2mendel
+\end_layout
+
+\begin_layout Itemize
+bed.fam
+\end_layout
+
+\begin_layout Itemize
+map.preannotated
+\end_layout
+
+\begin_layout Itemize
+study.bcf
+\end_layout
+
+\begin_layout Itemize
+study.phe
+\end_layout
+
+\begin_layout Itemize
+study.freq
+\end_layout
+
+\begin_layout Itemize
+study.pen
+\end_layout
+
+\begin_layout Itemize
+study.bcf.bcfidx
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+MEGA2.BATCH_vcf
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_vcf2mendel
+\end_layout
+
+\begin_layout Itemize
+bed.fam
+\end_layout
+
+\begin_layout Itemize
+map.preannotated
+\end_layout
+
+\begin_layout Itemize
+study.vcf
+\end_layout
+
+\begin_layout Itemize
+study.freq
+\end_layout
+
+\begin_layout Itemize
+study.pen
+\end_layout
+
+\begin_layout Itemize
+study.phe
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+MEGA2.BATCH_impute
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_impute2mendel
+\end_layout
+
+\begin_layout Itemize
+impute.impute
+\end_layout
+
+\begin_layout Itemize
+map.preannotated
+\end_layout
+
+\begin_layout Itemize
+impute.sample
+\end_layout
+
+\begin_layout Itemize
+study.freq
+\end_layout
+
+\begin_layout Itemize
+study.pen
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+MEGA2.BATCH_bcf2
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+MEGA2.BATCH_bcf22mendel
+\end_layout
+
+\begin_layout Itemize
+bed.fam
+\end_layout
+
+\begin_layout Itemize
+map.preannotated
+\end_layout
+
+\begin_layout Itemize
+studyBCF2.bcf
+\end_layout
+
+\begin_layout Itemize
+studyBCF2.bcf.csi
+\end_layout
+
+\begin_layout Itemize
+study.phe
+\end_layout
+
+\begin_layout Itemize
+study.freq
+\end_layout
+
+\begin_layout Itemize
+study.pen
+\end_layout
+
+\end_deeper
 \end_deeper
 \begin_layout Standard
 These constitute several sets of the preexisting Mega2 format data files,
@@ -3897,9 +4333,41 @@ These constitute several sets of the preexisting Mega2 format data files,
  It uses the datain.05 locus data file.
  The Mega2 data set was created by running the python script linkage_to_annotate
 d.py on the ".05" data set.
+ There also are samples of PLINK and IMPUTE2 data being processed.
 \end_layout
 
-\begin_layout Enumerate
+\begin_layout Standard
+The MEGA2.BATCH_<XYZ> file processes input of the files (and format) as shown
+ above and produces a database.
+ The MEGA2.BATCH_<XYZ>2mendel takes the database that was produced from 
+\begin_inset Quotes eld
+\end_inset
+
+<XYZ>
+\begin_inset Quotes erd
+\end_inset
+
+ input and uses it to produces 
+\begin_inset Quotes eld
+\end_inset
+
+mendel
+\begin_inset Quotes erd
+\end_inset
+
+ analysis with metadata.
+ In the example below, <XYZ> is 
+\begin_inset Quotes eld
+\end_inset
+
+pre
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Run mega2, by simply issuing the command mega2 without any arguments, or
  you may run it using one of the batch files:
 \begin_inset Separator latexpar
@@ -3908,7 +4376,6 @@ Run mega2, by simply issuing the command mega2 without any arguments, or
 
 \end_layout
 
-\begin_deeper
 \begin_layout LyX-Code
 mega2 
 \emph on
@@ -3927,7 +4394,7 @@ status collapsed
 
 -DBdump
 \emph default
- MEGA.BATCH.pre               then
+ MEGA.BATCH_pre               then
 \end_layout
 
 \begin_layout LyX-Code
@@ -3948,94 +4415,44 @@ status collapsed
 
 -DB
 \emph default
-read MEGA.BATCH.pre
+read MEGA.BATCH_pre2mendel
 \end_layout
 
 \begin_layout Standard
-Your own data can be run exactly as above
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-Alternatively, you may enter 
+Your own data can be run exactly as above.
 \end_layout
 
-\begin_layout LyX-Code
-mega2 
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--DBdump
-\emph default
- 
-\emph on
--
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-/
-\end_layout
-
-\end_inset
-
--DB
-\emph default
-read MEGA.BATCH.pre
-\end_layout
-
-\begin_layout Plain Layout
-all these flags are explained later.
-\end_layout
-
-\end_inset
-
-; simply change into your data folder, and run Mega2.
- 
-\end_layout
-
-\end_deeper
-\begin_layout Enumerate
+\begin_layout Standard
 Example Output:
-\begin_inset Separator latexpar
-\end_inset
-
-
 \end_layout
 
-\begin_deeper
 \begin_layout Standard
-\noindent
-\align left
-The example_output_pre, example_output_post, example_output_annotated, example_o
-utput_ped, example_output_bed and example_output_preannotated directories
- contain output from Mega2 when run using the MEGA2.BATCH.pre, MEGA2.BATCH.post,
- MEGA2.BATCH.annotated, MEGA2.BATCH.ped, MEGA2.BATCH.bed and MEGA2.BATCH.preannotated
- batch files, respectively, in the example/ directory.
- 
+The directories below contain the metadata and real data from the mendel
+ analyses: example_output_annotated, example_output_bcf, example_output_bcf2,
+ example_output_bed, example_output_bed1, example_output_impute, example_output_
+ped, example_output_post, example_output_pre, example_output_preannotated,
+ and example_output_vcf.
 \end_layout
 
-\end_deeper
+\begin_layout Standard
+The directories below contain the metadata from the database creation runs:
+ example_db_annotated, example_db_bcf, example_db_bcf2, example_db_bed,
+ example_db_impute, example_db_ped, example_db_post, example_db_pre, example_db_
+preannotated, and example_db_vcf.
+\end_layout
+
+\begin_layout Standard
+The actual databases are stored in the example_db/ directory named: dbAnnotated.d
+b, dbBcf.db, dbBcf2.db, dbBed.db, dbImpute.db, dbPed.db, dbPost.db, dbPre.db, dbPreanno
+tated.db, and dbVcf.db, 
+\end_layout
+
 \begin_layout Subsection
 Mega2 Documentation
 \end_layout
 
 \begin_layout Standard
-The sub-folder called mega2_html/ within the mega2_v5.0.1_src folder contains
+The sub-folder called mega2_html/ within the mega2_v6.0.0_src folder contains
  documentation for mega2.
  The Mega2 documentation is also available on-line at 
 \end_layout
@@ -4702,7 +5119,7 @@ You need to have registered your e-mail before you can download software
 \end_layout
 
 \begin_layout Enumerate
-The Mega2 distribution package is named mega2_v5.0.1_src.tar.gz.
+The Mega2 distribution package is named mega2_v6.0.0_src.tar.gz.
  Download this package into your Downloads folder.
 \end_layout
 
@@ -4717,7 +5134,7 @@ Depending on your browser settings, Windows may automatically untar the
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v5.0.1_src.tar
+mega2_v6.0.0_src.tar
 \end_layout
 
 \end_deeper
@@ -4743,7 +5160,7 @@ Note: In some cases, your file may be downloaded as:
 
 \begin_deeper
 \begin_layout LyX-Code
-mega2_v5.0.1_src.tar.tar
+mega2_v6.0.0_src.tar.tar
 \end_layout
 
 \begin_layout Standard
@@ -4751,7 +5168,7 @@ instead of as:
 \end_layout
 
 \begin_layout LyX-Code
-mega2_v5.0.1_src.tar.gz
+mega2_v6.0.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -4759,7 +5176,7 @@ If that happens, then rename the “tar.tar” file as follows:
 \end_layout
 
 \begin_layout LyX-Code
-mv mega2_v5.0.1_src.tar.tar mega2_v5.0.1_src.tar.gz
+mv mega2_v6.0.0_src.tar.tar mega2_v6.0.0_src.tar.gz
 \end_layout
 
 \begin_layout Standard
@@ -11817,9 +12234,12 @@ target "http://en.wikipedia.org/wiki/Variant_Call_Format"
 \begin_layout Standard
 Mega2 currently uses two applications for parsing VCF and BCF files, these
  are VCFtools and BCFtools.
- The former is called the 'legacy' mode because it reads the earlier BCF
- format 2.1 bcf files, while the later reads the current BCF format files
- (v2.2 and higher).
+ The former is called 
+\end_layout
+
+\begin_layout Standard
+the 'legacy' mode because it reads the earlier BCF format 2.1 bcf files,
+ while the later reads the current BCF format files (v2.2 and higher).
  
 \end_layout
 
@@ -11896,19 +12316,11 @@ reference "par:VCF_Args"
 \end_layout
 
 \begin_layout Standard
-For these three input options
+For newer BCF input options, we use one menu item:
 \end_layout
 
 \begin_layout LyX-Code
-* BCF v2.2 or higher (bcf)
-\end_layout
-
-\begin_layout LyX-Code
-* VCF compressed format (vcf.gz)
-\end_layout
-
-\begin_layout LyX-Code
-* VCF format (vcf)
+* BCF v2.2 or higher (bcf, vcf.gz, or vcf)
 \end_layout
 
 \begin_layout Standard
@@ -11965,7 +12377,7 @@ reference "subsec:VCF-Pedigree-File"
 \end_layout
 
 \begin_layout Standard
-Mega2 and the 'vcftools' program will accept variant call input files in
+Mega2 and the 'vcftools' library will accept variant call input files in
  one of three formats: text only (VCF), gzipped compressed text only (VCF.gz),
  or binary (BCF).
  The variant call file format is specified using the appropriate menu in
@@ -11985,6 +12397,9 @@ reference "par:Input_Format_Type"
 
 ) set to the values of: 5 for a .bcf (binary) file, 6 for a .vcf.gz (compressed
  text) file, and 7 for a .vcf (text) file.
+ The 'bcftools' library is newer and more clever.
+ It needs only one Input_Format_Type and determines the which of the three
+ file formats is desired by examining the file.
 \end_layout
 
 \begin_layout Standard
@@ -14240,7 +14655,7 @@ database mode
 \end_layout
 
 \begin_layout LyX-Code
-Mega2 5.0.1 database mode menu: 
+Mega2 6.0.0 database mode menu: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -14544,7 +14959,7 @@ When entering the file input menu, Mega2 initially expects to read input
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 5.0.1 file input menu:
+              Mega2 6.0.0 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -14648,7 +15063,7 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-             Mega2 5.0.1 input file type menu:
+             Mega2 6.0.0 input file type menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -14704,19 +15119,11 @@ Line 1
 \end_layout
 
 \begin_layout LyX-Code
-12) BCF v2.2 or higher (bcf) 
+12) BCF v2.2 or higher (bcf, vcf.gz or vcf) 
 \end_layout
 
 \begin_layout LyX-Code
-13) VCF compressed format (vcf.gz) 
-\end_layout
-
-\begin_layout LyX-Code
-14) VCF format (vcf)
-\end_layout
-
-\begin_layout LyX-Code
-Select from options 1-14 >
+Select from options 1-12 >
 \end_layout
 
 \begin_layout Standard
@@ -14736,7 +15143,7 @@ For example, selecting
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 5.0.1 file input menu:
+              Mega2 6.0.0 file input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -14858,7 +15265,7 @@ Mega2 format with header
 
 \begin_layout LyX-Code
 \begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="2">
+<lyxtabular version="3" rows="12" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="left" valignment="top">
@@ -15099,6 +15506,43 @@ status collapsed
 
 \begin_layout Plain Layout
 BCF format (bcf)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\emph on
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+
+\emph default
+-bcf2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BCF format (v2.2 or greater)
 \end_layout
 
 \end_inset
@@ -16809,377 +17253,86 @@ reference "subsec:VCF-file-formats"
 BCF v2.2 or higher menu
 \end_layout
 
-\begin_layout Standard
-\begin_inset Tabular
-<lyxtabular version="3" rows="18" columns="2">
-<features tabularvalignment="middle">
-<column alignment="left" valignment="top">
-<column alignment="left" valignment="top">
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0) Done with this menu 
+\begin_layout LyX-Code
+1) Select input file format:                 BCF v2.2 or higher (bcf, vcf.gz
+ or vcf)
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-please proceed 
+\begin_layout LyX-Code
+ 2) PLINK phenotype parameters:                --missing-phenotype -9 --trait
+ default
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1) Select input file format: 
+\begin_layout LyX-Code
+ 3) Input file stem:                          -
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BCF v2.2 or higher (bcf) 
+\begin_layout LyX-Code
+ 4) BCFtools Parameters                       -m2 -M2 -v snps -c 1
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2) Enter PLINK phenotype parameters:
+\begin_layout LyX-Code
+ 5) Data file or Manifest file:    [required] 
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
---missing-phenotype -9 --trait default 
+\begin_layout LyX-Code
+ 6) Person ID to VCF ID key:       [required] [ UNASSIGNED ]
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3) Input file stem:
+\begin_layout LyX-Code
+ 7) Pedigree file:    (PLINK .fam) [optional] _
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-- 
+\begin_layout LyX-Code
+ 8) Phenotype file:   (PLINK .phe) [optional] _
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4) BCFtools Parameters
+\begin_layout LyX-Code
+ 9) Map file:         (Mega2 .map) [optional] _
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--m2 -M2 -v snps -c 1 
+\begin_layout LyX-Code
+10) Omit file:        (Mega2 .omit)[optional] _
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5) Template File: 
+\begin_layout LyX-Code
+11) Frequency file:   (Mega2 .freq)[optional] _
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-[required] 
+\begin_layout LyX-Code
+12) Penetrance file:  (Mega2 .pen) [optional] _
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6) Pedigree file: (PLINK .fam) [optional]
+\begin_layout LyX-Code
+13) Output Directory:                         [ Current directory ]
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-_ 
+\begin_layout LyX-Code
+14) SQLite3 Database file:                    dbmega2.db   [overwrite]
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7) Phenotype file:(PLINK .phe) [optional]
+\begin_layout LyX-Code
+15) Reference Allele File:         [optional] 
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-_
+\begin_layout LyX-Code
+16) Simulate genotyping errors:               [ no ]
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-8) Map file: (Mega2 .map) [optional]
+\begin_layout LyX-Code
+17) Include all pedigrees whether typed or not
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-_
+\begin_layout LyX-Code
+18) Show pedigree typing statistics:          [ no ]
 \end_layout
 
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-9) Omit file: (Mega2 .omit)[optional]
+\begin_layout LyX-Code
+19) Maximum number of alleles per marker:     2 alleles
 \end_layout
 
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-_
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-10) Frequency file: (Mega2 .freq)[optional]
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-_
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-11) Penetrance file: (Mega2 .pen) [optional]
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-_
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-12) Output Directory: [ Current directory ]
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-_
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-13) SQLite3 Database file: dbmega2.db [overwrite]
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-_
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-14) Reference Allele File: [optional]
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-_
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-15) Simulate genotyping errors: 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-[ no ] 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-16) Include all pedigrees whether typed or not 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-17) Maximum number of alleles per marker: 
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2 alleles
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
+\begin_layout LyX-Code
+Select from options 0-19 > 
 \end_layout
 
 \begin_layout Subsubsection*
@@ -17965,15 +18118,14 @@ clear
 \end_layout
 
 \begin_layout Subsubsection*
-Menu item: Template File
+Menu item: Data file or Manifest file
 \end_layout
 
 \begin_layout Standard
 This is the only required value for this mode.
- Mega2 can take two styles inputs for the Template file, it can either be
- a bcf file encoded in bcf version 2.2 or later, or a text file containing
- a list of bcf files of the same criteria.
- 
+ Mega2 can take two styles for the file, it can either be a bcf file encoded
+ in bcf version 2.2 or later, or a text file containing a list of bcf files,
+ vcf.gz and vcf files.
 \end_layout
 
 \begin_layout Standard
@@ -18019,7 +18171,7 @@ Additionally when using this feature, the file name for the pedigree file
 \begin_inset Quotes eld
 \end_inset
 
-Input_Pedigree_File-.fam
+Input_Pedigree_File=-.fam
 \begin_inset Quotes erd
 \end_inset
 
@@ -18717,7 +18869,7 @@ name "subsec:Input-menu-item:"
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 5.0.1 Maximum alleles per marker menu:
+              Mega2 6.0.0 Maximum alleles per marker menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -19209,7 +19361,7 @@ The Database input menu is shown below and explained immediately following:
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 5.0.1 Database input menu:
+              Mega2 6.0.0 Database input menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -19353,7 +19505,7 @@ The path to this SQLite3 database is dbmega2.db.
 \end_layout
 
 \begin_layout LyX-Code
-This database was created using Mega2 version 5.0.1.
+This database was created using Mega2 version 6.0.0.
  
 \end_layout
 
@@ -20198,7 +20350,7 @@ NA
 \end_layout
 
 \begin_layout LyX-Code
-              Mega2 5.0.1 Missing Value menu:
+              Mega2 6.0.0 Missing Value menu:
 \end_layout
 
 \begin_layout LyX-Code
@@ -20842,6 +20994,18 @@ If only a female map is selected, then that female map can only be used
  
 \end_layout
 
+\begin_layout Standard
+Note: Data in PLINK format will present only a sex-averaged map and a physical
+ map.
+ While VCF/BCF and Impute formats will add a physical map to any specified
+ maps.
+\end_layout
+
+\begin_layout Standard
+Note: It only one genetic map was specified, it will be used without a menu
+ being displayed.
+\end_layout
+
 \begin_layout Subsection
 The Physical Map Selection Menu
 \end_layout
@@ -20909,6 +21073,18 @@ Select from options 0 - 3 >
 \begin_layout Standard
 If the analysis mode does not require a physical map, the user will be presented
  with the ‘None’ option.
+\end_layout
+
+\begin_layout Standard
+Note: Data in PLINK format will present only a sex-averaged map and a physical
+ map.
+ While VCF/BCF and Impute formats will add a physical map to any specified
+ maps.
+\end_layout
+
+\begin_layout Standard
+Note: It only one physical map was specified, it will be used without a
+ menu being displayed.
 \end_layout
 
 \begin_layout Section
@@ -24054,7 +24230,7 @@ Input format options
 
 \begin_layout Standard
 \begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="2">
+<lyxtabular version="3" rows="12" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -24287,6 +24463,41 @@ status collapsed
 
 \begin_layout Plain Layout
 BCF format (bcf)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\emph on
+-
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+/
+\end_layout
+
+\end_inset
+
+-bcf2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BCF format (version 2.2 or greater)
 \end_layout
 
 \end_inset
@@ -25737,14 +25948,6 @@ Traditional (4.6.1) input file format
 BCF v2.2 or higher (bcf) 
 \end_layout
 
-\begin_layout Enumerate
-VCF compressed format (vcf.gz) 
-\end_layout
-
-\begin_layout Enumerate
-VCF format (vcf)
-\end_layout
-
 \begin_layout Paragraph
 Input_Pedigree_File
 \begin_inset CommandInset label
@@ -26363,6 +26566,10 @@ SHAPEIT/minimac3
 
 \begin_layout Enumerate
 VCF
+\end_layout
+
+\begin_layout Enumerate
+MQLS-XM/KinInbcoef
 \end_layout
 
 \begin_layout Paragraph
@@ -40891,7 +41098,7 @@ Recent releases
 \begin_layout Standard
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="29" columns="4">
+<lyxtabular version="3" rows="30" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="right" valignment="top">
@@ -40957,7 +41164,45 @@ Patched version
 \begin_inset Text
 
 \begin_layout Plain Layout
-5.0.1
+6.0.0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+June 15, 2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Forever
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Patched version
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6.0.0
 \end_layout
 
 \end_inset
@@ -42015,7 +42260,124 @@ March 31, 2008
 \end_layout
 
 \begin_layout Subsection
-Changes from Version 5.0.0 to Version 5.0.1 (Released December 13, 2018)
+Changes from Version 6.0.0 to Version 6.0.0 (Released June 15, 2019)
+\end_layout
+
+\begin_layout Itemize
+Create a manual to explain and illustrate parallel execution of Mega2.
+\end_layout
+
+\begin_layout Itemize
+Mega2 now supports parallel execution to create multiple databases partitioned
+ by chromosome and to use the databases to proceed to run multiple analysis
+ by chromosome.
+ It currently works with the Sun Grid Engine and SLURM (qsub/srun).
+ Features:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+special command line arguments: --parallel/--chr/-e...
+ {<batch file> or "none"}.
+\end_layout
+
+\begin_layout Itemize
+create distinct build directory <jobname>/<output_dir>/chr<chrm> to avoid
+ need for locking.
+\end_layout
+
+\begin_layout Itemize
+Create a BATCH file w/o running a complete (long) analysis (like reading
+ genotypes)
+\end_layout
+
+\begin_layout Itemize
+Since DUMP analysis needs to ask for a choice of Maps, it is necessary to
+ process the map file independent and before all the other file processings.
+ We copied the necessary code out of the read_annotated_files() and read_linkage
+2() for the mega2 annotate style map and LINKAGE format map, respectively.
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Support: Microsoft WSL (Windows Subsystem for Linux).
+ In this case, we enable the feature and load Ubuntu linux onto Windows
+ and then build Mega2 on Ubuntu.
+ Checkout 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Windows-Subsystem-Linux-installation"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Support: Makefile -j<n> for parallel Mega2 compilation.
+ For your enjoyment, try 
+\begin_inset Quotes eld
+\end_inset
+
+make -j20
+\begin_inset Quotes erd
+\end_inset
+
+ if you machine has that many processors.
+\end_layout
+
+\begin_layout Itemize
+Upgrade: Add missing flag definitions to --help print out and group print
+ out into sections.
+\end_layout
+
+\begin_layout Itemize
+Upgrade: Update "example" directory for create database/use database version
+ of Mega2; see 00README.txt.
+\end_layout
+
+\begin_layout Itemize
+Upgrade: Add InputMissingValues for Quant and Affect to database so the
+ values can be accessed as defaults in analysis.
+\end_layout
+
+\begin_layout Itemize
+Upgrade: Use same menu id (input_format) for BCFS, gzcfs and vcfs distinguished
+ by file name suffix.
+\end_layout
+
+\begin_layout Itemize
+Bug: Use SAMPLEID from .phe for read_bcfs if BCF_Sample_Style is 1, else
+ use <pedigree>_<person> as sampleid when BCF_Sample_Style is 2 else use
+ <person> as sampleid when BCF_Sample_Style is 3.
+ You can not assume that people in the .fam file match the sample ordering
+ in the VCF/BCF file.
+\end_layout
+
+\begin_layout Itemize
+Bug: Generate a simple .fam file for bcf if it is not provided.
+\end_layout
+
+\begin_layout Itemize
+Bug: On Centos, you must close() Errlog & Log before moving them (see mega2log2h
+tml.pl).
+\end_layout
+
+\begin_layout Itemize
+Note: db_exists_db() will always create a file of the name of the database
+ even if the database is 
+\begin_inset Quotes eld
+\end_inset
+
+empty
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Changes from Version 5.0.0 to Version 6.0.0 (Released December 13, 2018)
 \end_layout
 
 \begin_layout Itemize
@@ -42125,7 +42487,7 @@ Mega2R has deprecated GenABEL support now that the latter has been archived.
 
 \begin_layout Itemize
 There is no Mega2 program compiled using the native Microsoft compilers.
- This should be available in release 5.0.1.
+ This should be available in release 6.0.0.
  For the present, you should use Msys2 Mega2.
 \end_layout
 

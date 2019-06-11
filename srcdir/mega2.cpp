@@ -1036,8 +1036,8 @@ int mega2(int argc, char **argv, char **env)
 	!check_web_ver) {
         ;
     } else {
-//remove check 06/05/2019
-//      mega2_version_check();
+        //dan: you should turn this off eventually
+        mega2_version_check();
     }
 
     extern linkage_ped_top SQLop;
