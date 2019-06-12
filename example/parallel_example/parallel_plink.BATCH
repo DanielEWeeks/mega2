@@ -1,5 +1,5 @@
 #Version4.4
-#          Mon Jun 10 11:15:11 2019
+#          Fri Aug 29 02:14:00 1997
 # Lines beginning with # are comments.
 # 
 # Currently implemented "keywords type default_value (.mega2rc value)":
@@ -82,8 +82,8 @@
 #   80) Rplot_Statistics                           LINE  ""
 #   81) Select_Loop_Break                           INT  0
 #   82) shapeit_haps_file_selected                  INT  0
-#   83) Shapeit_recomb_directory                 STRING  ""
-#   84) Shapeit_recomb_template                  STRING  "?"
+#   83) Shapeit_recomb_directory                 STRING  "" ("/Users/rbaron/rvb/Work/shapeit.r837/genetic_map_b37")
+#   84) Shapeit_recomb_template                  STRING  "?" ("genetic_map_chr?_combined_b37.txt")
 #   85) shapeit_reference_haplotype_template     STRING  "?"
 #   86) shapeit_reference_legend_template        STRING  "?"
 #   87) shapeit_reference_map_directory          STRING  "."
@@ -151,8 +151,8 @@
 # 
 
 Input_Database_Mode=2
-Database_File=dbmega2_chr$0.db
-Output_Path=.
+Database_File=db$0.db
+Output_Path=PLINK
 Align_Strand_Input=no 
 Input_Untyped_Ped_Option=2
 Input_Do_Error_Sim=no 

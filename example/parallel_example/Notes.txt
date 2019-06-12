@@ -1,0 +1,119 @@
+1        This is a very simple example of the parallel features of Mega2.
+
+1. We have a toy dataset with two chromosomes, each in a separate
+   file, vcf.01.vcf, vcf.02.vcf; we have separate maps, vcf.01.map,
+   vcf.02.map for each chromosome.  We also have the family pedigree 
+   information, vcf.fam, and phenotype, vcf.phe.  
+
+2. For a real dataset, we would have at least 22 chromosomes and each
+   could have 10's of millions of markers.  This is what Mega2P is
+   designed to handle.
+
+3. First, we need to create a Batch file to create the databases (2 in this
+   case, but we could have 22).  We invoke
+             mega2 --parallel Job1
+   Then we get a series of menus:                  select   choose
+              Mega2 6.0.0 database mode menu:          1)
+              Mega2 6.0.0 file input menu:             1)
+                Mega2 6.0.0 input file type menu:      12)
+              Mega2 6.0.0 file input menu:             3)    vcf.02
+              Mega2 6.0.0 file input menu:             5)    vcf.02.vcf
+              Mega2 6.0.0 file input menu:             6)    1
+              Mega2 6.0.0 file input menu:             7)    vcf.fam
+              Mega2 6.0.0 file input menu:             8)    vcf.phe
+              Mega2 6.0.0 file input menu:            13)    DUMP
+              Mega2 6.0.0 file input menu:            14)    dbmega2_02.db
+              Mega2 6.0.0 file input menu:             0)
+
+              Mega2 6.0.0 Missing Value menu:          0)
+
+              menu: Select individuals to compute allele frequencies
+                     for recoded marker loci:          0)
+
+              menu: Specify whether to reset Mendelianly inconsistent loci to missing: 
+                                                       0)
+
+              Loop-breaker selection menu:             0)
+
+              Physical map selection menu:             0)
+
+    Then Mega2 says:
+
+        The BATCH file MEGA2.BATCH was just created.  Please edit
+        it to use the chromosome variables: ($0/%0) and other script
+        variables ($1, $2, ...) as necessary and rename the MEGA2.BATCH
+        file. Then rerun Mega2 with the same options and the new
+        BATCH file.
+
+    NOTE: You may want to use different values for some of the options/choices above.
+
+4. (We have copied the MEGA2.BATCH file just created to MEGA2.BATCH.db for you to view.)
+   copy MEGA2.BATCH to parallel_DBcreate.BATCH
+   Now edit anyfile name you see that contains an "02" to now contain a "$0" instead.
+   (You produced these changes:
+        Input_Map_File=vcf.$0.map
+        Database_File=dbmega2_$0.db
+        BCFs_File=vcf.$0.vcf
+    )
+
+5. Now you can run:
+       mega2 --parallel Job1 --chr 1-2 parallel_DBcreate.BATCH
+
+   (You would not ever want to do this on real data, but since
+    the example is a mere toy, you can type:
+       mega2 --dname Job1 --chr 1-2 parallel_DBcreate.BATCH
+    which processes the the job for chromosome 1 and then for
+    chromosome 2.  All the output is sent to the output stream.)
+
+   The chief output from this run is db01.db and db02.db left in
+   the current directory.
+
+6. Now we need to generate a BATCH file to do an analysis.  For the
+   analysis, we will convert the data to PLINK format. This 
+   is very similar to what we illustrated above. We invoke
+             mega2 --parallel Job1
+   Then we get a series of menus:                  select   choose
+              Mega2 6.0.0 database mode menu:          2)
+              Mega2 6.0.0 Database input menu:         1)   PLINK
+              Mega2 6.0.0 Database input menu:         2)   db02.db
+              Mega2 6.0.0 Database input menu:         0)
+                 ANALYSIS MENU                        31)
+                 Selection Menu: PLINK output file options  2)
+              Mega2 6.0.0 Missing Value menu:          0)
+              Locus Reordering Menu                    0)
+              Trait and covariate selection menu:      0)
+              Individual and Pedigree ID selection menu: 0)
+              Analysis Menu (PLINK)                    0)
+    After this menu, the analysis proceeds possibly asking more 
+    questions until the result is computed.
+
+    Then Mega2 eventually says:
+
+        The BATCH file MEGA2.BATCH was just created.  Please edit
+        it to use the chromosome variables: ($0/%0) and other script
+        variables ($1, $2, ...) as necessary and rename the MEGA2.BATCH
+        file. Then rerun Mega2 with the same options and the new
+        BATCH file.
+
+    NOTE: Mega2 actually ran the analysis and produced an output (NOT in
+          JOB1/PLINK/chr02) but for this special run in PLINK/ in the 
+          current directory.
+
+    NOTE: You may want to use different values for some of the options/choices above.
+
+7. (We have copied the MEGA2.BATCH file just created to MEGA2.BATCH.plink for you to view.)
+   copy MEGA2.BATCH to parallel_plink.BATCH
+   Now edit anyfile name you see that contains an "02" to now contain a "$0" instead.
+   (You produced these changes:
+        Database_File=db$0.db
+        Chromosome_Single=$0
+    )
+
+8. Now you can run:
+       mega2 --parallel Job1 --chr 1-2 parallel_plink.BATCH
+
+   (You would not ever want to do this on real data, but since
+    the example is a mere toy, you can type:
+       mega2 --dname Job1 --chr 1-2 parallel_plink.BATCH
+    which processes the the job for chromosome 1 and then for
+    chromosome 2.  All the output is sent to the output stream.)

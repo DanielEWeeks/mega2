@@ -63,6 +63,8 @@ ifeq ($(OSTYPE), )
     else ifeq "$(findstring MSYS_NT,$(OSTYPE))" "MSYS_NT"
         ifeq ($(GCCVERSION),7.3.0)
 		OSTYPE = msys2_7
+	else ifeq ($(GCCVERSION),7.4.0)
+		OSTYPE = msys2_7
 	else
 		OSTYPE = msys2
 	endif

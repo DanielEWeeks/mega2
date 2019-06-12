@@ -153,13 +153,13 @@
 Input_Database_Mode=1
 Input_Format_Type=11
 Input_Pedigree_File=vcf.fam
-Input_Map_File=vcf.$0.map
+Input_Map_File=vcf.02.map
 Input_Phenotype_File=vcf.phe
 Input_Path=.
 Output_Path=DUMP
-Database_File=db$0.db
+Database_File=db02.db
 PLINK_Args= --missing-phenotype -9 --trait default
-BCFs_File=vcf.$0.vcf
+BCFs_File=vcf.02.vcf
 Input_Untyped_Ped_Option=2
 Input_Do_Error_Sim=no 
 Show_Ped_Stats=no 
