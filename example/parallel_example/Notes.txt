@@ -1,4 +1,4 @@
-1        This is a very simple example of the parallel features of Mega2.
+        This is a very simple example of the parallel features of Mega2.
 
 1. We have a toy dataset with two chromosomes, each in a separate
    file, vcf.01.vcf, vcf.02.vcf; we have separate maps, vcf.01.map,
@@ -22,7 +22,7 @@
               Mega2 6.0.0 file input menu:             7)    vcf.fam
               Mega2 6.0.0 file input menu:             8)    vcf.phe
               Mega2 6.0.0 file input menu:            13)    DUMP
-              Mega2 6.0.0 file input menu:            14)    dbmega2_02.db
+              Mega2 6.0.0 file input menu:            14)    db02.db
               Mega2 6.0.0 file input menu:             0)
 
               Mega2 6.0.0 Missing Value menu:          0)
@@ -49,7 +49,7 @@
 
 4. (We have copied the MEGA2.BATCH file just created to MEGA2.BATCH.db for you to view.)
    copy MEGA2.BATCH to parallel_DBcreate.BATCH
-   Now edit anyfile name you see that contains an "02" to now contain a "$0" instead.
+   Now edit any filename you see that contains an "02" to now contain a "$0" instead.
    (You produced these changes:
         Input_Map_File=vcf.$0.map
         Database_File=dbmega2_$0.db
@@ -57,9 +57,23 @@
     )
 
 5. Now you can run:
-       mega2 --parallel Job1 --chr 1-2 parallel_DBcreate.BATCH
+       mega2 --parallel Job1 --chr 1-2 --cmd /home/rvb5/bin/mega2 parallel_DBcreate.BATCH
+   Another series of menus:                  select   choose
+        JOB MANAGEMENT MENU                      2)
+        NODE OPTION MENU                         0)
+        JOB MANAGEMENT MENU                      0)
+   Then you will see:
+          qsub -b y -N Job1 -l h_vmem=4G -cwd  /home/rvb5/bin/mega2 --Dname Job1 -c 01 parallel_DBcreate.BATCH
+          Your job 91837 ("Job1") has been submitted
+          qsub -b y -N Job1 -l h_vmem=4G -cwd  /home/rvb5/bin/mega2 --Dname Job1 -c 02 parallel_DBcreate.BATCH
+          Your job 91838 ("Job1") has been submitted
+   The output databases db01.db and db02.db will be in the working directory. The logs are in
+   Job1/DUMP/chr0{1,2}
 
-   (You would not ever want to do this on real data, but since
+   Note: The argument --cmd lets us supply the path to mega2 that will be used by the compute engine.
+
+
+    (You would not ever want to do this on real data, but since
     the example is a mere toy, you can type:
        mega2 --dname Job1 --chr 1-2 parallel_DBcreate.BATCH
     which processes the the job for chromosome 1 and then for
@@ -103,17 +117,37 @@
 
 7. (We have copied the MEGA2.BATCH file just created to MEGA2.BATCH.plink for you to view.)
    copy MEGA2.BATCH to parallel_plink.BATCH
-   Now edit anyfile name you see that contains an "02" to now contain a "$0" instead.
+   Now edit any filename you see that contains an "02" to now contain a "$0" instead.
    (You produced these changes:
         Database_File=db$0.db
         Chromosome_Single=$0
     )
 
 8. Now you can run:
-       mega2 --parallel Job1 --chr 1-2 parallel_plink.BATCH
+       mega2 --parallel Job1 --chr 1-2 --cmd /home/rvb5/bin/mega2 parallel_plink.BATCH
+   Another series of menus:                  select   choose
+        JOB MANAGEMENT MENU                      2)
+        NODE OPTION MENU                         0)
+        JOB MANAGEMENT MENU                      0)
+   Then you will see:
+          qsub -b y -N Job1 -l h_vmem=4G -cwd  /home/rvb5/bin/mega2 --Dname Job1 -c 01 parallel_plink.BATCH
+          Your job 91839 ("Job1") has been submitted
+          qsub -b y -N Job1 -l h_vmem=4G -cwd  /home/rvb5/bin/mega2 --Dname Job1 -c 02 parallel_plink.BATCH
+          Your job 91840 ("Job1") has been submitted
+   The databases, db01.db and db02.db, are found in the working directory. The logs are in
+   Job1/PLINK/chr0{1,2}
+
+   Note: The argument --cmd lets us supply the path to mega2 that will be used by the compute engine.
 
    (You would not ever want to do this on real data, but since
     the example is a mere toy, you can type:
        mega2 --dname Job1 --chr 1-2 parallel_plink.BATCH
     which processes the the job for chromosome 1 and then for
     chromosome 2.  All the output is sent to the output stream.)
+
+9. Now, for fun, you can run:
+       mega2 --parallel Job1 --chr 1-2 -e -o PLINK plink
+   or
+       mega2 --dname Job1 --chr 1-2 -e -o PLINK plink
+
+   remember the first invocation will present a few menu's to start up the workload manager.
