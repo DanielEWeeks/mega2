@@ -3674,11 +3674,6 @@ mega2_bin
 \begin_layout Standard
 There are separate native binaries for Microsoft Windows 7 and Microsoft
  Windows 10.
- Also, the binaries for MinGW were built on Windows 7 while those for Msys2
- were build on Windows 10.
- MinGW needs two .dll's if you wish to install just Mega2 without the whole
- MinGW.
- They are included and depend on Windows Version.
  For Windows 10 Cygwin, all the necessary .dll's are in the Windows 10 directory
  and begin with the prefix 
 \begin_inset Quotes eld
@@ -3690,10 +3685,9 @@ cyg
 
 .
  The static Msys2 version of Mega2 only needs the msys-2.0.dll library which
- is available if you have installed msys2 on your machine.
- The other Msys2 executables use the .dll's in the msys2 or msys2_7 directories
- respectively for the 2.7.0 or 2.10.0 msys2 executable; again, these will be
- already available if you installed msys2.
+ is available if you have installed the full msys2 on your machine.
+ The other Msys2 executable uses the .dll's in the msys2_7 directory; again,
+ these will be already available if you installed the full msys2.
  If you are just using the executable and corresponding .dll's, you should
  copy all of them to the same directory.
  Finally, if you run a native Windows Mega2 at the 

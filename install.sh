@@ -238,6 +238,8 @@ elif [[ ${OSTYPE:0:7} == MSYS_NT ]]; then
     GCV=`gcc -dumpversion`
     if [[ $GCV == "7.3.0" ]]; then
         OSTYPE=msys2_7
+    elif [[ $GCV == "7.4.0" ]]; then
+        OSTYPE=msys2_7
     fi
 fi
 export OSTYPE
@@ -304,7 +306,8 @@ for scr in $scripts; do
             CC=gcc
             which=where
             v=`uname -r|sed -n -e "s/\\(.*\\)(.*)/\\1/p"`
-            pgm=mega2_${VERSION}_msys2_7.${v}
+#           changed to ignore it; 7 is gcc version
+            pgm=mega2_${VERSION}_msys2_7
         fi
 
         if [[ -x mega2_bin/$pgm && $pgm != "none" && $scr != "mega2compile" ]]; then

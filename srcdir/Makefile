@@ -61,15 +61,15 @@ ifeq ($(OSTYPE), )
     else ifeq "$(findstring MINGW64,$(OSTYPE))" "MINGW64"
 	OSTYPE = msys2
     else ifeq "$(findstring MSYS_NT,$(OSTYPE))" "MSYS_NT"
-        ifeq ($(GCCVERSION),7.3.0)
+	ifeq "$(GCCVERSION)" "7.3.0"
 		OSTYPE = msys2_7
-	else ifeq ($(GCCVERSION),7.4.0)
-		OSTYPE = msys2_7
-	else
-		OSTYPE = msys2
+	else ifeq "$(GCCVERSION)" "7.4.0"
+	    OSTYPE = msys2_7
+        else
+	    OSTYPE = msys2
 	endif
     else
-        $(warning OSTYPE is $(OSTYPE))
+	$(warning OSTYPE is $(OSTYPE))
     endif
 endif
 
