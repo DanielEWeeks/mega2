@@ -459,6 +459,20 @@ In addition to the ability to reformat data for a variety of analysis programs,
 \end_layout
 
 \begin_layout Enumerate
+Mega2 now supports parallel execution to create multiple databases partitioned
+ by chromosome and to use the databases to proceed to run multiple analysis
+ by chromosome.
+ It currently works with the Sun Grid Engine and SLURM (See Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Parallel"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Enumerate
 The ability to create publication-quality PDF plots of the results using
  our nplplot R library (See Section 
 \begin_inset CommandInset ref
@@ -851,23 +865,20 @@ https://bioconductor.org/packages/release/bioc/html/gdsfmt.html
 \end_layout
 
 \begin_layout Subsection
-Overview of Mega2P
+Overview of the parallel capabilities of Mega2 
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Parallel"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Mega2P is the same program as Mega2, but we give it a different name to
- emphasize that Mega2 has been augmented.
- The 
-\begin_inset Quotes eld
-\end_inset
-
-P
-\begin_inset Quotes erd
-\end_inset
-
- is for parallel; Mega2P can create a database or perform an analysis on
- multiple chromosomes at the same time using either the Sun Grid Engine
- or SLURM.
+Mega2 now supports running jobs in parallel - it can create a database or
+ perform an analysis on multiple chromosomes in parallel using either the
+ Sun Grid Engine or SLURM.
  Simply put today's datasets are rather large and it is very typical to
  get VCF data with a separate file (or even multiple files) per chromosome;
  the same is true for IMPUTE files.
@@ -882,11 +893,45 @@ P
 \end_layout
 
 \begin_layout Standard
-The most up to date Mega2P documentation is available at 
+For an brief introduction to the parallel capablities of Mega2, please see
+ the 'Notes.txt' file in the example/parallel_example folder of the Mega2
+ distribution.
+ More complete documentation will be forthcoming.
+ Features include:
+\end_layout
+
+\begin_layout Itemize
+special command line arguments: --parallel/--chr/-e...
+ {<batch file> or "none"}.
+\end_layout
+
+\begin_layout Itemize
+ability to create distinct ouptput directories <jobname>/<output_dir>/chr<chrm>
+ to avoid need for locking.
+\end_layout
+
+\begin_layout Itemize
+Create a BATCH file w/o running a complete (long) analysis (like reading
+ genotypes)
+\end_layout
+
+\begin_layout Itemize
+Since DUMP analysis needs to ask for a choice of Maps, it is necessary to
+ process the map file independent of and before all the other file processings.
+ We copied the necessary code out of the read_annotated_files() and read_linkage
+2() for the mega2 annotate style map and LINKAGE format map, respectively.
+\end_layout
+
+\begin_layout Standard
+The most up-to-date documentation about the parallel capabilites of Mega2
+ is available at
+\end_layout
+
+\begin_layout Standard
 \begin_inset CommandInset href
 LatexCommand href
-name "https://watson.hgen.pitt.edu/mega2/mega2p"
-target "https://watson.hgen.pitt.edu/mega2/mega2p"
+name "https://bitbucket.org/dweeks/mega2/src/master/mega2_html/Mega2P/"
+target "https://bitbucket.org/dweeks/mega2/src/master/mega2_html/Mega2P/"
 
 \end_inset
 
@@ -894,7 +939,7 @@ target "https://watson.hgen.pitt.edu/mega2/mega2p"
 \end_layout
 
 \begin_layout Standard
-The most up to date Mega2P code is available at via the Bitbucket git repository
+The most up to date Mega2 code is available at via the Bitbucket git repository
 \end_layout
 
 \begin_layout Standard
